@@ -1,13 +1,3 @@
-import {
-  executionRecords,
-  governanceResults,
-  marketplaceOptions,
-  outcomeReviews,
-  recommendationExplanations,
-  recommendationRecords,
-  taskAnalyses,
-  tasks,
-} from "../data"
 import { GovernanceStatusCard } from "../components/GovernanceStatusCard"
 import { PageHeader } from "../components/PageHeader"
 import { PrimaryButton } from "../components/PrimaryButton"
@@ -16,33 +6,17 @@ import { formatLabel } from "../components/formatLabel"
 import { StatusBadge } from "../components/StatusBadge"
 import { TaskSummaryCard } from "../components/TaskSummaryCard"
 
-export function TaskDetailPage({
-  activeTaskId = "task_001",
-  generatedResult,
-  onNavigate,
-}) {
-  const isGeneratedTask = generatedResult?.task.id === activeTaskId
-  const task =
-    isGeneratedTask
-      ? generatedResult.task
-      : tasks.find((item) => item.id === activeTaskId) || tasks[0]
-  const analysis = isGeneratedTask
-    ? generatedResult.analysis
-    : taskAnalyses.find((item) => item.taskId === task.id)
-  const recommendation = isGeneratedTask
-    ? generatedResult.recommendation
-    : recommendationRecords.find((record) => record.taskId === task.id)
-  const explanation = isGeneratedTask
-    ? generatedResult.explanation
-    : recommendationExplanations.find((item) => item.taskId === task.id)
-  const governance = governanceResults.find((item) => item.taskId === task.id)
-  const execution = executionRecords.find((item) => item.taskId === task.id)
-  const selectedOption = marketplaceOptions.find(
-    (option) => option.id === execution?.selectedOptionId,
-  )
-  const outcome = outcomeReviews.find(
-    (review) => review.executionId === execution?.id,
-  )
+export function TaskDetailPage({ flowResult, onNavigate }) {
+  const {
+    task,
+    analysis,
+    recommendation,
+    explanation,
+    governance,
+    selectedOption,
+    execution,
+    outcome,
+  } = flowResult
 
   return (
     <>
@@ -136,15 +110,7 @@ export function TaskDetailPage({
           </SectionCard>
         </div>
 
-        {governance ? (
-          <GovernanceStatusCard governance={governance} />
-        ) : (
-          <SectionCard title="Governance summary">
-            <p className="text-sm text-slate-600">
-              Governance has not been generated for this new Phase 1 task yet.
-            </p>
-          </SectionCard>
-        )}
+        <GovernanceStatusCard governance={governance} />
 
         <div className="grid gap-6 lg:grid-cols-2">
           <SectionCard title="Selected option">

@@ -1,8 +1,5 @@
 import {
   currentUser,
-  executionRecords,
-  governanceResults,
-  recommendationRecords,
   tasks,
 } from "../data"
 import { PageHeader } from "../components/PageHeader"
@@ -10,6 +7,7 @@ import { PrimaryButton } from "../components/PrimaryButton"
 import { SectionCard } from "../components/SectionCard"
 import { formatLabel } from "../components/formatLabel"
 import { StatusBadge } from "../components/StatusBadge"
+import { buildTaskFlow } from "../logic/taskFlowEngine"
 
 function SummaryMetric({ label, value }) {
   return (
@@ -21,16 +19,16 @@ function SummaryMetric({ label, value }) {
 }
 
 export function DashboardPage({ onNavigate }) {
-  const agentRecommendations = recommendationRecords.filter(
-    (record) => record.recommendedPath === "agent",
+  const taskFlows = tasks.map((task) => buildTaskFlow(task))
+  const agentRecommendations = taskFlows.filter(
+    (flow) => flow.recommendation.recommendedPath === "agent",
   ).length
-  const approvalRequiredCount = governanceResults.filter(
-    (result) => result.approvalRequired,
+  const approvalRequiredCount = taskFlows.filter(
+    (flow) => flow.governance.approvalRequired,
   ).length
-  const completedCount = executionRecords.filter((execution) => {
-    const task = tasks.find((item) => item.id === execution.taskId)
-    return task?.status === "completed"
-  }).length
+  const completedCount = taskFlows.filter(
+    (flow) => flow.outcome?.status === "completed",
+  ).length
 
   return (
     <>
@@ -68,9 +66,7 @@ export function DashboardPage({ onNavigate }) {
       >
         <div className="space-y-3">
           {tasks.map((task) => {
-            const recommendation = recommendationRecords.find(
-              (record) => record.taskId === task.id,
-            )
+            const taskFlow = taskFlows.find((flow) => flow.task.id === task.id)
 
             return (
               <button
@@ -87,11 +83,13 @@ export function DashboardPage({ onNavigate }) {
                     </p>
                   </div>
                   <div className="flex shrink-0 flex-wrap gap-2">
-                    <StatusBadge value={task.status} />
-                    {recommendation ? (
+                    <StatusBadge value={taskFlow?.task.status || task.status} />
+                    {taskFlow ? (
                       <StatusBadge
-                        value={recommendation.recommendedPath}
-                        label={formatLabel(recommendation.recommendedPath)}
+                        value={taskFlow.recommendation.recommendedPath}
+                        label={formatLabel(
+                          taskFlow.recommendation.recommendedPath,
+                        )}
                       />
                     ) : null}
                   </div>

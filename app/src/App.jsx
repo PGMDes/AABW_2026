@@ -1,10 +1,7 @@
 import { useState } from "react"
 import { AppShell } from "./components/AppShell"
-import { analyzeTask } from "./logic/analyzeTask"
-import {
-  buildRecommendation,
-  buildRecommendationExplanation,
-} from "./logic/recommendationEngine"
+import { tasks } from "./data"
+import { buildTaskFlow } from "./logic/taskFlowEngine"
 import { DashboardPage } from "./pages/DashboardPage"
 import { NewTaskPage } from "./pages/NewTaskPage"
 import { RecommendationPage } from "./pages/RecommendationPage"
@@ -22,22 +19,16 @@ function App() {
   }
 
   function handleAnalyzeTask(task) {
-    const taskAnalysis = analyzeTask(task)
-    const recommendation = buildRecommendation(taskAnalysis)
-    const explanation = buildRecommendationExplanation(
-      taskAnalysis,
-      recommendation,
-    )
-
-    setGeneratedResult({
-      task,
-      analysis: taskAnalysis,
-      recommendation,
-      explanation,
-    })
+    setGeneratedResult(buildTaskFlow(task))
     setActiveTaskId(task.id)
     setCurrentPage("recommendation")
   }
+
+  const sampleTask = tasks.find((task) => task.id === activeTaskId) || tasks[0]
+  const activeFlowResult =
+    generatedResult?.task.id === activeTaskId
+      ? generatedResult
+      : buildTaskFlow(sampleTask)
 
   let page
 
@@ -46,16 +37,14 @@ function App() {
   } else if (currentPage === "recommendation") {
     page = (
       <RecommendationPage
-        activeTaskId={activeTaskId}
-        generatedResult={generatedResult}
+        flowResult={activeFlowResult}
         onContinue={() => navigate("detail", activeTaskId)}
       />
     )
   } else if (currentPage === "detail") {
     page = (
       <TaskDetailPage
-        activeTaskId={activeTaskId}
-        generatedResult={generatedResult}
+        flowResult={activeFlowResult}
         onNavigate={navigate}
       />
     )

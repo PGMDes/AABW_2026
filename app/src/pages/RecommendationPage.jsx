@@ -1,11 +1,3 @@
-import {
-  governanceResults,
-  marketplaceOptions,
-  recommendationExplanations,
-  recommendationRecords,
-  taskAnalyses,
-  tasks,
-} from "../data"
 import { GovernanceStatusCard } from "../components/GovernanceStatusCard"
 import { PageHeader } from "../components/PageHeader"
 import { PrimaryButton } from "../components/PrimaryButton"
@@ -15,30 +7,15 @@ import { formatLabel } from "../components/formatLabel"
 import { StatusBadge } from "../components/StatusBadge"
 import { TaskSummaryCard } from "../components/TaskSummaryCard"
 
-export function RecommendationPage({
-  activeTaskId = "task_001",
-  generatedResult,
-  onContinue,
-}) {
-  const isGeneratedTask = generatedResult?.task.id === activeTaskId
-  const task =
-    isGeneratedTask
-      ? generatedResult.task
-      : tasks.find((item) => item.id === activeTaskId) || tasks[0]
-  const analysis = isGeneratedTask
-    ? generatedResult.analysis
-    : taskAnalyses.find((item) => item.taskId === task.id)
-  const recommendation = isGeneratedTask
-    ? generatedResult.recommendation
-    : recommendationRecords.find((record) => record.taskId === task.id)
-  const explanation = isGeneratedTask
-    ? generatedResult.explanation
-    : recommendationExplanations.find((item) => item.taskId === task.id)
-  const governance = governanceResults.find((item) => item.taskId === task.id)
-  const options = marketplaceOptions.filter(
-    (option) => option.taskId === task.id && option.eligible,
-  )
-  const selectedOption = options[0]
+export function RecommendationPage({ flowResult, onContinue }) {
+  const {
+    task,
+    analysis,
+    recommendation,
+    explanation,
+    governance,
+    selectedOption,
+  } = flowResult
 
   return (
     <>
@@ -71,7 +48,7 @@ export function RecommendationPage({
           explanation={explanation}
         />
 
-        {governance ? <GovernanceStatusCard governance={governance} /> : null}
+        <GovernanceStatusCard governance={governance} />
 
         {selectedOption ? (
           <SectionCard title="Selected execution option">
@@ -106,8 +83,8 @@ export function RecommendationPage({
           </SectionCard>
         ) : (
           <SectionCard
-            title="Phase 1 generated result"
-            description="This new submission now has a real frontend-generated analysis, recommendation, and explanation. Governance and marketplace options still use the Phase 0 sample data."
+            title="Selected execution option"
+            description="No eligible execution option was generated for this task."
           />
         )}
       </div>
