@@ -6,6 +6,70 @@ import { formatLabel } from "../components/formatLabel"
 import { StatusBadge } from "../components/StatusBadge"
 import { TaskSummaryCard } from "../components/TaskSummaryCard"
 
+function LifecycleStepList({ lifecycle }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="text-sm font-medium text-slate-500">
+          Current stage
+        </span>
+        <StatusBadge value={lifecycle.currentStage} />
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {lifecycle.steps.map((step) => (
+          <div
+            key={step.id}
+            className="rounded-md border border-slate-200 bg-slate-50 p-4"
+          >
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <StatusBadge value={step.status} />
+            </div>
+            <h3 className="text-sm font-semibold text-slate-950">
+              {step.label}
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              {step.description}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function AuditTrailList({ auditTrail }) {
+  return (
+    <ol className="space-y-3">
+      {auditTrail.map((event) => (
+        <li
+          key={event.id}
+          className="grid gap-3 rounded-md border border-slate-200 p-4 sm:grid-cols-[5rem_1fr]"
+        >
+          <div className="text-sm font-semibold text-slate-500">
+            {event.relativeTimestamp}
+          </div>
+          <div>
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <h3 className="text-sm font-semibold text-slate-950">
+                {event.label}
+              </h3>
+              <StatusBadge value={event.status} />
+              <StatusBadge
+                value={event.actorType}
+                label={formatLabel(event.actorType)}
+              />
+            </div>
+            <p className="text-sm leading-6 text-slate-600">
+              {event.description}
+            </p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
 export function TaskDetailPage({ flowResult, onNavigate }) {
   const {
     task,
@@ -16,6 +80,8 @@ export function TaskDetailPage({ flowResult, onNavigate }) {
     selectedOption,
     execution,
     outcome,
+    lifecycle,
+    auditTrail,
   } = flowResult
 
   return (
@@ -112,6 +178,13 @@ export function TaskDetailPage({ flowResult, onNavigate }) {
 
         <GovernanceStatusCard governance={governance} />
 
+        <SectionCard
+          title="Execution lifecycle"
+          description="A simple state tracker for the route from recommendation through review."
+        >
+          <LifecycleStepList lifecycle={lifecycle} />
+        </SectionCard>
+
         <div className="grid gap-6 lg:grid-cols-2">
           <SectionCard title="Selected option">
             {selectedOption ? (
@@ -180,6 +253,13 @@ export function TaskDetailPage({ flowResult, onNavigate }) {
               No outcome review has been recorded yet.
             </p>
           )}
+        </SectionCard>
+
+        <SectionCard
+          title="Audit trail"
+          description="Deterministic activity log for the task flow."
+        >
+          <AuditTrailList auditTrail={auditTrail} />
         </SectionCard>
       </div>
     </>

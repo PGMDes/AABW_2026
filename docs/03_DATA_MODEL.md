@@ -32,6 +32,7 @@ Example:
 6. the system finds matching execution options
 7. the user launches one option
 8. the system records the outcome
+9. the system shows lifecycle and audit history
 
 Each of those steps should produce a clear object.
 
@@ -39,7 +40,7 @@ Each of those steps should produce a clear object.
 
 ## Object list
 
-The MVP uses these 10 objects:
+The MVP uses these 12 objects:
 
 1. `Task`
 2. `TaskAnalysis`
@@ -51,6 +52,8 @@ The MVP uses these 10 objects:
 8. `MarketplaceOption`
 9. `ExecutionRecord`
 10. `OutcomeReview`
+11. `LifecycleState`
+12. `AuditEvent`
 
 ---
 
@@ -534,6 +537,107 @@ The MVP should show that the platform does not stop at launch. It also records w
 
 ---
 
+## 11. LifecycleState
+
+### What it means in simple words
+
+`LifecycleState` shows where the task is in the execution journey.
+
+It is the simple tracker behind labels like `recommended`, `selected`, `launched`, `completed`, and `reviewed`.
+
+### Why the app needs it
+
+The task detail page should feel like a control plane, not just a static result page. A lifecycle state helps the user see what already happened and what is still pending.
+
+### Important fields
+
+- `taskId`
+- `currentStage`
+- `governanceState`
+- `steps`
+
+### Required lifecycle concepts
+
+- `recommended`
+- `approved`
+- `needs_human_review`
+- `blocked`
+- `selected`
+- `launched`
+- `in_progress`
+- `completed`
+- `reviewed`
+
+### Example JSON
+
+```json
+{
+  "taskId": "task_001",
+  "currentStage": "reviewed",
+  "governanceState": "approved",
+  "steps": [
+    {
+      "id": "recommended",
+      "label": "Recommended",
+      "status": "completed"
+    },
+    {
+      "id": "reviewed",
+      "label": "Reviewed",
+      "status": "reviewed"
+    }
+  ]
+}
+```
+
+### Which step creates or uses it
+
+- generated after execution and outcome data are available
+- used on the task detail page
+
+---
+
+## 12. AuditEvent
+
+### What it means in simple words
+
+`AuditEvent` is one entry in the task activity log.
+
+It records who or what performed each major step, such as task submission, recommendation, governance evaluation, launch, completion, and review.
+
+### Why the app needs it
+
+The user needs to trust the decision path. A readable audit trail makes the work route explainable after the fact.
+
+### Important fields
+
+- `id`
+- `label`
+- `description`
+- `actorType`
+- `relativeTimestamp`
+- `status`
+
+### Example JSON
+
+```json
+{
+  "id": "task_001_audit_004_governance_evaluated",
+  "label": "Governance evaluated",
+  "description": "Low-sensitivity internal research is allowed for trusted agents",
+  "actorType": "system",
+  "relativeTimestamp": "T+03m",
+  "status": "approved"
+}
+```
+
+### Which step creates or uses it
+
+- generated from the existing task flow objects
+- used on the task detail page as an activity timeline
+
+---
+
 ## How the objects connect together
 
 This is the simplest way to understand the object relationships.
@@ -547,6 +651,8 @@ Task
   -> MarketplaceOption(s)
   -> ExecutionRecord
   -> OutcomeReview
+  -> LifecycleState
+  -> AuditEvent(s)
 ```
 
 Supporting objects used by marketplace:
@@ -562,6 +668,8 @@ Supporting objects used by marketplace:
 - one `Task` can have many `MarketplaceOption` items
 - one `Task` has zero or one `ExecutionRecord` in the first demo
 - one `ExecutionRecord` has zero or one `OutcomeReview`
+- one `Task` has one generated `LifecycleState`
+- one `Task` has many generated `AuditEvent` items
 - many `MarketplaceOption` items can be built from `AgentProfile` and `HumanRoleProfile`
 
 ---
@@ -642,11 +750,30 @@ For the AI competitors market research task:
 }
 ```
 
+### 9. System builds `LifecycleState`
+```json
+{
+  "taskId": "task_001",
+  "currentStage": "reviewed"
+}
+```
+
+### 10. System builds `AuditEvent` items
+```json
+{
+  "id": "task_001_audit_009_outcome_reviewed",
+  "label": "Outcome reviewed",
+  "actorType": "human",
+  "relativeTimestamp": "T+50m",
+  "status": "completed"
+}
+```
+
 ---
 
 ## Which objects should be hardcoded first
 
-For the first build, these objects should be hardcoded in frontend files or sample data files.
+For the first build, these objects should be hardcoded in frontend files, sample data files, or generated from the frontend flow.
 
 ### Hardcode first
 - `Task`
@@ -659,6 +786,10 @@ For the first build, these objects should be hardcoded in frontend files or samp
 - `MarketplaceOption`
 - `ExecutionRecord`
 - `OutcomeReview`
+- `LifecycleState`
+- `AuditEvent`
+
+Note: `LifecycleState` and `AuditEvent` can be generated from the task flow instead of stored as separate sample data arrays.
 
 ### Best starting order for hardcoded data
 
@@ -672,6 +803,8 @@ For the first build, these objects should be hardcoded in frontend files or samp
 8. `MarketplaceOption`
 9. `ExecutionRecord`
 10. `OutcomeReview`
+11. `LifecycleState`
+12. `AuditEvent`
 
 ### Why hardcode first
 
@@ -697,9 +830,11 @@ Do not build tables now, but these objects are likely candidates later.
 - `HumanRoleProfile`
 - `ExecutionRecord`
 - `OutcomeReview`
+- `AuditEvent`
 
 ### Maybe stored later, maybe generated on the fly
 - `MarketplaceOption`
+- `LifecycleState`
 
 Why `MarketplaceOption` may not need its own table later:
 - it is often a generated view
@@ -892,6 +1027,8 @@ If the builder wants the smallest possible first version, start with these objec
 8. `MarketplaceOption`
 9. `ExecutionRecord`
 10. `OutcomeReview`
+11. `LifecycleState`
+12. `AuditEvent`
 
 This order works because it lets the main screens appear early.
 
@@ -915,6 +1052,8 @@ src/
     recommendPath.js
     evaluateGovernance.js
     buildMarketplaceOptions.js
+    lifecycleEngine.js
+    auditTrailEngine.js
 
   types/
     dataShapes.js

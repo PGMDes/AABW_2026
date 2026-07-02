@@ -484,7 +484,9 @@ It should show:
 - explanation
 - governance result
 - selected option
+- lifecycle status
 - launch status
+- audit trail
 - output summary
 - outcome review
 
@@ -497,6 +499,7 @@ It should show:
 
 ### What the system does behind the scenes
 The system loads a sample execution outcome.
+It also builds a deterministic lifecycle state and audit trail so the task detail page can show what happened step by step.
 
 ### Example outcome object
 ```json
@@ -517,6 +520,8 @@ By this point, the task detail page combines:
 - governance data
 - marketplace selection
 - launch record
+- lifecycle state
+- audit trail
 - outcome record
 
 This is the full MVP story in one place.
@@ -635,6 +640,27 @@ This section is important for building the screens.
   "status": "completed",
   "outputSummary": "Draft market research brief created",
   "reviewOutcome": "accepted_with_minor_edits"
+}
+```
+
+### 9. Lifecycle and audit trail show the task story
+```json
+{
+  "currentStage": "reviewed",
+  "events": [
+    {
+      "label": "Task submitted",
+      "actorType": "human",
+      "relativeTimestamp": "T+00m",
+      "status": "completed"
+    },
+    {
+      "label": "Outcome reviewed",
+      "actorType": "human",
+      "relativeTimestamp": "T+50m",
+      "status": "completed"
+    }
+  ]
 }
 ```
 
@@ -812,6 +838,8 @@ User sees:
 User sees:
 - everything that happened
 - current status
+- lifecycle tracker
+- audit/activity timeline
 - output summary
 - review result
 
@@ -883,6 +911,8 @@ These notes make the flow easier to build.
 - policy result
 - selected option
 - execution status
+- lifecycle tracker
+- audit trail
 - output summary
 
 ## Fake states to support early

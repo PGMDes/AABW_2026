@@ -934,7 +934,47 @@ export const outcomeReviews = [
 
 ---
 
-## 12. Recommended `src/data` file structure
+## 12. Generated lifecycle and audit trail
+
+Lifecycle and audit data should be generated from the task flow instead of copied into separate sample arrays.
+
+This keeps the demo consistent when recommendation, governance, selected option, execution, or outcome data changes.
+
+### Example lifecycle state
+
+```js
+{
+  taskId: "task_001",
+  currentStage: "reviewed",
+  governanceState: "approved",
+  steps: [
+    { id: "recommended", label: "Recommended", status: "completed" },
+    { id: "approved", label: "Approved", status: "approved" },
+    { id: "selected", label: "Selected", status: "selected" },
+    { id: "launched", label: "Launched", status: "launched" },
+    { id: "in_progress", label: "In progress", status: "completed" },
+    { id: "completed", label: "Completed", status: "completed" },
+    { id: "reviewed", label: "Reviewed", status: "reviewed" }
+  ]
+}
+```
+
+### Example audit event
+
+```js
+{
+  id: "task_001_audit_006_execution_launched",
+  label: "Execution launched",
+  description: "Execution launched through Research Analyst Agent.",
+  actorType: "human",
+  relativeTimestamp: "T+05m",
+  status: "completed"
+}
+```
+
+---
+
+## 13. Recommended `src/data` file structure
 
 A simple frontend-only structure could look like this:
 
@@ -978,7 +1018,7 @@ This file structure is simple and clear. It is easier to debug than putting all 
 
 ---
 
-## 13. Which sample task proves which path
+## 14. Which sample task proves which path
 
 This helps the demo stay clear.
 

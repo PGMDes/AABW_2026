@@ -1,10 +1,12 @@
 import { analyzeTask } from "./analyzeTask.js"
+import { buildAuditTrail } from "./auditTrailEngine.js"
 import {
   createDemoOutcomeReview,
   createExecutionRecord,
   getTaskStatusFromExecution,
 } from "./executionEngine.js"
 import { evaluateGovernance } from "./governanceEngine.js"
+import { buildLifecycleState } from "./lifecycleEngine.js"
 import { getExecutionOptions } from "./marketplaceEngine.js"
 import {
   buildRecommendation,
@@ -20,6 +22,23 @@ export function buildTaskFlow(task) {
   const selectedOption = options.find((option) => option.eligible) || null
   const execution = createExecutionRecord(task, recommendation, selectedOption)
   const outcome = createDemoOutcomeReview(execution, analysis)
+  const lifecycle = buildLifecycleState({
+    task,
+    recommendation,
+    governance,
+    selectedOption,
+    execution,
+    outcome,
+  })
+  const auditTrail = buildAuditTrail({
+    task,
+    analysis,
+    recommendation,
+    governance,
+    selectedOption,
+    execution,
+    outcome,
+  })
   const taskStatus = getTaskStatusFromExecution(governance, execution)
 
   return {
@@ -35,5 +54,7 @@ export function buildTaskFlow(task) {
     selectedOption,
     execution,
     outcome,
+    lifecycle,
+    auditTrail,
   }
 }

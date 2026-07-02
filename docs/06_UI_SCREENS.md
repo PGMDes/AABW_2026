@@ -577,6 +577,8 @@ It is the final state of the demo flow.
 - governance result
 - selected option
 - execution status
+- lifecycle status
+- audit trail
 - output summary
 - outcome review
 
@@ -589,7 +591,9 @@ It is the final state of the demo flow.
 - `GovernanceSummaryCard`
 - `ExecutionStatusCard`
 - `OutcomeReviewCard`
+- `LifecycleStepList`
 - `TimelineList`
+- `AuditTrailList`
 - `StatusBadge`
 
 ### Data objects used
@@ -602,6 +606,8 @@ It is the final state of the demo flow.
 - `MarketplaceOption`
 - `ExecutionRecord`
 - `OutcomeReview`
+- `LifecycleState`
+- `AuditEvent`
 
 ### User actions
 
