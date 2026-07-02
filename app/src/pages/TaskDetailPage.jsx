@@ -16,15 +16,25 @@ import { formatLabel } from "../components/formatLabel"
 import { StatusBadge } from "../components/StatusBadge"
 import { TaskSummaryCard } from "../components/TaskSummaryCard"
 
-export function TaskDetailPage({ activeTaskId = "task_001", onNavigate }) {
-  const task = tasks.find((item) => item.id === activeTaskId) || tasks[0]
-  const analysis = taskAnalyses.find((item) => item.taskId === task.id)
-  const recommendation = recommendationRecords.find(
-    (record) => record.taskId === task.id,
-  )
-  const explanation = recommendationExplanations.find(
-    (item) => item.taskId === task.id,
-  )
+export function TaskDetailPage({
+  activeTaskId = "task_001",
+  generatedResult,
+  onNavigate,
+}) {
+  const isGeneratedTask = generatedResult?.task.id === activeTaskId
+  const task =
+    isGeneratedTask
+      ? generatedResult.task
+      : tasks.find((item) => item.id === activeTaskId) || tasks[0]
+  const analysis = isGeneratedTask
+    ? generatedResult.analysis
+    : taskAnalyses.find((item) => item.taskId === task.id)
+  const recommendation = isGeneratedTask
+    ? generatedResult.recommendation
+    : recommendationRecords.find((record) => record.taskId === task.id)
+  const explanation = isGeneratedTask
+    ? generatedResult.explanation
+    : recommendationExplanations.find((item) => item.taskId === task.id)
   const governance = governanceResults.find((item) => item.taskId === task.id)
   const execution = executionRecords.find((item) => item.taskId === task.id)
   const selectedOption = marketplaceOptions.find(
@@ -54,64 +64,87 @@ export function TaskDetailPage({ activeTaskId = "task_001", onNavigate }) {
 
         <div className="grid gap-6 lg:grid-cols-2">
           <SectionCard title="Recommendation summary">
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <StatusBadge value={recommendation.recommendedPath} />
-                <StatusBadge
-                  value={recommendation.recommendedPath}
-                  label={`${recommendation.confidence}% confidence`}
-                />
+            {recommendation && explanation ? (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <StatusBadge value={recommendation.recommendedPath} />
+                  <StatusBadge
+                    value={recommendation.recommendedPath}
+                    label={`${recommendation.confidence}% confidence`}
+                  />
+                </div>
+                <dl className="grid gap-3 text-sm sm:grid-cols-3">
+                  <div>
+                    <dt className="font-medium text-slate-500">Human</dt>
+                    <dd className="mt-1 text-slate-900">
+                      {recommendation.humanFitScore}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-medium text-slate-500">Agent</dt>
+                    <dd className="mt-1 text-slate-900">
+                      {recommendation.agentFitScore}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="font-medium text-slate-500">Hybrid</dt>
+                    <dd className="mt-1 text-slate-900">
+                      {recommendation.hybridFitScore}
+                    </dd>
+                  </div>
+                </dl>
+                <ul className="space-y-2 text-sm text-slate-700">
+                  {explanation.topReasons.map((reason) => (
+                    <li
+                      key={reason}
+                      className="rounded-md bg-slate-50 px-3 py-2"
+                    >
+                      {reason}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <dl className="grid gap-3 text-sm sm:grid-cols-3">
-                <div>
-                  <dt className="font-medium text-slate-500">Human</dt>
-                  <dd className="mt-1 text-slate-900">
-                    {recommendation.humanFitScore}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="font-medium text-slate-500">Agent</dt>
-                  <dd className="mt-1 text-slate-900">
-                    {recommendation.agentFitScore}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="font-medium text-slate-500">Hybrid</dt>
-                  <dd className="mt-1 text-slate-900">
-                    {recommendation.hybridFitScore}
-                  </dd>
-                </div>
-              </dl>
-              <ul className="space-y-2 text-sm text-slate-700">
-                {explanation.topReasons.map((reason) => (
-                  <li key={reason} className="rounded-md bg-slate-50 px-3 py-2">
-                    {reason}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            ) : (
+              <p className="text-sm text-slate-600">
+                No recommendation has been generated yet.
+              </p>
+            )}
           </SectionCard>
 
           <SectionCard title="Analyzed attributes">
-            <dl className="grid gap-3 text-sm sm:grid-cols-2">
-              {Object.entries(analysis).map(([key, value]) => {
-                if (key === "taskId") return null
-                return (
-                  <div key={key} className="rounded-md bg-slate-50 p-3">
-                    <dt className="font-medium text-slate-500">
-                      {formatLabel(key)}
-                    </dt>
-                    <dd className="mt-1 text-slate-900">
-                      {formatLabel(value)}
-                    </dd>
-                  </div>
-                )
-              })}
-            </dl>
+            {analysis ? (
+              <dl className="grid gap-3 text-sm sm:grid-cols-2">
+                {Object.entries(analysis).map(([key, value]) => {
+                  if (key === "taskId") return null
+                  return (
+                    <div key={key} className="rounded-md bg-slate-50 p-3">
+                      <dt className="font-medium text-slate-500">
+                        {formatLabel(key)}
+                      </dt>
+                      <dd className="mt-1 text-slate-900">
+                        {formatLabel(value)}
+                      </dd>
+                    </div>
+                  )
+                })}
+              </dl>
+            ) : (
+              <p className="text-sm text-slate-600">
+                No task analysis has been generated yet.
+              </p>
+            )}
           </SectionCard>
         </div>
 
-        <GovernanceStatusCard governance={governance} />
+        {governance ? (
+          <GovernanceStatusCard governance={governance} />
+        ) : (
+          <SectionCard title="Governance summary">
+            <p className="text-sm text-slate-600">
+              Governance has not been generated for this new Phase 1 task yet.
+            </p>
+          </SectionCard>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-2">
           <SectionCard title="Selected option">

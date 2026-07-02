@@ -15,15 +15,25 @@ import { formatLabel } from "../components/formatLabel"
 import { StatusBadge } from "../components/StatusBadge"
 import { TaskSummaryCard } from "../components/TaskSummaryCard"
 
-export function RecommendationPage({ activeTaskId = "task_001", onContinue }) {
-  const task = tasks.find((item) => item.id === activeTaskId) || tasks[0]
-  const analysis = taskAnalyses.find((item) => item.taskId === task.id)
-  const recommendation = recommendationRecords.find(
-    (record) => record.taskId === task.id,
-  )
-  const explanation = recommendationExplanations.find(
-    (item) => item.taskId === task.id,
-  )
+export function RecommendationPage({
+  activeTaskId = "task_001",
+  generatedResult,
+  onContinue,
+}) {
+  const isGeneratedTask = generatedResult?.task.id === activeTaskId
+  const task =
+    isGeneratedTask
+      ? generatedResult.task
+      : tasks.find((item) => item.id === activeTaskId) || tasks[0]
+  const analysis = isGeneratedTask
+    ? generatedResult.analysis
+    : taskAnalyses.find((item) => item.taskId === task.id)
+  const recommendation = isGeneratedTask
+    ? generatedResult.recommendation
+    : recommendationRecords.find((record) => record.taskId === task.id)
+  const explanation = isGeneratedTask
+    ? generatedResult.explanation
+    : recommendationExplanations.find((item) => item.taskId === task.id)
   const governance = governanceResults.find((item) => item.taskId === task.id)
   const options = marketplaceOptions.filter(
     (option) => option.taskId === task.id && option.eligible,
@@ -61,33 +71,45 @@ export function RecommendationPage({ activeTaskId = "task_001", onContinue }) {
           explanation={explanation}
         />
 
-        <GovernanceStatusCard governance={governance} />
+        {governance ? <GovernanceStatusCard governance={governance} /> : null}
 
-        <SectionCard title="Selected execution option">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <div className="mb-2 flex flex-wrap items-center gap-2">
-                <h3 className="text-xl font-semibold text-slate-950">
-                  {selectedOption.displayName}
-                </h3>
-                <StatusBadge value={selectedOption.pathType} />
-                <StatusBadge value={selectedOption.trustTier} />
+        {selectedOption ? (
+          <SectionCard title="Selected execution option">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div>
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <h3 className="text-xl font-semibold text-slate-950">
+                    {selectedOption.displayName}
+                  </h3>
+                  <StatusBadge value={selectedOption.pathType} />
+                  <StatusBadge value={selectedOption.trustTier} />
+                </div>
+                <p className="text-sm text-slate-600">
+                  Fit score: {selectedOption.fitScore}. This is the demo happy
+                  path option for the approved agent recommendation.
+                </p>
+                <ul className="mt-3 space-y-2 text-sm text-slate-700">
+                  {selectedOption.whyShown.map((reason) => (
+                    <li
+                      key={reason}
+                      className="rounded-md bg-slate-50 px-3 py-2"
+                    >
+                      {reason}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <p className="text-sm text-slate-600">
-                Fit score: {selectedOption.fitScore}. This is the demo happy
-                path option for the approved agent recommendation.
-              </p>
-              <ul className="mt-3 space-y-2 text-sm text-slate-700">
-                {selectedOption.whyShown.map((reason) => (
-                  <li key={reason} className="rounded-md bg-slate-50 px-3 py-2">
-                    {reason}
-                  </li>
-                ))}
-              </ul>
+              <PrimaryButton onClick={onContinue}>
+                Continue to Detail
+              </PrimaryButton>
             </div>
-            <PrimaryButton onClick={onContinue}>Continue to Detail</PrimaryButton>
-          </div>
-        </SectionCard>
+          </SectionCard>
+        ) : (
+          <SectionCard
+            title="Phase 1 generated result"
+            description="This new submission now has a real frontend-generated analysis, recommendation, and explanation. Governance and marketplace options still use the Phase 0 sample data."
+          />
+        )}
       </div>
     </>
   )
