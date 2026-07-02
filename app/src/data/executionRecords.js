@@ -1,0 +1,32 @@
+export const executionRecords = [
+  {
+    id: "execution_001",
+    taskId: "task_001",
+    selectedPath: "agent",
+    selectedOptionId: "option_001",
+    selectedOptionType: "agent",
+    approvalStatus: "not_required",
+    launchStatus: "launched",
+    launchedAt: "2026-07-03T11:00:00Z",
+  },
+  {
+    id: "execution_002",
+    taskId: "task_002",
+    selectedPath: "hybrid",
+    selectedOptionId: "option_003",
+    selectedOptionType: "agent",
+    approvalStatus: "pending",
+    launchStatus: "pending_approval",
+    launchedAt: null,
+  },
+  {
+    id: "execution_003",
+    taskId: "task_004",
+    selectedPath: "hybrid",
+    selectedOptionId: "option_004",
+    selectedOptionType: "agent",
+    approvalStatus: "approved",
+    launchStatus: "launched",
+    launchedAt: "2026-07-03T11:20:00Z",
+  },
+]

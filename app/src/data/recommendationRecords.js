@@ -1,0 +1,38 @@
+export const recommendationRecords = [
+  {
+    taskId: "task_001",
+    humanFitScore: 45,
+    agentFitScore: 82,
+    hybridFitScore: 67,
+    recommendedPath: "agent",
+    confidence: 85,
+    createdAt: "2026-07-03T10:30:00Z",
+  },
+  {
+    taskId: "task_002",
+    humanFitScore: 72,
+    agentFitScore: 48,
+    hybridFitScore: 79,
+    recommendedPath: "hybrid",
+    confidence: 69,
+    createdAt: "2026-07-03T10:35:00Z",
+  },
+  {
+    taskId: "task_003",
+    humanFitScore: 88,
+    agentFitScore: 22,
+    hybridFitScore: 69,
+    recommendedPath: "human",
+    confidence: 93,
+    createdAt: "2026-07-03T10:40:00Z",
+  },
+  {
+    taskId: "task_004",
+    humanFitScore: 74,
+    agentFitScore: 42,
+    hybridFitScore: 81,
+    recommendedPath: "hybrid",
+    confidence: 69,
+    createdAt: "2026-07-03T10:50:00Z",
+  },
+]
