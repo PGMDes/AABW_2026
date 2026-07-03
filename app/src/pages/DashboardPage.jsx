@@ -9,32 +9,100 @@ import { formatLabel } from "../components/formatLabel"
 import { StatusBadge } from "../components/StatusBadge"
 import { buildTaskFlow } from "../logic/taskFlowEngine"
 
-function SummaryMetric({ label, value }) {
+const decisionPaths = ["agent", "human", "hybrid"]
+
+function SummaryMetric({ label, value, hint, status }) {
   return (
     <SectionCard>
-      <p className="text-sm font-medium text-slate-500">{label}</p>
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-sm font-medium text-slate-500">{label}</p>
+        {status ? <StatusBadge value={status} /> : null}
+      </div>
       <p className="mt-2 text-3xl font-semibold text-slate-950">{value}</p>
+      {hint ? <p className="mt-1 text-sm text-slate-500">{hint}</p> : null}
     </SectionCard>
   )
 }
 
+function DecisionMix({ pathCounts, totalTasks }) {
+  return (
+    <SectionCard
+      title="Human / Agent / Hybrid mix"
+      description="Recommendation coverage across the sample tasks."
+    >
+      <div className="space-y-4">
+        {decisionPaths.map((path) => {
+          const count = pathCounts[path] || 0
+          const percent = totalTasks > 0 ? (count / totalTasks) * 100 : 0
+
+          return (
+            <div key={path}>
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <StatusBadge value={path} />
+                <span className="text-sm font-medium text-slate-600">
+                  {count} of {totalTasks}
+                </span>
+              </div>
+              <div className="h-2 rounded-full bg-slate-100">
+                <div
+                  className="h-2 rounded-full bg-cyan-600"
+                  style={{ width: `${percent}%` }}
+                />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </SectionCard>
+  )
+}
+
+function getNextStepHint(flow) {
+  if (flow.governance.status === "blocked") {
+    return "Policy stop - no launch option"
+  }
+
+  if (flow.governance.status === "needs_human_review") {
+    return "Review before launch"
+  }
+
+  if (flow.execution.launchStatus === "launched") {
+    return "Launched and tracked"
+  }
+
+  return "Ready for walkthrough"
+}
+
 export function DashboardPage({ onNavigate }) {
   const taskFlows = tasks.map((task) => buildTaskFlow(task))
-  const agentRecommendations = taskFlows.filter(
-    (flow) => flow.recommendation.recommendedPath === "agent",
+  const totalTasks = taskFlows.length
+  const approvedForLaunchCount = taskFlows.filter(
+    (flow) => flow.governance.status === "approved_for_launch",
   ).length
-  const approvalRequiredCount = taskFlows.filter(
-    (flow) => flow.governance.approvalRequired,
+  const needsHumanReviewCount = taskFlows.filter(
+    (flow) => flow.governance.status === "needs_human_review",
   ).length
-  const completedCount = taskFlows.filter(
-    (flow) => flow.outcome?.status === "completed",
+  const blockedCount = taskFlows.filter(
+    (flow) => flow.governance.status === "blocked",
   ).length
+  const launchedCount = taskFlows.filter(
+    (flow) => flow.execution.launchStatus === "launched",
+  ).length
+  const pathCounts = decisionPaths.reduce(
+    (counts, path) => ({
+      ...counts,
+      [path]: taskFlows.filter(
+        (flow) => flow.recommendation.recommendedPath === path,
+      ).length,
+    }),
+    {},
+  )
 
   return (
     <>
       <PageHeader
         title="Human-AgentOS"
-        description="A decision-first control plane that helps AI transformation leads choose whether knowledge work should go to a human, an AI agent, or a hybrid team."
+        description="Operational demo for routing knowledge work to a Human, an Agent, or a Hybrid team with visible governance."
         action={
           <PrimaryButton onClick={() => onNavigate("newTask")}>
             New Task
@@ -47,58 +115,84 @@ export function DashboardPage({ onNavigate }) {
           Welcome back, {currentUser.name}
         </p>
         <p className="mt-1 text-sm text-cyan-800">
-          Phase 0 uses sample data only. No backend, database, or authentication
-          is connected.
+          This walkthrough uses sample data only. It shows decisioning,
+          governance, execution selection, and outcome tracking without a
+          backend.
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <SummaryMetric label="Total sample tasks" value={tasks.length} />
-        <SummaryMetric label="Agent recommendations" value={agentRecommendations} />
-        <SummaryMetric label="Need approval" value={approvalRequiredCount} />
-        <SummaryMetric label="Completed outcomes" value={completedCount} />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <SummaryMetric
+          label="Total tasks"
+          value={totalTasks}
+          hint="Demo scenarios"
+        />
+        <SummaryMetric
+          label="Approved for launch"
+          value={approvedForLaunchCount}
+          status="approved_for_launch"
+        />
+        <SummaryMetric
+          label="Needs human review"
+          value={needsHumanReviewCount}
+          status="needs_human_review"
+        />
+        <SummaryMetric label="Blocked" value={blockedCount} status="blocked" />
+        <SummaryMetric
+          label="Launched"
+          value={launchedCount}
+          hint="Already tracked"
+          status="launched"
+        />
       </div>
 
-      <SectionCard
-        title="Recent sample tasks"
-        description="These tasks show the first V1 paths: agent, hybrid, human, approval required, and blocked by policy."
-        className="mt-6"
-      >
-        <div className="space-y-3">
-          {tasks.map((task) => {
-            const taskFlow = taskFlows.find((flow) => flow.task.id === task.id)
+      <div className="mt-6 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+        <DecisionMix pathCounts={pathCounts} totalTasks={totalTasks} />
 
-            return (
-              <button
-                key={task.id}
-                type="button"
-                onClick={() => onNavigate("detail", task.id)}
-                className="block w-full rounded-lg border border-slate-200 p-4 text-left transition hover:border-cyan-300 hover:bg-cyan-50"
-              >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="font-semibold text-slate-950">{task.title}</p>
-                    <p className="mt-1 text-sm text-slate-600">
-                      {task.expectedOutput}
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 flex-wrap gap-2">
-                    <StatusBadge value={taskFlow?.task.status || task.status} />
-                    {taskFlow ? (
+        <SectionCard
+          title="Demo task queue"
+          description="Each row opens the task detail view used in the product walkthrough."
+        >
+          <div className="space-y-3">
+            {taskFlows.map((taskFlow) => {
+              const { task, recommendation, governance, selectedOption } =
+                taskFlow
+
+              return (
+                <button
+                  key={task.id}
+                  type="button"
+                  onClick={() => onNavigate("detail", task.id)}
+                  className="block w-full rounded-lg border border-slate-200 p-4 text-left transition hover:border-cyan-300 hover:bg-cyan-50"
+                >
+                  <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                    <div>
+                      <p className="font-semibold text-slate-950">
+                        {task.title}
+                      </p>
+                      <p className="mt-1 text-sm text-slate-600">
+                        {selectedOption
+                          ? `Selected option: ${selectedOption.displayName}`
+                          : "Selected option: none because governance blocks launch"}
+                      </p>
+                      <p className="mt-1 text-xs font-medium text-slate-500">
+                        {getNextStepHint(taskFlow)}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 flex-wrap gap-2">
                       <StatusBadge
-                        value={taskFlow.recommendation.recommendedPath}
-                        label={formatLabel(
-                          taskFlow.recommendation.recommendedPath,
-                        )}
+                        value={recommendation.recommendedPath}
+                        label={formatLabel(recommendation.recommendedPath)}
                       />
-                    ) : null}
+                      <StatusBadge value={governance.status} />
+                    </div>
                   </div>
-                </div>
-              </button>
-            )
-          })}
-        </div>
-      </SectionCard>
+                </button>
+              )
+            })}
+          </div>
+        </SectionCard>
+      </div>
     </>
   )
 }

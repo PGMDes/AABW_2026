@@ -8,6 +8,8 @@ import {
 import { PageHeader } from "../components/PageHeader"
 import { PrimaryButton } from "../components/PrimaryButton"
 import { SectionCard } from "../components/SectionCard"
+import { StatusBadge } from "../components/StatusBadge"
+import { formatLabel } from "../components/formatLabel"
 
 function Field({ label, children }) {
   return (
@@ -59,6 +61,35 @@ function getTaskFormData(task) {
   }
 }
 
+function ScenarioPreview({ scenario }) {
+  const selectedOptionLabel =
+    scenario.expected.selectedOptionName || "No launch option"
+
+  return (
+    <div className="rounded-md border border-cyan-200 bg-cyan-50 p-4">
+      <p className="text-xs font-semibold uppercase tracking-normal text-cyan-800">
+        Scenario proof
+      </p>
+      <h3 className="mt-2 text-lg font-semibold text-slate-950">
+        {scenario.label}
+      </h3>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <StatusBadge
+          value={scenario.expected.recommendedPath}
+          label={`Expected: ${formatLabel(scenario.expected.recommendedPath)}`}
+        />
+        <StatusBadge value={scenario.expected.governanceStatus} />
+      </div>
+      <p className="mt-3 text-sm leading-6 text-cyan-950">
+        {scenario.demonstrates}
+      </p>
+      <p className="mt-2 text-sm text-cyan-900">
+        Demo result: {selectedOptionLabel}
+      </p>
+    </div>
+  )
+}
+
 export function NewTaskPage({ onAnalyze }) {
   const defaultScenario = getDemoScenarioById(defaultDemoScenarioId)
   const [selectedScenarioId, setSelectedScenarioId] = useState(
@@ -101,11 +132,14 @@ export function NewTaskPage({ onAnalyze }) {
     <>
       <PageHeader
         title="New Task"
-        description="Describe the knowledge-work task. Use the scenario picker to test agent, human, hybrid, review, and blocked paths."
+        description="Choose a demo scenario or edit the task fields, then run the same frontend decision flow."
       />
 
-      <SectionCard title="Task intake form">
-        <form onSubmit={handleSubmit} className="space-y-5">
+      <SectionCard
+        title="Demo scenario"
+        description="The picker fills the form and shows what the scenario is meant to prove."
+      >
+        <div className="grid gap-4 lg:grid-cols-[1fr_1.1fr]">
           <Field label="Load demo scenario">
             <SelectInput
               value={selectedScenarioId}
@@ -117,7 +151,13 @@ export function NewTaskPage({ onAnalyze }) {
             />
           </Field>
 
-          <p className="rounded-md bg-cyan-50 px-3 py-2 text-sm text-cyan-800">
+          <ScenarioPreview scenario={selectedScenario} />
+        </div>
+      </SectionCard>
+
+      <SectionCard title="Task intake form" className="mt-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <p className="rounded-md bg-slate-50 px-3 py-2 text-sm text-slate-700">
             {selectedScenario.description}
           </p>
 

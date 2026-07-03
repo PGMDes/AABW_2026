@@ -24,7 +24,7 @@ export function AppShell({ children, currentPage, onNavigate }) {
           <div>
             <p className="text-sm font-semibold text-cyan-700">Human-AgentOS</p>
             <p className="text-xs text-slate-500">
-              {currentUser.name} · {currentUser.role}
+              {currentUser.name} - {currentUser.role}
             </p>
           </div>
           <nav className="flex flex-wrap gap-2">

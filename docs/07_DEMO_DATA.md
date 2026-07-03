@@ -1409,3 +1409,30 @@ Human review decision checks:
 
 This validator is intentionally small. It does not add a testing framework,
 backend service, database, auth, API integration, or external dependency.
+
+---
+
+## Phase 7 Scenario Presentation
+
+Phase 7 does not change scenario expectations or validation behavior. It adds a
+small presentation field to each demo scenario so the New Task screen can explain
+what the scenario proves during a walkthrough.
+
+Each object in `app/src/data/demoScenarios.js` now includes:
+
+- `label`: the scenario name shown in the picker
+- `description`: the short form helper text
+- `demonstrates`: the compact proof point shown in the scenario preview
+- `expected.recommendedPath`: expected Human, Agent, or Hybrid recommendation
+- `expected.governanceStatus`: expected `Approved for launch`, `Needs human review`, or `Blocked` state
+- `expected.selectedOptionName`: expected selected option, or `null` when no launch option should appear
+
+The blocked scenario still expects:
+
+- `governanceStatus: "blocked"`
+- `selectedOptionName: null`
+- `launchStatus: "not_launched"`
+- `lifecycleFinalStage: "blocked"`
+
+Dashboard metrics and scenario preview badges should be derived from the same
+generated task flow and scenario expectation data used by the validator.

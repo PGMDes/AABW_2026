@@ -13,11 +13,17 @@ const badgeStyles = {
   in_progress: "bg-blue-50 text-blue-700 ring-blue-200",
   reviewed: "bg-emerald-50 text-emerald-700 ring-emerald-200",
   pending: "bg-slate-100 text-slate-600 ring-slate-200",
+  not_started: "bg-slate-100 text-slate-600 ring-slate-200",
+  not_launched: "bg-slate-100 text-slate-600 ring-slate-200",
+  not_required: "bg-emerald-50 text-emerald-700 ring-emerald-200",
   system: "bg-slate-100 text-slate-700 ring-slate-200",
   recommended: "bg-slate-100 text-slate-700 ring-slate-200",
   ready_to_launch: "bg-blue-50 text-blue-700 ring-blue-200",
   pending_approval: "bg-amber-50 text-amber-700 ring-amber-200",
   trusted: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+  review_required: "bg-amber-50 text-amber-700 ring-amber-200",
+  human_review: "bg-amber-50 text-amber-700 ring-amber-200",
+  human_role: "bg-amber-50 text-amber-700 ring-amber-200",
 }
 
 import { formatLabel } from "./formatLabel"

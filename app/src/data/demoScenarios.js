@@ -12,6 +12,8 @@ export const demoScenarios = [
     label: "Agent path",
     taskId: "task_001",
     description: "Clear, low-risk research work that can launch with a trusted agent.",
+    demonstrates:
+      "Trusted Agent launch for clear, low-sensitivity internal knowledge work.",
     task: getTask("task_001"),
     expected: {
       recommendedPath: "agent",
@@ -29,6 +31,8 @@ export const demoScenarios = [
     label: "Hybrid path",
     taskId: "task_002",
     description: "Leadership-facing drafting where an agent can help but review stays human-led.",
+    demonstrates:
+      "Hybrid execution when an Agent drafts but a Human reviewer stays in control.",
     task: getTask("task_002"),
     expected: {
       recommendedPath: "hybrid",
@@ -45,6 +49,8 @@ export const demoScenarios = [
     label: "Blocked",
     taskId: "task_003",
     description: "Sensitive, high-risk external work that should not launch in the demo flow.",
+    demonstrates:
+      "A policy stop where no Human, Agent, or Hybrid path is safe to launch.",
     task: getTask("task_003"),
     expected: {
       recommendedPath: "human",
@@ -60,6 +66,8 @@ export const demoScenarios = [
     label: "Human path",
     taskId: "task_004",
     description: "Ambiguous strategy work with high judgment and accountability risk.",
+    demonstrates:
+      "Human ownership for high-judgment strategy decisions.",
     task: getTask("task_004"),
     expected: {
       recommendedPath: "human",
@@ -76,6 +84,8 @@ export const demoScenarios = [
     label: "Needs human review",
     taskId: "task_005",
     description: "Policy review work where automation can assist but human validation is required.",
+    demonstrates:
+      "Human review before launch for policy work assisted by an Agent.",
     task: getTask("task_005"),
     expected: {
       recommendedPath: "hybrid",

@@ -62,8 +62,8 @@ export function RecommendationPage({ flowResult, onContinue }) {
                   <StatusBadge value={selectedOption.trustTier} />
                 </div>
                 <p className="text-sm text-slate-600">
-                  Fit score: {selectedOption.fitScore}. This is the demo happy
-                  path option for the approved agent recommendation.
+                  Fit score: {selectedOption.fitScore}. Selected as the best
+                  eligible option for this scenario.
                 </p>
                 <ul className="mt-3 space-y-2 text-sm text-slate-700">
                   {selectedOption.whyShown.map((reason) => (
@@ -85,7 +85,15 @@ export function RecommendationPage({ flowResult, onContinue }) {
           <SectionCard
             title="Selected execution option"
             description="No eligible execution option was generated for this task."
-          />
+          >
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <p className="text-sm leading-6 text-slate-600">
+                This usually means governance blocked launch. Continue to the
+                detail view to see the policy stop, lifecycle, and audit trail.
+              </p>
+              <PrimaryButton onClick={onContinue}>Continue to Detail</PrimaryButton>
+            </div>
+          </SectionCard>
         )}
       </div>
     </>

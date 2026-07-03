@@ -753,6 +753,75 @@ All of this remains frontend-only sample behavior.
 
 ---
 
+## Phase 7 product walkthrough polish
+
+Phase 7 keeps the same frontend-only flow and scenario behavior, but makes the
+screens easier to present in a product demo.
+
+### Dashboard polish
+
+The dashboard now emphasizes operational summary metrics derived from the demo
+task flows:
+
+- total tasks
+- `Approved for launch`
+- `Needs human review`
+- `Blocked`
+- launched work
+- Human / Agent / Hybrid recommendation mix
+
+The task queue shows the recommended path, governance status, selected option
+when one exists, and a short next-step hint. This makes it clear which tasks are
+ready, waiting for Human review, or blocked.
+
+### New Task scenario preview
+
+The `Load demo scenario` picker now has a compact scenario preview. For the
+selected scenario, it shows:
+
+- scenario name
+- expected recommendation: Human, Agent, or Hybrid
+- expected governance result: `Approved for launch`, `Needs human review`, or `Blocked`
+- what the scenario demonstrates
+- expected selected option, or `No launch option` for the blocked scenario
+
+The picker still only fills the same intake form. It does not create a separate
+workflow.
+
+### Task Detail polish
+
+Task Detail now presents the final walkthrough record in clearer sections:
+
+- recommendation summary
+- analyzed attributes
+- governance status with next-step guidance
+- Human review panel when needed
+- execution lifecycle as an ordered step list
+- selected execution option
+- execution status
+- outcome summary
+- audit trail
+
+The blocked scenario must still show no selected launch option and no launched
+execution. It should explain that governance stopped launch instead of making
+the screen look broken.
+
+### Label consistency
+
+Use these user-facing labels consistently:
+
+- `Human`
+- `Agent`
+- `Hybrid`
+- `Approved for launch`
+- `Needs human review`
+- `Blocked`
+
+Internal enum values can stay lower-case in code, but visible labels should be
+plain and consistent.
+
+---
+
 ## Blocked-by-policy screen behavior
 
 This is how the UI should behave when a path or option is blocked.

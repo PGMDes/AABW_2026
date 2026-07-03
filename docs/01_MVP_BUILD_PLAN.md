@@ -54,6 +54,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 4: Outcome tracking and first demo polish
 ### Phase 5: Human review and override controls
 ### Phase 6: Scenario validation guardrails
+### Phase 7: Product walkthrough polish
 
 ---
 
@@ -522,6 +523,25 @@ Run the guardrail with:
 ```bash
 npm.cmd --prefix app run validate:scenarios
 ```
+
+---
+
+## Phase 7: Product walkthrough polish
+
+### Goal
+
+Make the existing frontend demo easier to present in a live walkthrough without
+changing product scope or adding backend infrastructure.
+
+### Expected output
+
+By the end of this phase, the app should provide:
+
+- dashboard summary metrics for total tasks, `Approved for launch`, `Needs human review`, `Blocked`, launched work, and the Human / Agent / Hybrid mix
+- a New Task scenario picker that shows each selected scenario's expected recommendation, governance result, and proof point
+- clearer Task Detail sections for governance, Human review, selected execution option, lifecycle, audit trail, and outcome state
+- blocked scenarios that still show no launched execution option
+- unchanged Phase 6 scenario validation behavior
 
 ---
 
