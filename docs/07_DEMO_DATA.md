@@ -1317,7 +1317,8 @@ Expected behavior:
 ### Validation helper
 
 `app/src/logic/validateDemoScenarios.js` exports a lightweight internal helper
-for checking the Phase 4 scenario expectations without adding a test framework.
+for checking the Phase 4 and Phase 5 scenario expectations without adding a
+test framework.
 
 Use it when changing scenario data or decision logic so the demo keeps covering:
 
@@ -1326,6 +1327,9 @@ Use it when changing scenario data or decision logic so the demo keeps covering:
 - hybrid path
 - needs human review path
 - blocked path
+- approved human review decisions
+- human-led review overrides
+- confirmed policy blocks
 
 ---
 
@@ -1360,3 +1364,48 @@ No backend, database, auth, API, or external approval service is added.
 The blocked scenario must not show a launched agent option. Human-led fallback
 is only allowed when the governance result includes the `human` path in
 `allowedPaths`.
+
+---
+
+## Phase 6 Scenario Validation Guardrails
+
+Phase 6 adds a simple npm command that validates the baseline demo flows and the
+Phase 5 human review decisions.
+
+Run it from the repository root with:
+
+```bash
+npm.cmd --prefix app run validate:scenarios
+```
+
+The command prints a readable pass/fail report. If any scenario fails, the
+command exits with a failure code so future agents can catch broken demo flows
+before handing work back.
+
+### What the validator checks
+
+Baseline checks:
+
+- `task_001` stays `approved_for_launch`, recommends `agent`, launches, and reaches `reviewed`
+- `task_002` stays `needs_human_review`, recommends `hybrid`, and waits at `pending_approval`
+- `task_003` stays `blocked` and does not show a launched execution option
+- `task_004` stays on the `human` path and waits for review
+- `task_005` stays `needs_human_review` before a decision
+
+Human review decision checks:
+
+- `task_002` approve recommended -> hybrid launches
+- `task_002` switch to human-led -> `Strategy Lead` launches
+- `task_003` confirm policy block -> no launch, blocked
+- `task_004` approve recommended -> human-led path launches
+- `task_005` approve recommended -> policy review path launches
+- `task_005` switch to human-led -> `Policy Owner` launches
+
+### Files involved
+
+- `app/src/logic/validateDemoScenarios.js`
+- `app/scripts/validateScenarios.mjs`
+- `app/package.json`
+
+This validator is intentionally small. It does not add a testing framework,
+backend service, database, auth, API integration, or external dependency.

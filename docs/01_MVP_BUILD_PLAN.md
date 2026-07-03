@@ -52,6 +52,8 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 2: Explainability and governance
 ### Phase 3: Curated marketplace and launch
 ### Phase 4: Outcome tracking and first demo polish
+### Phase 5: Human review and override controls
+### Phase 6: Scenario validation guardrails
 
 ---
 
@@ -470,6 +472,56 @@ By the end of this phase, the first demo should show the full story:
 - the outcome was tracked
 
 That is enough for a believable MVP demo.
+
+---
+
+## Phase 5: Human review and override controls
+
+### Goal
+
+Make review-required and blocked tasks behave like a real workforce control
+plane instead of stopping at a static pending state.
+
+This phase stays frontend-only and deterministic.
+
+### Expected output
+
+By the end of this phase, the demo should let a user:
+
+- approve a recommendation when governance requires human review
+- switch eligible review-required work to a human-led path
+- block execution after review
+- confirm a policy block when launch is unavailable
+- see the human decision reflected in lifecycle and audit trail
+
+The blocked scenario must still not launch an agent.
+
+---
+
+## Phase 6: Scenario validation guardrails
+
+### Goal
+
+Add a lightweight command that catches broken demo behavior before future
+changes are handed back.
+
+This phase does not add a test framework, backend, database, auth, API, or
+external service.
+
+### Expected output
+
+By the end of this phase, the app should provide:
+
+- baseline validation for the five demo tasks
+- post-human-review validation for Phase 5 decisions
+- readable pass/fail command output
+- a nonzero exit code when a scenario fails
+
+Run the guardrail with:
+
+```bash
+npm.cmd --prefix app run validate:scenarios
+```
 
 ---
 
