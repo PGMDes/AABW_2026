@@ -61,6 +61,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 11: Frontend QA and submission-readiness pass
 ### Phase 12: Hackathon submission package and judge-facing explanation
 ### Phase 13: Judge clarity and Founder Mode positioning polish
+### Phase 14: User-flow realism and empty states
 
 ---
 
@@ -736,6 +737,45 @@ By the end of this phase, the repo should provide:
   lifecycle, and audit trail as separate control-plane concepts
 - Founder Mode alignment notes in `docs/11_SUBMISSION_PACKAGE.md`
 - unchanged build and scenario validation behavior
+
+---
+
+## Phase 14: User-flow realism and empty states
+
+### Goal
+
+Make the frontend feel like a user-driven product instead of a preloaded static
+demo.
+
+This phase stays frontend-only. It does not change recommendation, governance,
+execution, scenario validation, localStorage behavior, dependencies, backend,
+auth, database, APIs, or external services.
+
+### Expected output
+
+By the end of this phase, the app should provide:
+
+- Dashboard as the first screen on fresh load
+- no active analyzed task on fresh load
+- no active selected task on fresh load
+- a Recommendation empty state until the user clicks `Analyze Task`
+- a Task Detail empty state until the user opens a Dashboard task or analyzes a
+  new task
+- Dashboard task rows that intentionally open Task Detail for the selected task
+- New Task -> Analyze Task -> Recommendation behavior unchanged
+- Recommendation -> Continue to Detail behavior unchanged
+- reset local demo state clears local tasks, Human review decisions, and active
+  page context
+- unchanged deterministic scenario validation behavior
+
+### Phase 14 commands
+
+Run these before handing the phase back:
+
+```bash
+npm.cmd --prefix app run build
+npm.cmd --prefix app run validate:scenarios
+```
 
 ---
 

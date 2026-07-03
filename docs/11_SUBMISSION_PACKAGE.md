@@ -70,6 +70,10 @@ The build process also followed a Founder Mode pattern: use agentic development 
 8. Human review controls let a reviewer approve, switch to a safer Human-led path, or confirm a policy block.
 9. Task Detail shows the final recommendation, governance result, selected option, lifecycle, outcome, and audit trail.
 
+Direct navigation to Recommendation or Task Detail does not preload a hidden
+demo task. Those screens show empty states until the user analyzes a task or
+opens one from Dashboard.
+
 ## Key features
 
 - Task intake for knowledge-work requests

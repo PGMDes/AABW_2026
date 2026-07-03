@@ -91,7 +91,7 @@ function HumanReviewPanel({
   return (
     <SectionCard
       title="Human review"
-      description="Use this panel when governance needs a person to approve, reroute, or block the task."
+      description="Approval checkpoint: a Human reviewer can approve, reroute to a safer Human-led path, or confirm a policy block before launch."
     >
       <div className="space-y-4">
         <div className="rounded-md border border-amber-200 bg-amber-50 p-4">
@@ -206,6 +206,40 @@ export function TaskDetailPage({
   onNavigate,
   onHumanReviewDecision,
 }) {
+  if (!flowResult) {
+    return (
+      <>
+        <PageHeader
+          title="Task Detail"
+          description="Task details appear after you open a task or analyze a new task."
+        />
+
+        <SectionCard
+          title="No task selected"
+          description="No task selected. Open a task from Dashboard or analyze a new task."
+        >
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <p className="text-sm leading-6 text-slate-600">
+              The app is waiting for an explicit task selection before it shows
+              recommendation, governance, lifecycle, and audit evidence.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <PrimaryButton
+                variant="secondary"
+                onClick={() => onNavigate("dashboard")}
+              >
+                Go to Dashboard
+              </PrimaryButton>
+              <PrimaryButton onClick={() => onNavigate("newTask")}>
+                New Task
+              </PrimaryButton>
+            </div>
+          </div>
+        </SectionCard>
+      </>
+    )
+  }
+
   const {
     task,
     analysis,
@@ -224,7 +258,7 @@ export function TaskDetailPage({
     <>
       <PageHeader
         title="Task Detail"
-        description="Full walkthrough record: request, recommendation, governance, review, selection, launch, lifecycle, and outcome."
+        description="Full control-plane record: recommendation, governance, Human review, lifecycle, outcome, and audit evidence."
         action={
           <PrimaryButton
             variant="secondary"
@@ -239,7 +273,10 @@ export function TaskDetailPage({
         <TaskSummaryCard task={task} />
 
         <div className="grid gap-6 lg:grid-cols-2">
-          <SectionCard title="Recommendation summary">
+          <SectionCard
+            title="Recommendation summary"
+            description="This is the routing recommendation. Governance is evaluated separately before launch."
+          >
             {recommendation && explanation ? (
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
@@ -323,7 +360,7 @@ export function TaskDetailPage({
 
         <SectionCard
           title="Execution lifecycle"
-          description="Step-by-step state for the route from recommendation through review."
+          description="Step-by-step state showing whether the task launched, paused for review, or stopped by policy."
         >
           <LifecycleStepList lifecycle={lifecycle} />
         </SectionCard>
@@ -467,7 +504,7 @@ export function TaskDetailPage({
 
         <SectionCard
           title="Audit trail"
-          description="Activity log showing what the system or Human reviewer did at each step."
+          description="Evidence record showing what the system or Human reviewer did, and why the task is in its current state."
         >
           <AuditTrailList auditTrail={auditTrail} />
         </SectionCard>

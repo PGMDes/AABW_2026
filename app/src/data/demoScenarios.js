@@ -11,7 +11,7 @@ export const demoScenarios = [
     id: "scenario_agent_path",
     label: "Agent path",
     taskId: "task_001",
-    description: "Clear, low-risk research work that can launch with a trusted agent.",
+    description: "Clear, low-risk research work that proves trusted Agent launch.",
     demonstrates:
       "Trusted Agent launch for clear, low-sensitivity internal knowledge work.",
     task: getTask("task_001"),
@@ -30,9 +30,9 @@ export const demoScenarios = [
     id: "scenario_hybrid_path",
     label: "Hybrid path",
     taskId: "task_002",
-    description: "Leadership-facing drafting where an agent can help but review stays human-led.",
+    description: "Leadership-facing drafting that proves Hybrid execution plus Human review.",
     demonstrates:
-      "Hybrid execution when an Agent drafts but a Human reviewer stays in control.",
+      "Hybrid + Human review: an Agent drafts, but a Human reviewer stays in control before launch.",
     task: getTask("task_002"),
     expected: {
       recommendedPath: "hybrid",
@@ -48,9 +48,9 @@ export const demoScenarios = [
     id: "scenario_blocked",
     label: "Blocked",
     taskId: "task_003",
-    description: "Sensitive, high-risk external work that should not launch in the demo flow.",
+    description: "Sensitive, high-risk external work that proves governance can stop unsafe launch.",
     demonstrates:
-      "A policy stop where no Human, Agent, or Hybrid path is safe to launch.",
+      "Governance block: unsafe launch is stopped instead of forcing an Agent path.",
     task: getTask("task_003"),
     expected: {
       recommendedPath: "human",
@@ -65,9 +65,9 @@ export const demoScenarios = [
     id: "scenario_human_path",
     label: "Human path",
     taskId: "task_004",
-    description: "Ambiguous strategy work with high judgment and accountability risk.",
+    description: "Ambiguous strategy work that proves high-judgment tasks stay Human-led.",
     demonstrates:
-      "Human ownership for high-judgment strategy decisions.",
+      "High-judgment strategy work remains Human-led instead of being over-automated.",
     task: getTask("task_004"),
     expected: {
       recommendedPath: "human",
@@ -83,9 +83,9 @@ export const demoScenarios = [
     id: "scenario_needs_human_review",
     label: "Needs human review",
     taskId: "task_005",
-    description: "Policy review work where automation can assist but human validation is required.",
+    description: "Policy review work that proves Agent assistance still needs Human validation.",
     demonstrates:
-      "Human review before launch for policy work assisted by an Agent.",
+      "Policy work can be assisted by an Agent, but Human validation is required before launch.",
     task: getTask("task_005"),
     expected: {
       recommendedPath: "hybrid",

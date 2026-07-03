@@ -344,8 +344,12 @@ The screen should answer:
 
 #### No recommendation state
 Show simple fallback:
-- `Recommendation not available`
-- button: `Run analysis again`
+- `No recommendation yet. Create or select a task, then analyze it.`
+- button: `Go to New Task`
+
+Do not silently load a built-in demo task on this screen. A recommendation
+should appear only after the user has clicked `Analyze Task` in the current
+browser session.
 
 ### Beginner-friendly implementation notes
 
@@ -644,6 +648,14 @@ If task exists but has no execution record:
 - show `Not launched yet`
 - button: `Return to Launch`
 
+#### No selected task
+If the user opens Task Detail before selecting or analyzing a task:
+- show `No task selected. Open a task from Dashboard or analyze a new task.`
+- button: `Go to Dashboard`
+- button: `New Task`
+
+Do not silently load `task_001` or any other built-in demo task on this screen.
+
 #### No outcome yet
 If launched but outcome not complete:
 - show `Execution in progress`
@@ -904,6 +916,44 @@ This is different from a policy block.
 
 This is browser `localStorage` only. It is not a backend, database, API, auth
 system, or durable product storage.
+
+---
+
+## Phase 14 user-flow realism and empty states
+
+Phase 14 keeps the deterministic demo scenarios and localStorage behavior, but
+removes the hidden default active task.
+
+### Initial app state
+
+On a fresh load:
+
+- Dashboard is the first screen
+- no task is considered actively analyzed
+- no task is considered actively selected
+- built-in demo tasks can still appear in the Dashboard task queue
+
+### Recommendation behavior
+
+Recommendation should show an empty state until the user clicks `Analyze Task`.
+It should not fall back to `task_001`.
+
+### Task Detail behavior
+
+Task Detail should show an empty state until the user opens a Dashboard task or
+analyzes a new task. A Dashboard row click is an intentional task selection and
+can open the full Task Detail record for that task.
+
+### State model
+
+Keep page state easy to understand:
+
+- `currentPage` controls which screen is visible
+- `analyzedTaskId` tracks the task most recently analyzed through New Task
+- `selectedTaskId` tracks the task intentionally opened in Task Detail
+
+The validator should continue to call the deterministic task-flow logic
+directly. It should not depend on browser navigation state.
 
 ---
 

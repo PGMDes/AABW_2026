@@ -17,7 +17,8 @@ import "./App.css"
 
 function App() {
   const [currentPage, setCurrentPage] = useState("dashboard")
-  const [activeTaskId, setActiveTaskId] = useState("task_001")
+  const [selectedTaskId, setSelectedTaskId] = useState(null)
+  const [analyzedTaskId, setAnalyzedTaskId] = useState(null)
   const [customTasks, setCustomTasks] = useState(() => getStoredCustomTasks())
   const [humanReviewDecisions, setHumanReviewDecisions] = useState(() =>
     getStoredHumanReviewDecisions(),
@@ -30,8 +31,17 @@ function App() {
   const allTasks = [...demoTasksWithSource, ...customTasks]
   const allTaskIds = allTasks.map((task) => task.id)
 
-  function navigate(pageName, taskId = activeTaskId) {
-    setActiveTaskId(taskId)
+  function getTaskById(taskId) {
+    if (!taskId) return null
+
+    return allTasks.find((task) => task.id === taskId) || null
+  }
+
+  function navigate(pageName, taskId = null) {
+    if (pageName === "detail" && taskId) {
+      setSelectedTaskId(taskId)
+    }
+
     setCurrentPage(pageName)
   }
 
@@ -49,8 +59,17 @@ function App() {
       })
     }
 
-    setActiveTaskId(task.id)
+    setAnalyzedTaskId(task.id)
+    setSelectedTaskId(null)
     setCurrentPage("recommendation")
+  }
+
+  function handleContinueToDetail() {
+    if (analyzedTaskId) {
+      setSelectedTaskId(analyzedTaskId)
+    }
+
+    setCurrentPage("detail")
   }
 
   function handleHumanReviewDecision(taskId, action) {
@@ -73,20 +92,20 @@ function App() {
     clearStoredLocalSession()
     setCustomTasks([])
     setHumanReviewDecisions({})
-
-    if (!demoTasks.some((task) => task.id === activeTaskId)) {
-      setActiveTaskId("task_001")
-    }
-
+    setSelectedTaskId(null)
+    setAnalyzedTaskId(null)
     setCurrentPage("dashboard")
   }
 
-  const activeTask =
-    allTasks.find((task) => task.id === activeTaskId) || demoTasksWithSource[0]
-  const activeFlowResult = buildTaskFlow(
-    activeTask,
-    humanReviewDecisions[activeTaskId],
-  )
+  const analyzedTask = getTaskById(analyzedTaskId)
+  const analyzedFlowResult = analyzedTask
+    ? buildTaskFlow(analyzedTask, humanReviewDecisions[analyzedTask.id])
+    : null
+  const detailTaskId = selectedTaskId || analyzedTaskId
+  const detailTask = getTaskById(detailTaskId)
+  const detailFlowResult = detailTask
+    ? buildTaskFlow(detailTask, humanReviewDecisions[detailTask.id])
+    : null
 
   let page
 
@@ -97,14 +116,15 @@ function App() {
   } else if (currentPage === "recommendation") {
     page = (
       <RecommendationPage
-        flowResult={activeFlowResult}
-        onContinue={() => navigate("detail", activeTaskId)}
+        flowResult={analyzedFlowResult}
+        onContinue={handleContinueToDetail}
+        onNewTask={() => navigate("newTask")}
       />
     )
   } else if (currentPage === "detail") {
     page = (
       <TaskDetailPage
-        flowResult={activeFlowResult}
+        flowResult={detailFlowResult}
         onNavigate={navigate}
         onHumanReviewDecision={handleHumanReviewDecision}
       />

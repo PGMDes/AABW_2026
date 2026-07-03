@@ -7,7 +7,31 @@ import { formatLabel } from "../components/formatLabel"
 import { StatusBadge } from "../components/StatusBadge"
 import { TaskSummaryCard } from "../components/TaskSummaryCard"
 
-export function RecommendationPage({ flowResult, onContinue }) {
+export function RecommendationPage({ flowResult, onContinue, onNewTask }) {
+  if (!flowResult) {
+    return (
+      <>
+        <PageHeader
+          title="Recommendation Result"
+          description="Recommendations appear after a task has been analyzed in this browser session."
+        />
+
+        <SectionCard
+          title="No recommendation yet"
+          description="No recommendation yet. Create or select a task, then analyze it."
+        >
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <p className="text-sm leading-6 text-slate-600">
+              The app is waiting for an explicit Analyze Task action before it
+              shows recommendation, governance, and execution-option details.
+            </p>
+            <PrimaryButton onClick={onNewTask}>Go to New Task</PrimaryButton>
+          </div>
+        </SectionCard>
+      </>
+    )
+  }
+
   const {
     task,
     analysis,
