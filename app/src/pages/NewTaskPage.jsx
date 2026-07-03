@@ -33,12 +33,13 @@ function Field({ label, children }) {
   )
 }
 
-function TextInput({ value, onChange, type = "text" }) {
+function TextInput({ value, onChange, type = "text", ...inputProps }) {
   return (
     <input
       type={type}
       value={value}
       onChange={(event) => onChange(event.target.value)}
+      {...inputProps}
       className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
     />
   )
@@ -221,6 +222,10 @@ export function NewTaskPage({ existingTaskIds = [], onAnalyze }) {
 
           <Field label="Task title">
             <TextInput
+              aria-invalid={
+                showError && !formData.title.trim() ? "true" : undefined
+              }
+              required
               value={formData.title}
               onChange={(value) => updateField("title", value)}
             />
@@ -228,6 +233,10 @@ export function NewTaskPage({ existingTaskIds = [], onAnalyze }) {
 
           <Field label="Task description">
             <textarea
+              aria-invalid={
+                showError && !formData.description.trim() ? "true" : undefined
+              }
+              required
               value={formData.description}
               onChange={(event) =>
                 updateField("description", event.target.value)
@@ -282,7 +291,10 @@ export function NewTaskPage({ existingTaskIds = [], onAnalyze }) {
           </div>
 
           {showError ? (
-            <p className="rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-700">
+            <p
+              className="rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-700"
+              role="alert"
+            >
               Task title and description are required.
             </p>
           ) : null}

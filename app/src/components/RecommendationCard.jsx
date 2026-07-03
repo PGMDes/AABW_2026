@@ -9,7 +9,14 @@ function ScoreBar({ label, score }) {
         <span className="font-medium text-slate-700">{label}</span>
         <span className="text-slate-500">{score}</span>
       </div>
-      <div className="h-2 rounded-full bg-slate-100">
+      <div
+        aria-label={`${label} score`}
+        aria-valuemax={100}
+        aria-valuemin={0}
+        aria-valuenow={score}
+        className="h-2 rounded-full bg-slate-100"
+        role="progressbar"
+      >
         <div
           className="h-2 rounded-full bg-cyan-600"
           style={{ width: `${score}%` }}

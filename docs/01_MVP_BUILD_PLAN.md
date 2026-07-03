@@ -58,6 +58,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 8: Demo readiness and GitHub walkthrough
 ### Phase 9: Custom task realism and local session persistence
 ### Phase 10: Static deployment and final submission packaging
+### Phase 11: Frontend QA and submission-readiness pass
 
 ---
 
@@ -658,6 +659,29 @@ npm.cmd --prefix app run preview -- --host 127.0.0.1
 Static deployment serves the frontend only. It does not add a backend, auth,
 database, APIs, real agents, or durable shared storage. Custom local tasks and
 Human review decisions still persist only in each browser's `localStorage`.
+
+---
+
+## Phase 11: Frontend QA and submission-readiness pass
+
+### Goal
+
+Review the frontend MVP like a final hackathon submission and make only small,
+safe polish fixes.
+
+This phase does not change recommendation, governance, execution, scenario, or
+localStorage behavior.
+
+### Expected output
+
+By the end of this phase, the repo should provide:
+
+- basic accessibility polish for navigation, keyboard focus, score bars, and
+  form validation
+- a short QA notes document in `docs/10_QA_NOTES.md`
+- unchanged build and scenario validation behavior
+- no new dependencies, backend, auth, database, APIs, external services, or
+  testing framework
 
 ---
 

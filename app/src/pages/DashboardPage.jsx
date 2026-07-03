@@ -50,7 +50,14 @@ function DecisionMix({ pathCounts, totalTasks }) {
                   {count} of {totalTasks}
                 </span>
               </div>
-              <div className="h-2 rounded-full bg-slate-100">
+              <div
+                aria-label={`${formatLabel(path)} recommendation share`}
+                aria-valuemax={100}
+                aria-valuemin={0}
+                aria-valuenow={Math.round(percent)}
+                className="h-2 rounded-full bg-slate-100"
+                role="progressbar"
+              >
                 <div
                   className="h-2 rounded-full bg-cyan-600"
                   style={{ width: `${percent}%` }}
@@ -222,8 +229,9 @@ export function DashboardPage({
                 <button
                   key={task.id}
                   type="button"
+                  aria-label={`Open ${task.title} task detail`}
                   onClick={() => onNavigate("detail", task.id)}
-                  className="block w-full rounded-lg border border-slate-200 p-4 text-left transition hover:border-cyan-300 hover:bg-cyan-50"
+                  className="block w-full rounded-lg border border-slate-200 p-4 text-left transition hover:border-cyan-300 hover:bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2"
                 >
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div>

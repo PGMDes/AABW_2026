@@ -41,4 +41,10 @@ Validate demo scenarios:
 npm.cmd run validate:scenarios
 ```
 
-For the full GitHub entry point and live demo script, see the root `README.md` and `docs/08_DEMO_WALKTHROUGH.md`.
+Preview the built static app:
+
+```bash
+npm.cmd run preview -- --host 127.0.0.1
+```
+
+For the full GitHub entry point, live demo script, deployment guide, and QA notes, see the root `README.md`, `docs/08_DEMO_WALKTHROUGH.md`, `docs/09_DEPLOYMENT.md`, and `docs/10_QA_NOTES.md`.
