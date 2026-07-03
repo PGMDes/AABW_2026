@@ -55,6 +55,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 5: Human review and override controls
 ### Phase 6: Scenario validation guardrails
 ### Phase 7: Product walkthrough polish
+### Phase 8: Demo readiness and GitHub walkthrough
 
 ---
 
@@ -542,6 +543,49 @@ By the end of this phase, the app should provide:
 - clearer Task Detail sections for governance, Human review, selected execution option, lifecycle, audit trail, and outcome state
 - blocked scenarios that still show no launched execution option
 - unchanged Phase 6 scenario validation behavior
+
+---
+
+## Phase 8: Demo readiness and GitHub walkthrough
+
+### Goal
+
+Make the project easy to understand from GitHub and ready for a live
+walkthrough without changing the product scope or decision behavior.
+
+This phase stays frontend-only. It does not add a backend, database,
+authentication, APIs, external services, dependencies, or a new testing
+framework.
+
+### Expected output
+
+By the end of this phase, the repo should provide:
+
+- a root `README.md` with product summary, setup commands, build command,
+  scenario validation command, current phase summary, and demo scenarios
+- a focused live walkthrough guide in `docs/08_DEMO_WALKTHROUGH.md`
+- a concise demo checklist covering build, scenario validation, local app
+  launch, Dashboard, New Task scenario picker, `task_001`, `task_002`,
+  `task_003`, lifecycle, and audit trail
+- an updated app README that no longer looks like the default Vite template
+- a compact Dashboard `Walkthrough order` panel that helps the presenter follow
+  the recommended demo path
+- unchanged Phase 6 scenario validation behavior
+
+### Demo readiness commands
+
+Run these before presenting:
+
+```bash
+npm.cmd --prefix app run build
+npm.cmd --prefix app run validate:scenarios
+```
+
+For the live app:
+
+```bash
+npm.cmd --prefix app run dev -- --host 127.0.0.1
+```
 
 ---
 

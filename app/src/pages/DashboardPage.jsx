@@ -11,6 +11,14 @@ import { buildTaskFlow } from "../logic/taskFlowEngine"
 
 const decisionPaths = ["agent", "human", "hybrid"]
 
+const walkthroughSteps = [
+  "Open New Task and show the scenario picker.",
+  "Run task_001 to show the approved Agent path.",
+  "Run task_002 to show Hybrid plus Human review.",
+  "Run task_003 to show the Blocked policy stop.",
+  "Use Task Detail to show lifecycle and audit trail.",
+]
+
 function SummaryMetric({ label, value, hint, status }) {
   return (
     <SectionCard>
@@ -53,6 +61,21 @@ function DecisionMix({ pathCounts, totalTasks }) {
           )
         })}
       </div>
+    </SectionCard>
+  )
+}
+
+function WalkthroughOrder() {
+  return (
+    <SectionCard
+      title="Walkthrough order"
+      description="Compact guide for the live demo sequence."
+    >
+      <ol className="list-decimal space-y-3 pl-5 text-sm leading-6 text-slate-700">
+        {walkthroughSteps.map((step) => (
+          <li key={step}>{step}</li>
+        ))}
+      </ol>
     </SectionCard>
   )
 }
@@ -147,7 +170,10 @@ export function DashboardPage({ onNavigate }) {
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-        <DecisionMix pathCounts={pathCounts} totalTasks={totalTasks} />
+        <div className="space-y-6">
+          <DecisionMix pathCounts={pathCounts} totalTasks={totalTasks} />
+          <WalkthroughOrder />
+        </div>
 
         <SectionCard
           title="Demo task queue"

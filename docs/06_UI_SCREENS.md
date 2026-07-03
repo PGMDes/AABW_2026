@@ -822,6 +822,31 @@ plain and consistent.
 
 ---
 
+## Phase 8 demo walkthrough support
+
+Phase 8 keeps the same frontend-only behavior and scenario expectations, but
+adds a compact `Walkthrough order` panel to the Dashboard.
+
+### Dashboard walkthrough order panel
+
+The panel is static presentation guidance. It does not add new state, routing,
+decision logic, governance logic, scenario data, dependencies, backend, database,
+auth, API, or external service integration.
+
+It should remind the presenter to show:
+
+- Dashboard metrics
+- New Task scenario picker
+- `task_001` Agent path
+- `task_002` Hybrid path with Human review
+- `task_003` Blocked path
+- lifecycle and audit trail on Task Detail
+
+This panel should stay compact so the Dashboard remains an operational demo
+screen, not a documentation page.
+
+---
+
 ## Blocked-by-policy screen behavior
 
 This is how the UI should behave when a path or option is blocked.

@@ -1,16 +1,42 @@
-# React + Vite
+# Human-AgentOS Frontend App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This folder contains the React + Vite frontend demo for `Human-AgentOS`.
 
-Currently, two official plugins are available:
+The app is frontend-only. It uses sample data and local React state to show the MVP flow:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- submit a knowledge-work task
+- analyze it
+- recommend `Human`, `Agent`, or `Hybrid`
+- apply governance
+- select an execution option
+- show lifecycle, audit trail, Human review, and outcome state
 
-## React Compiler
+There is no backend, database, auth, API, or external service integration yet.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Commands
 
-## Expanding the ESLint configuration
+Install dependencies:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm.cmd install
+```
+
+Run locally:
+
+```bash
+npm.cmd run dev -- --host 127.0.0.1
+```
+
+Build:
+
+```bash
+npm.cmd run build
+```
+
+Validate demo scenarios:
+
+```bash
+npm.cmd run validate:scenarios
+```
+
+For the full GitHub entry point and live demo script, see the root `README.md` and `docs/08_DEMO_WALKTHROUGH.md`.
