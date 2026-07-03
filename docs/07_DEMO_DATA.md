@@ -1171,3 +1171,158 @@ help the frontend prove the full product story before any backend work starts.
 If a sample object does not support this flow, it probably does not need to exist yet:
 
 `submit task -> analyze task -> recommend -> explain why -> apply governance -> select execution option -> launch -> track outcome`
+
+---
+
+## Phase 4 Decision Scenario Coverage
+
+### Why this section exists
+
+The earlier sections preserve the original detailed demo-data source of truth.
+That older context is still useful because it explains the intended static data
+shape, the original happy-path demo, and the broader sample records a future
+agent may need to understand.
+
+Phase 4 added live decision scenario coverage in the React frontend. The New
+Task screen now includes a small demo scenario picker that loads task examples
+into the same intake form. The app still runs those tasks through the normal
+frontend logic:
+
+`analyzeTask -> buildRecommendation -> buildRecommendationExplanation -> evaluateGovernance -> getExecutionOptions -> createExecutionRecord -> createDemoOutcomeReview`
+
+The Phase 4 implementation is documented in:
+
+- `app/src/data/demoScenarios.js`
+- `app/src/data/tasks.js`
+- `app/src/logic/validateDemoScenarios.js`
+
+### Relationship to the original happy path
+
+The original happy-path demo remains `task_001`.
+
+That task should continue to prove:
+
+- an `agent` recommendation
+- `85` confidence
+- governance status `approved_for_launch`
+- selected option `Research Analyst Agent`
+- completed/reviewed lifecycle behavior
+
+Phase 4 does not replace that happy path. It adds four additional scenario
+paths so the frontend demonstrates more than one recommendation and governance
+outcome.
+
+### Scenario summary
+
+| Task ID | Scenario | Expected `recommendedPath` | Expected governance status | Expected selected option behavior | Expected lifecycle behavior |
+|---|---|---|---|---|---|
+| `task_001` | Agent path | `agent` | `approved_for_launch` | Selects `Research Analyst Agent` | Launches and reaches `reviewed` |
+| `task_002` | Hybrid path | `hybrid` | `needs_human_review` | Selects a hybrid human-agent option | Waits at `selected` / pending approval |
+| `task_003` | Blocked path | `human` | `blocked` | No launched execution option | Stops at `blocked` |
+| `task_004` | Human path | `human` | `needs_human_review` | Selects a human owner / human role | Waits at `selected` / pending approval |
+| `task_005` | Needs human review path | `hybrid` | `needs_human_review` | Selects a hybrid review option | Waits at `selected` / pending approval |
+
+### `task_001`: Agent path
+
+Purpose:
+
+This is the original happy-path demo. It proves that clear, low-sensitivity,
+repeatable internal knowledge work can be routed to a trusted agent.
+
+Expected behavior:
+
+- `recommendedPath`: `agent`
+- confidence: `85`
+- governance status: `approved_for_launch`
+- selected option: `Research Analyst Agent`
+- selected option path type: `agent`
+- execution launch status: `launched`
+- lifecycle final stage: `reviewed`
+- outcome: completed demo review with minor edits
+
+### `task_002`: Hybrid path
+
+Purpose:
+
+This scenario proves that an agent can help with leadership-facing drafting,
+but human review should stay in the loop.
+
+Expected behavior:
+
+- `recommendedPath`: `hybrid`
+- governance status: `needs_human_review`
+- selected option behavior: choose a human-agent team or hybrid execution option
+- current implementation selected option: `Executive Memo Agent + Human Reviewer`
+- selected option path type: `hybrid`
+- execution launch status: `pending_approval`
+- lifecycle final stage: `selected`
+
+### `task_003`: Blocked path
+
+Purpose:
+
+This scenario proves that the product can stop work that is too sensitive and
+too high-risk for the demo workflow.
+
+Expected behavior:
+
+- `recommendedPath`: `human`
+- governance status: `blocked`
+- allowed paths: none in the current Phase 4 demo behavior
+- blocked paths: `human`, `agent`, and `hybrid`
+- selected option behavior: no eligible execution option should be selected
+- execution launch status: `not_launched`
+- lifecycle final stage: `blocked`
+
+Important rule:
+
+The blocked scenario must not show a launched execution option. It should make
+the policy stop visible instead of pretending the work launched.
+
+### `task_004`: Human path
+
+Purpose:
+
+This scenario proves that high-ambiguity, high-judgment, high-accountability
+strategy work routes to a human owner instead of auto-launching an agent.
+
+Expected behavior:
+
+- `recommendedPath`: `human`
+- governance status: `needs_human_review`
+- selected option behavior: choose a human owner or human-led option
+- current implementation selected option: `Strategy Lead`
+- selected option path type: `human`
+- selected option source type: `human_role`
+- execution launch status: `pending_approval`
+- lifecycle final stage: `selected`
+
+### `task_005`: Needs human review path
+
+Purpose:
+
+This scenario proves that automation may assist policy or review work, but the
+workflow still requires human validation before launch or final use.
+
+Expected behavior:
+
+- `recommendedPath`: `hybrid`
+- governance status: `needs_human_review`
+- selected option behavior: choose a hybrid review option
+- current implementation selected option: `Policy Review Agent + Human Reviewer`
+- selected option path type: `hybrid`
+- execution launch status: `pending_approval`
+- lifecycle final stage: `selected`
+
+### Validation helper
+
+`app/src/logic/validateDemoScenarios.js` exports a lightweight internal helper
+for checking the Phase 4 scenario expectations without adding a test framework.
+
+Use it when changing scenario data or decision logic so the demo keeps covering:
+
+- agent path
+- human path
+- hybrid path
+- needs human review path
+- blocked path

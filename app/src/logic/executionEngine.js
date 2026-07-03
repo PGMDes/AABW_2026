@@ -7,7 +7,7 @@ export function createExecutionRecord(task, recommendation, selectedOption) {
     return {
       id: buildExecutionId(task.id),
       taskId: task.id,
-      selectedPath: recommendation.recommendedPath,
+      selectedPath: null,
       selectedOptionId: null,
       selectedOptionType: null,
       approvalStatus: "not_started",

@@ -1,5 +1,11 @@
 export { currentUser } from "./currentUser"
 export {
+  defaultDemoScenarioId,
+  demoScenarios,
+  getDemoScenarioById,
+  scenarioExpectations,
+} from "./demoScenarios"
+export {
   defaultNewTaskFormData,
   taskAnalyses,
   taskFormOptions,

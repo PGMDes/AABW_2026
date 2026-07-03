@@ -1,5 +1,10 @@
 import { useState } from "react"
-import { defaultNewTaskFormData, taskFormOptions } from "../data"
+import {
+  defaultDemoScenarioId,
+  demoScenarios,
+  getDemoScenarioById,
+  taskFormOptions,
+} from "../data"
 import { PageHeader } from "../components/PageHeader"
 import { PrimaryButton } from "../components/PrimaryButton"
 import { SectionCard } from "../components/SectionCard"
@@ -40,9 +45,38 @@ function SelectInput({ value, onChange, options }) {
   )
 }
 
+function getTaskFormData(task) {
+  return {
+    id: task.id,
+    title: task.title,
+    description: task.description,
+    expectedOutput: task.expectedOutput,
+    deadline: task.deadline,
+    audience: task.audience,
+    sensitivity: task.sensitivity,
+    urgency: task.urgency,
+    budgetRange: task.budgetRange,
+  }
+}
+
 export function NewTaskPage({ onAnalyze }) {
-  const [formData, setFormData] = useState(defaultNewTaskFormData)
+  const defaultScenario = getDemoScenarioById(defaultDemoScenarioId)
+  const [selectedScenarioId, setSelectedScenarioId] = useState(
+    defaultScenario.id,
+  )
+  const [formData, setFormData] = useState(() =>
+    getTaskFormData(defaultScenario.task),
+  )
   const [showError, setShowError] = useState(false)
+  const selectedScenario = getDemoScenarioById(selectedScenarioId)
+
+  function loadScenario(scenarioId) {
+    const scenario = getDemoScenarioById(scenarioId)
+
+    setSelectedScenarioId(scenario.id)
+    setFormData(getTaskFormData(scenario.task))
+    setShowError(false)
+  }
 
   function updateField(fieldName, value) {
     setFormData((current) => ({ ...current, [fieldName]: value }))
@@ -57,8 +91,8 @@ export function NewTaskPage({ onAnalyze }) {
     }
 
     onAnalyze({
-      id: "task_001",
       ...formData,
+      id: formData.id || "task_custom",
       status: "submitted",
     })
   }
@@ -67,11 +101,26 @@ export function NewTaskPage({ onAnalyze }) {
     <>
       <PageHeader
         title="New Task"
-        description="Describe the knowledge-work task. The demo form is prefilled so you can test the happy path quickly."
+        description="Describe the knowledge-work task. Use the scenario picker to test agent, human, hybrid, review, and blocked paths."
       />
 
       <SectionCard title="Task intake form">
         <form onSubmit={handleSubmit} className="space-y-5">
+          <Field label="Load demo scenario">
+            <SelectInput
+              value={selectedScenarioId}
+              onChange={loadScenario}
+              options={demoScenarios.map((scenario) => ({
+                label: scenario.label,
+                value: scenario.id,
+              }))}
+            />
+          </Field>
+
+          <p className="rounded-md bg-cyan-50 px-3 py-2 text-sm text-cyan-800">
+            {selectedScenario.description}
+          </p>
+
           <Field label="Task title">
             <TextInput
               value={formData.title}
@@ -144,7 +193,7 @@ export function NewTaskPage({ onAnalyze }) {
             <PrimaryButton type="submit">Analyze Task</PrimaryButton>
             <PrimaryButton
               variant="secondary"
-              onClick={() => setFormData(defaultNewTaskFormData)}
+              onClick={() => loadScenario(defaultDemoScenarioId)}
             >
               Reset demo task
             </PrimaryButton>

@@ -3,9 +3,9 @@ export const recommendationExplanations = [
     taskId: "task_001",
     topReasons: [
       "Task is clearly defined",
-      "This is repeatable research work",
+      "The work is structured enough for agent support",
       "Sensitivity is low",
-      "Agent support improves speed",
+      "Business risk is manageable",
     ],
     keyFactors: {
       taskClarity: "high",
@@ -15,12 +15,12 @@ export const recommendationExplanations = [
     },
     alternatives: [
       {
-        path: "hybrid",
-        reason: "Useful if a human wants to review the final brief",
+        path: "human",
+        reason: "Safer when sensitivity or judgment needs increase",
       },
       {
-        path: "human",
-        reason: "Possible, but slower than needed for this structured task",
+        path: "hybrid",
+        reason: "Useful when agent speed is valuable but human review still matters",
       },
     ],
     conditions: [
@@ -31,10 +31,10 @@ export const recommendationExplanations = [
   {
     taskId: "task_002",
     topReasons: [
-      "An agent can help draft the first pass",
-      "Leadership-facing work needs human judgment",
-      "Sensitivity is medium",
-      "Hybrid is safer than agent-only",
+      "An agent can help with the first pass",
+      "A human should stay involved for review or judgment",
+      "The task needs both speed and human thinking",
+      "Shared handling is safer than agent-only",
     ],
     keyFactors: {
       taskClarity: "medium",
@@ -43,21 +43,23 @@ export const recommendationExplanations = [
       businessRisk: "medium",
     },
     alternatives: [
-      { path: "human", reason: "Safer, but slower than needed" },
-      { path: "agent", reason: "Too risky without human review" },
+      {
+        path: "agent",
+        reason: "Useful when the task becomes more structured and lower risk",
+      },
+      {
+        path: "human",
+        reason: "Safer when sensitivity or judgment needs increase",
+      },
     ],
-    conditions: [
-      "Human review should stay in the loop",
-      "Approval is likely required before launch",
-    ],
+    conditions: ["Check governance before launch"],
   },
   {
     taskId: "task_003",
     topReasons: [
-      "This task is sensitive",
-      "The output is external-facing",
+      "Strong human judgment is needed",
+      "The content is sensitive",
       "Mistakes would have high business impact",
-      "Human control is safest",
     ],
     keyFactors: {
       taskClarity: "medium",
@@ -66,21 +68,55 @@ export const recommendationExplanations = [
       businessRisk: "high",
     },
     alternatives: [
-      { path: "hybrid", reason: "Possible only with strict human review" },
-      { path: "agent", reason: "Not suitable for this level of risk" },
+      {
+        path: "agent",
+        reason: "Useful when the task becomes more structured and lower risk",
+      },
+      {
+        path: "hybrid",
+        reason: "Useful when agent speed is valuable but human review still matters",
+      },
     ],
     conditions: [
-      "Do not use agent-only for this task",
-      "Human approval and control are required",
+      "Check governance before launch",
+      "Human review should remain in the loop",
     ],
   },
   {
     taskId: "task_004",
     topReasons: [
-      "An agent can help review the document",
-      "Policy work still needs human validation",
-      "Sensitivity is medium",
-      "Hybrid gives speed with safer oversight",
+      "Task is still ambiguous",
+      "Strong human judgment is needed",
+      "Mistakes would have high business impact",
+    ],
+    keyFactors: {
+      taskClarity: "low",
+      requiredJudgment: "high",
+      dataSensitivity: "medium",
+      businessRisk: "high",
+    },
+    alternatives: [
+      {
+        path: "agent",
+        reason: "Useful when the task becomes more structured and lower risk",
+      },
+      {
+        path: "hybrid",
+        reason: "Useful when agent speed is valuable but human review still matters",
+      },
+    ],
+    conditions: [
+      "Check governance before launch",
+      "Human review should remain in the loop",
+    ],
+  },
+  {
+    taskId: "task_005",
+    topReasons: [
+      "An agent can help with the first pass",
+      "A human should stay involved for review or judgment",
+      "The task needs both speed and human thinking",
+      "Shared handling is safer than agent-only",
     ],
     keyFactors: {
       taskClarity: "medium",
@@ -89,12 +125,15 @@ export const recommendationExplanations = [
       businessRisk: "medium",
     },
     alternatives: [
-      { path: "human", reason: "Safer, but slower" },
-      { path: "agent", reason: "Too risky without human review" },
+      {
+        path: "agent",
+        reason: "Useful when the task becomes more structured and lower risk",
+      },
+      {
+        path: "human",
+        reason: "Safer when sensitivity or judgment needs increase",
+      },
     ],
-    conditions: [
-      "Approval should happen before launch",
-      "Human validation is required before using the final review",
-    ],
+    conditions: ["Check governance before launch"],
   },
 ]

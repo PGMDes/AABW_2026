@@ -30,10 +30,11 @@ export function checkApprovalRequired(taskAnalysis, recommendation) {
   const approvalReasons = []
 
   if (
-    taskAnalysis.dataSensitivity === "medium" ||
-    taskAnalysis.dataSensitivity === "high"
+    taskAnalysis.taskType === "document_review" ||
+    taskAnalysis.taskType === "policy_review" ||
+    taskAnalysis.taskType === "compliance_review"
   ) {
-    approvalReasons.push("Task contains medium or high sensitivity content")
+    approvalReasons.push("Policy or review work needs human validation")
   }
 
   if (taskAnalysis.businessRisk === "high") {
@@ -41,11 +42,10 @@ export function checkApprovalRequired(taskAnalysis, recommendation) {
   }
 
   if (
-    taskAnalysis.taskType === "document_review" ||
-    taskAnalysis.taskType === "policy_review" ||
-    taskAnalysis.taskType === "compliance_review"
+    taskAnalysis.dataSensitivity === "medium" ||
+    taskAnalysis.dataSensitivity === "high"
   ) {
-    approvalReasons.push("Policy or review work needs human validation")
+    approvalReasons.push("Task contains medium or high sensitivity content")
   }
 
   if (
@@ -63,6 +63,15 @@ export function checkApprovalRequired(taskAnalysis, recommendation) {
 
 export function checkBlockedPaths(taskAnalysis) {
   const blockedPaths = []
+
+  if (
+    taskAnalysis.dataSensitivity === "high" &&
+    taskAnalysis.businessRisk === "high"
+  ) {
+    return {
+      blockedPaths: ALL_PATHS,
+    }
+  }
 
   if (taskAnalysis.dataSensitivity === "high") {
     blockedPaths.push("agent")
@@ -88,6 +97,7 @@ export function evaluateGovernance(taskAnalysis, recommendation) {
   const recommendedPathBlocked = blockedInfo.blockedPaths.includes(
     recommendation.recommendedPath,
   )
+  const allPathsBlocked = allowedPaths.length === 0
 
   let status = "approved_for_launch"
   let policyReason = "Launch allowed"
@@ -101,14 +111,16 @@ export function evaluateGovernance(taskAnalysis, recommendation) {
       "Low-sensitivity internal research is allowed for trusted agents"
   }
 
-  if (approvalInfo.approvalRequired) {
-    status = "approval_required"
-    policyReason = approvalInfo.approvalReasons[0]
-  }
-
-  if (recommendedPathBlocked) {
-    status = "recommended_path_blocked"
+  if (allPathsBlocked) {
+    status = "blocked"
+    policyReason =
+      "This task is too sensitive and high-risk to launch through the demo workflow"
+  } else if (recommendedPathBlocked) {
+    status = "blocked"
     policyReason = "The recommended path is not allowed by policy"
+  } else if (approvalInfo.approvalRequired) {
+    status = "needs_human_review"
+    policyReason = approvalInfo.approvalReasons[0]
   }
 
   return {

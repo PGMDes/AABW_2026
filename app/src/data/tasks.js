@@ -40,6 +40,19 @@ export const tasks = [
   },
   {
     id: "task_004",
+    title: "Decide whether to change AI product strategy for enterprise customers",
+    description:
+      "Assess current market direction and decide whether our AI product strategy should change for enterprise customers this quarter.",
+    expectedOutput: "Decision recommendation with rationale",
+    deadline: "2026-07-15",
+    audience: "internal_leadership",
+    sensitivity: "medium",
+    urgency: "medium",
+    budgetRange: "low",
+    status: "recommended",
+  },
+  {
+    id: "task_005",
     title: "Review internal policy document for governance gaps",
     description:
       "Review the internal AI use policy and identify missing governance controls, weak language, and operational risks.",
@@ -49,7 +62,7 @@ export const tasks = [
     sensitivity: "medium",
     urgency: "medium",
     budgetRange: "medium",
-    status: "ready_to_launch",
+    status: "needs_human_review",
   },
 ]
 
@@ -86,6 +99,16 @@ export const taskAnalyses = [
   },
   {
     taskId: "task_004",
+    taskType: "strategy_work",
+    taskClarity: "low",
+    requiredJudgment: "high",
+    dataSensitivity: "medium",
+    businessRisk: "high",
+    speedPressure: "medium",
+    costPressure: "high",
+  },
+  {
+    taskId: "task_005",
     taskType: "document_review",
     taskClarity: "medium",
     requiredJudgment: "high",

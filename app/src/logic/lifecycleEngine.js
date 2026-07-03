@@ -20,6 +20,7 @@ export function getGovernanceLifecycleState(governanceResult) {
   )
 
   if (
+    governanceResult.status === "blocked" ||
     governanceResult.status === "selected_option_blocked" ||
     governanceResult.status === "recommended_path_blocked" ||
     recommendedPathBlocked

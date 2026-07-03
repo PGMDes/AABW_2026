@@ -668,16 +668,18 @@ function buildGovernanceResult(
   status = "approved_for_launch"
   policyReason = "Launch allowed"
 
-  if blockedInfo.blockedPaths includes recommendation.recommendedPath:
-    status = "recommended_path_blocked"
+  if allowedPaths is empty:
+    status = "blocked"
+    policyReason = "This task is too sensitive and high-risk to launch through the demo workflow"
+  else if blockedInfo.blockedPaths includes recommendation.recommendedPath:
+    status = "blocked"
     policyReason = "The recommended path is not allowed by policy"
-
-  if approvalInfo.approvalRequired:
-    status = "approval_required"
+  else if approvalInfo.approvalRequired:
+    status = "needs_human_review"
     policyReason = approvalInfo.approvalReasons[0]
 
   if selectedOptionAllowed == false:
-    status = "selected_option_blocked"
+    status = "blocked"
     policyReason = selectedOptionBlockReason
 
   return {
@@ -708,19 +710,19 @@ Example:
 
 When multiple statuses apply, use this priority order:
 
-1. `selected_option_blocked`
-2. `recommended_path_blocked`
-3. `approval_required`
-4. `approved_for_launch`
+1. `blocked`
+2. `needs_human_review`
+3. `approved_for_launch`
 
 Reason:
 
-Blocked states are more serious than approval states. If something is blocked, the UI should show the block first, then explain any approval requirement after that.
+Blocked states are more serious than review states. If something is blocked,
+the UI should show the block first, then explain any approval requirement after
+that.
 
 This means the final status should be chosen in this order:
-- if the selected option is blocked, use `selected_option_blocked`
-- else if the recommended path is blocked, use `recommended_path_blocked`
-- else if approval is required, use `approval_required`
+- if all paths are blocked or the recommended path is blocked, use `blocked`
+- else if approval is required, use `needs_human_review`
 - else use `approved_for_launch`
 
 ---
@@ -814,7 +816,7 @@ This is the clean happy path.
   "policyFlags": ["medium_sensitivity", "leadership_audience"],
   "selectedOptionAllowed": true,
   "selectedOptionBlockReason": null,
-  "status": "approval_required",
+  "status": "needs_human_review",
   "policyReason": "Audience is leadership or executive"
 }
 ```
@@ -848,7 +850,7 @@ The route is allowed, but it cannot launch freely.
   "policyFlags": ["high_sensitivity", "external_audience"],
   "selectedOptionAllowed": true,
   "selectedOptionBlockReason": null,
-  "status": "approval_required",
+  "status": "needs_human_review",
   "policyReason": "Task contains medium or high sensitivity content"
 }
 ```
@@ -885,7 +887,7 @@ Agent-only is blocked. Safer paths remain available.
   "policyFlags": ["low_sensitivity", "internal_use"],
   "selectedOptionAllowed": false,
   "selectedOptionBlockReason": "Selected agent is untrusted",
-  "status": "selected_option_blocked",
+  "status": "blocked",
   "policyReason": "Selected agent is untrusted"
 }
 ```
@@ -919,7 +921,7 @@ The general path may be okay, but this specific option is not allowed.
   "policyFlags": ["medium_sensitivity", "leadership_audience"],
   "selectedOptionAllowed": true,
   "selectedOptionBlockReason": null,
-  "status": "approval_required",
+  "status": "needs_human_review",
   "policyReason": "Policy or review work needs human validation"
 }
 ```

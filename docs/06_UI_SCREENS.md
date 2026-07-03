@@ -162,6 +162,18 @@ A simple form with labeled fields:
 
 Optional helper text can explain why the app asks for these fields.
 
+Phase 4 adds a small `Load demo scenario` dropdown above the form. It fills the
+same task fields with one of the deterministic demo scenarios:
+
+- `Agent path`
+- `Human path`
+- `Hybrid path`
+- `Needs human review`
+- `Blocked`
+
+This is only a demo shortcut. It does not replace the intake form or create a
+separate workflow.
+
 ### Components needed
 
 - `TaskForm`
@@ -200,12 +212,14 @@ Show field-level messages like:
 - `Please select audience`
 
 #### Helpful default values
-To speed up the demo, the form can preload one sample task.
+To speed up the demo, the form preloads the original `task_001` agent happy
+path. The scenario picker can load the other Phase 4 tasks into the same form.
 
 ### Beginner-friendly implementation notes
 
 - start with controlled React state
 - use one object like `formData`
+- keep the selected scenario ID separate from the editable task fields
 - keep dropdown options hardcoded first
 - do not build autosave
 - do not build attachments, templates, or advanced settings

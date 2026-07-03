@@ -2,6 +2,12 @@ import { SectionCard } from "./SectionCard"
 import { formatLabel } from "./formatLabel"
 import { StatusBadge } from "./StatusBadge"
 
+function getGovernanceActionLabel(governance) {
+  if (governance.status === "blocked") return "Launch blocked"
+  if (governance.approvalRequired) return "Human review required"
+  return "No approval required"
+}
+
 export function GovernanceStatusCard({ governance }) {
   return (
     <SectionCard title="Governance summary">
@@ -9,12 +15,14 @@ export function GovernanceStatusCard({ governance }) {
         <div className="flex flex-wrap items-center gap-3">
           <StatusBadge value={governance.status} />
           <StatusBadge
-            value={governance.approvalRequired ? "approval_required" : "approved_for_launch"}
-            label={
-              governance.approvalRequired
-                ? "Approval required"
-                : "No approval required"
+            value={
+              governance.status === "blocked"
+                ? "blocked"
+                : governance.approvalRequired
+                ? "needs_human_review"
+                : "approved_for_launch"
             }
+            label={getGovernanceActionLabel(governance)}
           />
         </div>
         <p className="text-sm leading-6 text-slate-700">

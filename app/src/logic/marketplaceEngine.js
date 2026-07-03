@@ -35,7 +35,7 @@ const EXECUTION_PROFILES = [
   {
     id: "agent_003",
     sourceType: "agent",
-    displayName: "Executive Memo Agent",
+    displayName: "Executive Memo Agent + Human Reviewer",
     pathType: "hybrid",
     trustTier: "review_required",
     sensitiveDataSuitability: "medium",
@@ -50,7 +50,7 @@ const EXECUTION_PROFILES = [
   {
     id: "agent_004",
     sourceType: "agent",
-    displayName: "Policy Review Agent",
+    displayName: "Policy Review Agent + Human Reviewer",
     pathType: "hybrid",
     trustTier: "trusted",
     sensitiveDataSuitability: "medium",
