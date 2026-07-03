@@ -59,6 +59,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 9: Custom task realism and local session persistence
 ### Phase 10: Static deployment and final submission packaging
 ### Phase 11: Frontend QA and submission-readiness pass
+### Phase 12: Hackathon submission package and judge-facing explanation
 
 ---
 
@@ -682,6 +683,34 @@ By the end of this phase, the repo should provide:
 - unchanged build and scenario validation behavior
 - no new dependencies, backend, auth, database, APIs, external services, or
   testing framework
+
+---
+
+## Phase 12: Hackathon submission package and judge-facing explanation
+
+### Goal
+
+Align the repo with final hackathon / Devpost submission needs and make the
+project easier for judges to understand.
+
+This phase stays frontend-only. It does not change recommendation, governance,
+execution, scenario, or localStorage behavior.
+
+### Expected output
+
+By the end of this phase, the repo should provide:
+
+- a Devpost-ready submission guide in `docs/11_SUBMISSION_PACKAGE.md`
+- clear documentation of how ChatGPT / Codex were used during planning,
+  implementation, and review
+- explicit clarification that the app demonstrates an agentic workflow control
+  plane, not connected production agent execution
+- README links for the demo walkthrough, deployment guide, QA notes, and
+  submission package
+- a compact Dashboard summary of what the demo proves
+- TODO placeholders for the source code URL, live demo URL, demo video URL, and
+  exact development model names if the submission form asks for them
+- unchanged build and scenario validation behavior
 
 ---
 

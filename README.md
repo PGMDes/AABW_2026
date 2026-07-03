@@ -104,6 +104,15 @@ The built-in demo scenarios are still fixed sample data, and `validate:scenarios
 
 Use [docs/08_DEMO_WALKTHROUGH.md](docs/08_DEMO_WALKTHROUGH.md) for the live presentation script, click path, checklist, and talking points.
 
+## Hackathon Submission
+
+Use these docs for final submission prep:
+
+- [Demo walkthrough](docs/08_DEMO_WALKTHROUGH.md)
+- [Deployment and release checklist](docs/09_DEPLOYMENT.md)
+- [Frontend QA notes](docs/10_QA_NOTES.md)
+- [Submission package](docs/11_SUBMISSION_PACKAGE.md)
+
 ## Useful Docs
 
 - [Product spec](docs/00_PRODUCT_SPEC.md)
@@ -113,3 +122,4 @@ Use [docs/08_DEMO_WALKTHROUGH.md](docs/08_DEMO_WALKTHROUGH.md) for the live pres
 - [Phase 8 demo walkthrough](docs/08_DEMO_WALKTHROUGH.md)
 - [Deployment and release checklist](docs/09_DEPLOYMENT.md)
 - [Phase 11 QA notes](docs/10_QA_NOTES.md)
+- [Phase 12 submission package](docs/11_SUBMISSION_PACKAGE.md)

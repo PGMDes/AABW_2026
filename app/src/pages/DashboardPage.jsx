@@ -18,6 +18,14 @@ const walkthroughSteps = [
   "Use Task Detail to show lifecycle and audit trail.",
 ]
 
+const demoProofPoints = [
+  "Routes work to Human, Agent, or Hybrid paths.",
+  "Applies governance before launch.",
+  "Supports Human review and safer overrides.",
+  "Records lifecycle and audit trail evidence.",
+  "Keeps custom tasks local to this browser.",
+]
+
 function SummaryMetric({ label, value, hint, status }) {
   return (
     <SectionCard>
@@ -82,6 +90,23 @@ function WalkthroughOrder() {
           <li key={step}>{step}</li>
         ))}
       </ol>
+    </SectionCard>
+  )
+}
+
+function DemoProofPanel() {
+  return (
+    <SectionCard
+      title="What this demo proves"
+      description="Judge-facing summary of the working MVP loop."
+    >
+      <ul className="space-y-2 text-sm leading-6 text-slate-700">
+        {demoProofPoints.map((point) => (
+          <li key={point} className="rounded-md bg-slate-50 px-3 py-2">
+            {point}
+          </li>
+        ))}
+      </ul>
     </SectionCard>
   )
 }
@@ -214,6 +239,7 @@ export function DashboardPage({
       <div className="mt-6 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <div className="space-y-6">
           <DecisionMix pathCounts={pathCounts} totalTasks={totalTasks} />
+          <DemoProofPanel />
           <WalkthroughOrder />
         </div>
 
