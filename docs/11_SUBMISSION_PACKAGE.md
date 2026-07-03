@@ -94,7 +94,8 @@ opens one from Dashboard.
 
 ## Demo scenario walkthrough
 
-Use the full walkthrough script in `docs/08_DEMO_WALKTHROUGH.md`.
+Use the full walkthrough script in `docs/08_DEMO_WALKTHROUGH.md`. Use
+`docs/14_DEMO_SCRIPT.md` for the tighter 2-minute and 5-minute judge scripts.
 
 Recommended judge flow:
 
@@ -212,3 +213,6 @@ Possible next steps after the hackathon demo:
 - [ ] Review `docs/08_DEMO_WALKTHROUGH.md`
 - [ ] Review `docs/09_DEPLOYMENT.md`
 - [ ] Review `docs/10_QA_NOTES.md`
+- [ ] Review `docs/12_ARCHITECTURE.md`
+- [ ] Review `docs/13_DOMAIN_MODEL.md`
+- [ ] Review `docs/14_DEMO_SCRIPT.md`

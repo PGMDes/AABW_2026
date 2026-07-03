@@ -1,21 +1,119 @@
 # Human-AgentOS
 
-`Human-AgentOS` is a frontend-only MVP demo for a decision-first workforce control plane.
+`Human-AgentOS` is a decision-first workforce control plane that routes knowledge work to a Human, an Agent, or a Hybrid team with visible governance and audit evidence.
 
-It helps an Innovation / AI transformation lead decide whether a knowledge-work task should be handled by a `Human`, an `Agent`, or a `Hybrid` human-agent team. The demo also shows why the recommendation was made, what governance allows, which execution option was selected, and what happened after launch.
+## Founder Mode Framing
 
-## Current Scope
+Teams are moving faster with AI agents, but most organizations still lack a practical operating layer for deciding when agents should be used, when humans should stay accountable, and when a hybrid workflow is safest.
 
-This repository is intentionally scoped to a clickable frontend demo:
+This MVP focuses on one sharp Founder Mode wedge:
+
+`task intake -> Human / Agent / Hybrid recommendation -> governance -> controlled execution -> output review -> audit trail`
+
+The current product is intentionally narrow. It proves the decision and control layer before adding production infrastructure.
+
+## Problem
+
+AI adoption is creating a new management problem:
+
+- leaders cannot consistently decide which work is safe for agents
+- sensitive work can be automated too aggressively
+- low-risk work can move too slowly through manual review
+- agent selection is often disconnected from policy
+- output review and audit evidence are usually scattered or missing
+
+Human-AgentOS treats this as an operating-system problem, not just a chat or task-list problem.
+
+## Solution
+
+The demo lets an Innovation / AI transformation lead:
+
+- submit or choose a knowledge-work task
+- see a deterministic Human / Agent / Hybrid recommendation
+- understand the main reasons and alternatives
+- apply governance before launch
+- select an eligible execution option from a curated sample marketplace
+- run controlled local Agent output only when allowed
+- record a Human output review decision
+- inspect lifecycle and audit trail evidence
+
+## Demo Flow
+
+Use the built-in scenarios to show the product is not blindly agent-first:
+
+1. `task_001` proves an approved Agent path for clear, low-risk internal research.
+2. `task_002` proves a Hybrid path where Human review gates leadership-facing work.
+3. `task_003` proves a Blocked path where governance stops unsafe external work.
+
+Recommended click path:
+
+1. Open `Dashboard`.
+2. Click `New Task`.
+3. Choose a demo scenario.
+4. Click `Analyze Task`.
+5. Review `Recommendation Result`.
+6. Click `Continue to Detail`.
+7. On approved Agent work, click `Run demo agent`.
+8. After output exists, choose `Accept output`, `Request revision`, or `Reroute to Human`.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  User["Innovation / AI transformation lead"]
+  UI["React UI\nDashboard, New Task, Recommendation, Task Detail"]
+  Flow["taskFlowEngine\nsingle generated task flow"]
+  Analyze["analyzeTask"]
+  Recommend["recommendationEngine"]
+  Govern["governanceEngine"]
+  Market["marketplaceEngine"]
+  Review["humanReviewEngine"]
+  Execute["executionEngine"]
+  Lifecycle["lifecycleEngine"]
+  Audit["auditTrailEngine"]
+  Runner["agentRunner\nlocal deterministic output"]
+  OutputReview["agentOutputReview\nfinal Human gate"]
+  Storage["browser localStorage\ncustom tasks and demo decisions"]
+
+  User --> UI
+  UI --> Flow
+  Flow --> Analyze
+  Analyze --> Recommend
+  Recommend --> Govern
+  Govern --> Market
+  Market --> Review
+  Review --> Execute
+  Execute --> Lifecycle
+  Execute --> Audit
+  UI --> Runner
+  Runner --> OutputReview
+  UI <--> Storage
+```
+
+For more detail, see [docs/12_ARCHITECTURE.md](docs/12_ARCHITECTURE.md).
+
+## Current MVP Boundary
+
+This repository is a frontend-only MVP demo:
 
 - React + Vite app in `app/`
-- hardcoded sample tasks, marketplace options, governance results, lifecycle states, and audit events
-- deterministic recommendation, governance, marketplace, execution, lifecycle, and scenario validation logic
-- localStorage persistence for browser-local custom tasks and Human review decisions
-- no backend
-- no database
-- no authentication
-- no API or external service integration
+- deterministic local JavaScript logic
+- hardcoded demo tasks, policy rules, marketplace profiles, lifecycle, and audit data
+- browser `localStorage` for local custom tasks and demo review decisions
+- static build output in `app/dist`
+
+It does not include:
+
+- backend
+- APIs
+- authentication
+- database
+- queues
+- live model calls
+- external agent providers
+- production observability
+
+That boundary is intentional. The goal is to prove the workflow before adding infrastructure.
 
 ## Tech Stack
 
@@ -23,9 +121,10 @@ This repository is intentionally scoped to a clickable frontend demo:
 - Vite
 - Tailwind CSS
 - Plain JavaScript data and logic modules
-- Lightweight scenario validation script with no added test framework
+- Node-based scenario validator
+- Browser `localStorage` for demo-only local state
 
-## Run Locally
+## Setup Commands
 
 Install dependencies:
 
@@ -39,7 +138,7 @@ Start the local dev server:
 npm.cmd --prefix app run dev -- --host 127.0.0.1
 ```
 
-Open the URL printed by Vite, usually:
+Open the Vite URL printed in the terminal, usually:
 
 ```text
 http://127.0.0.1:5173
@@ -47,81 +146,68 @@ http://127.0.0.1:5173
 
 If you are not on Windows, use `npm` instead of `npm.cmd`.
 
-## Build
+## Validation Commands
+
+Run these before handing off or presenting:
 
 ```bash
 npm.cmd --prefix app run build
-```
-
-The static build output is created in `app/dist`.
-
-## Deployment
-
-This app can be deployed as a static frontend. Build from the repo root and publish `app/dist`.
-
-For deployment scope, local preview, release checklist, static hosting options, and GitHub Pages base-path notes, see [docs/09_DEPLOYMENT.md](docs/09_DEPLOYMENT.md).
-
-## Scenario Validation
-
-```bash
 npm.cmd --prefix app run validate:scenarios
 ```
 
-The validator checks the baseline demo scenarios and the Human review decision scenarios. Phase 6 currently expects `11/11 scenarios passed`.
+The scenario validator should end with:
 
-## Phase Summary
+```text
+Result: 11/11 scenarios passed
+```
 
-- Phase 0: React/Vite frontend skeleton and happy path
-- Phase 1: recommendation engine
-- Phase 2: governance, marketplace, execution, and task flow engines
-- Phase 3: lifecycle and audit trail
-- Phase 4: decision scenario coverage
-- Phase 5: Human review and override controls
-- Phase 6: scenario validation guardrails
-- Phase 7: product walkthrough polish
-- Phase 8: GitHub-ready README, live demo walkthrough, demo checklist, and compact dashboard walkthrough order
-- Phase 9: custom local tasks, persisted Human review decisions, Demo/Local labels, and reset local demo state
-- Phase 10: static deployment readiness and final submission packaging
-- Phase 11: frontend QA, accessibility polish, and submission-readiness notes
-- Phase 12: Founder Mode submission package and judge-facing explanation
-- Phase 13: first-60-seconds judge clarity and Founder Mode positioning polish
+Optional local static preview:
 
-## Local Demo Persistence
+```bash
+npm.cmd --prefix app run preview -- --host 127.0.0.1
+```
 
-Custom tasks and Human review decisions persist in browser `localStorage` only. They are local to the current browser and can be cleared with `Reset local demo state` on the Dashboard.
-
-The built-in demo scenarios are still fixed sample data, and `validate:scenarios` checks only those deterministic scenarios.
-
-## Important Demo Scenarios
+## Demo Scenarios
 
 | Task | Path | Governance | What it proves |
 |---|---|---|---|
-| `task_001` | Agent | Approved for launch | Clear, low-risk internal research can launch with a trusted Agent. |
-| `task_002` | Hybrid | Needs human review | Leadership-facing drafting can use an Agent draft while a Human stays in control. |
-| `task_003` | Human | Blocked | Sensitive external work is stopped by governance instead of launching unsafely. |
-| `task_004` | Human | Needs human review | High-judgment strategy work belongs with a Human owner. |
-| `task_005` | Hybrid | Needs human review | Policy review can use Agent help, but Human validation is required. |
+| `task_001` | Agent | Approved for launch | Clear internal research can use a trusted Agent. |
+| `task_002` | Hybrid | Needs human review | An Agent can draft while a Human controls launch. |
+| `task_003` | Human | Blocked | Sensitive external work is stopped by policy. |
+| `task_004` | Human | Needs human review | High-judgment strategy work stays Human-led. |
+| `task_005` | Hybrid | Needs human review | Policy review can use Agent help with Human validation. |
 
-## Demo Walkthrough
+Scenario examples:
 
-Use [docs/08_DEMO_WALKTHROUGH.md](docs/08_DEMO_WALKTHROUGH.md) for the live presentation script, click path, checklist, and talking points.
+- [examples/task_001_agent_path.md](examples/task_001_agent_path.md)
+- [examples/task_002_hybrid_review.md](examples/task_002_hybrid_review.md)
+- [examples/task_003_blocked_policy.md](examples/task_003_blocked_policy.md)
 
-## Hackathon Submission
-
-Use these docs for final submission prep:
-
-- [Demo walkthrough](docs/08_DEMO_WALKTHROUGH.md)
-- [Deployment and release checklist](docs/09_DEPLOYMENT.md)
-- [Frontend QA notes](docs/10_QA_NOTES.md)
-- [Submission package](docs/11_SUBMISSION_PACKAGE.md)
-
-## Useful Docs
+## Project Docs
 
 - [Product spec](docs/00_PRODUCT_SPEC.md)
 - [MVP build plan](docs/01_MVP_BUILD_PLAN.md)
 - [UI screen spec](docs/06_UI_SCREENS.md)
 - [Demo data guide](docs/07_DEMO_DATA.md)
-- [Phase 8 demo walkthrough](docs/08_DEMO_WALKTHROUGH.md)
-- [Deployment and release checklist](docs/09_DEPLOYMENT.md)
-- [Phase 11 QA notes](docs/10_QA_NOTES.md)
-- [Phase 12 submission package](docs/11_SUBMISSION_PACKAGE.md)
+- [Demo walkthrough](docs/08_DEMO_WALKTHROUGH.md)
+- [Deployment guide](docs/09_DEPLOYMENT.md)
+- [QA notes](docs/10_QA_NOTES.md)
+- [Submission package](docs/11_SUBMISSION_PACKAGE.md)
+- [Architecture](docs/12_ARCHITECTURE.md)
+- [Domain model](docs/13_DOMAIN_MODEL.md)
+- [Demo script](docs/14_DEMO_SCRIPT.md)
+
+## Production Roadmap
+
+Near-term production steps after the demo:
+
+1. Add a backend API for tasks, recommendations, approvals, execution records, and audit events.
+2. Add durable database storage so task history is shared across users and browsers.
+3. Add provider adapters for real agent/model execution behind server-side credentials.
+4. Add queue-based execution for long-running agent work.
+5. Add authentication and role-based approval permissions.
+6. Add organization-specific governance policy configuration.
+7. Add observability for recommendation decisions, provider runs, policy blocks, latency, failures, and audit integrity.
+8. Expand outcome analytics to compare recommended path, selected path, and final result quality.
+
+The product should keep the same core promise as it scales: trusted routing, explainable governance, controlled execution, and reviewable evidence.

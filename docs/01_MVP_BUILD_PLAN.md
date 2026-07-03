@@ -64,6 +64,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 14: User-flow realism and empty states
 ### Phase 15: Controlled Agent Runner
 ### Phase 16: Agent Output Review and Final Decision Gate
+### Phase 17: Repository and architecture professionalization
 
 ---
 
@@ -875,6 +876,50 @@ Also create:
 
 ```bash
 phase16_codex.diff
+```
+
+---
+
+## Phase 17: Repository and architecture professionalization
+
+### Goal
+
+Make the GitHub repository read like a serious Founder Mode startup MVP while
+preserving the existing frontend behavior.
+
+This phase is documentation-only. It does not add backend infrastructure,
+authentication, databases, APIs, dependencies, live model calls, or new product
+features.
+
+### Expected output
+
+By the end of this phase, the repo should provide:
+
+- a polished root `README.md` with Founder Mode framing, problem, solution,
+  architecture diagram, MVP boundary, setup, validation, and production roadmap
+- `docs/12_ARCHITECTURE.md` explaining the current frontend-only architecture
+  and where production backend pieces would fit later
+- `docs/13_DOMAIN_MODEL.md` documenting the implemented domain objects
+- `docs/14_DEMO_SCRIPT.md` with 2-minute and 5-minute demo scripts plus judge
+  Q&A
+- example scenario files in `examples/`
+- aligned submission-package links
+- unchanged build and scenario validation behavior
+
+### Phase 17 commands
+
+Run these before handing the phase back:
+
+```bash
+git status --short
+npm.cmd --prefix app run build
+npm.cmd --prefix app run validate:scenarios
+```
+
+Also create:
+
+```bash
+phase17_codex.diff
 ```
 
 ---
