@@ -53,6 +53,14 @@ If you are not on Windows, use `npm` instead of `npm.cmd`.
 npm.cmd --prefix app run build
 ```
 
+The static build output is created in `app/dist`.
+
+## Deployment
+
+This app can be deployed as a static frontend. Build from the repo root and publish `app/dist`.
+
+For deployment scope, local preview, release checklist, static hosting options, and GitHub Pages base-path notes, see [docs/09_DEPLOYMENT.md](docs/09_DEPLOYMENT.md).
+
 ## Scenario Validation
 
 ```bash
@@ -73,6 +81,7 @@ The validator checks the baseline demo scenarios and the Human review decision s
 - Phase 7: product walkthrough polish
 - Phase 8: GitHub-ready README, live demo walkthrough, demo checklist, and compact dashboard walkthrough order
 - Phase 9: custom local tasks, persisted Human review decisions, Demo/Local labels, and reset local demo state
+- Phase 10: static deployment readiness and final submission packaging
 
 ## Local Demo Persistence
 
@@ -101,3 +110,4 @@ Use [docs/08_DEMO_WALKTHROUGH.md](docs/08_DEMO_WALKTHROUGH.md) for the live pres
 - [UI screen spec](docs/06_UI_SCREENS.md)
 - [Demo data guide](docs/07_DEMO_DATA.md)
 - [Phase 8 demo walkthrough](docs/08_DEMO_WALKTHROUGH.md)
+- [Deployment and release checklist](docs/09_DEPLOYMENT.md)

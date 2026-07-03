@@ -57,6 +57,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 7: Product walkthrough polish
 ### Phase 8: Demo readiness and GitHub walkthrough
 ### Phase 9: Custom task realism and local session persistence
+### Phase 10: Static deployment and final submission packaging
 
 ---
 
@@ -620,6 +621,43 @@ By the end of this phase, the app should provide:
 
 `localStorage` is only a prototype convenience. It is not a backend, database,
 auth layer, API, or source of truth for the deterministic scenario validator.
+
+---
+
+## Phase 10: Static deployment and final submission packaging
+
+### Goal
+
+Prepare the frontend-only MVP demo for static hosting and final submission.
+
+This phase does not change recommendation, governance, execution, scenario, or
+localStorage behavior.
+
+### Expected output
+
+By the end of this phase, the repo should provide:
+
+- Vite static build readiness for `app/dist`
+- deployment guidance in `docs/09_DEPLOYMENT.md`
+- a release checklist for final submission
+- root README deployment guidance that links to the deployment doc
+- unchanged build and scenario validation behavior
+
+### Phase 10 commands
+
+Run these before deployment or final submission:
+
+```bash
+npm.cmd --prefix app run build
+npm.cmd --prefix app run validate:scenarios
+npm.cmd --prefix app run preview -- --host 127.0.0.1
+```
+
+### Important boundary
+
+Static deployment serves the frontend only. It does not add a backend, auth,
+database, APIs, real agents, or durable shared storage. Custom local tasks and
+Human review decisions still persist only in each browser's `localStorage`.
 
 ---
 
