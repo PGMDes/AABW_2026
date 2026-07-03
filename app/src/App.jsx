@@ -3,11 +3,14 @@ import { AppShell } from "./components/AppShell"
 import { tasks as demoTasks } from "./data"
 import {
   clearStoredLocalSession,
+  getStoredAgentRunResults,
   getStoredCustomTasks,
   getStoredHumanReviewDecisions,
+  saveStoredAgentRunResults,
   saveStoredCustomTasks,
   saveStoredHumanReviewDecisions,
 } from "./logic/localSessionStore"
+import { createDemoAgentRun } from "./logic/agentRunner"
 import { buildTaskFlow } from "./logic/taskFlowEngine"
 import { DashboardPage } from "./pages/DashboardPage"
 import { NewTaskPage } from "./pages/NewTaskPage"
@@ -22,6 +25,9 @@ function App() {
   const [customTasks, setCustomTasks] = useState(() => getStoredCustomTasks())
   const [humanReviewDecisions, setHumanReviewDecisions] = useState(() =>
     getStoredHumanReviewDecisions(),
+  )
+  const [agentRunResults, setAgentRunResults] = useState(() =>
+    getStoredAgentRunResults(),
   )
 
   const demoTasksWithSource = demoTasks.map((task) => ({
@@ -86,12 +92,41 @@ function App() {
 
       return nextDecisions
     })
+
+    setAgentRunResults((currentResults) => {
+      const nextResults = { ...currentResults }
+      delete nextResults[taskId]
+
+      saveStoredAgentRunResults(nextResults)
+
+      return nextResults
+    })
+  }
+
+  function handleRunDemoAgent(flowResult) {
+    const agentRun = createDemoAgentRun(flowResult)
+
+    if (!agentRun) {
+      return
+    }
+
+    setAgentRunResults((currentResults) => {
+      const nextResults = {
+        ...currentResults,
+        [agentRun.taskId]: agentRun,
+      }
+
+      saveStoredAgentRunResults(nextResults)
+
+      return nextResults
+    })
   }
 
   function handleResetLocalState() {
     clearStoredLocalSession()
     setCustomTasks([])
     setHumanReviewDecisions({})
+    setAgentRunResults({})
     setSelectedTaskId(null)
     setAnalyzedTaskId(null)
     setCurrentPage("dashboard")
@@ -105,6 +140,9 @@ function App() {
   const detailTask = getTaskById(detailTaskId)
   const detailFlowResult = detailTask
     ? buildTaskFlow(detailTask, humanReviewDecisions[detailTask.id])
+    : null
+  const detailAgentRun = detailTask
+    ? agentRunResults[detailTask.id] || null
     : null
 
   let page
@@ -124,15 +162,18 @@ function App() {
   } else if (currentPage === "detail") {
     page = (
       <TaskDetailPage
+        agentRun={detailAgentRun}
         flowResult={detailFlowResult}
         onNavigate={navigate}
         onHumanReviewDecision={handleHumanReviewDecision}
+        onRunAgent={handleRunDemoAgent}
       />
     )
   } else {
     page = (
       <DashboardPage
         customTaskCount={customTasks.length}
+        agentRunCount={Object.keys(agentRunResults).length}
         humanReviewDecisions={humanReviewDecisions}
         onNavigate={navigate}
         onResetLocalState={handleResetLocalState}

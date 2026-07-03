@@ -69,6 +69,7 @@ The build process also followed a Founder Mode pattern: use agentic development 
 7. The marketplace logic selects an eligible execution option when one is allowed.
 8. Human review controls let a reviewer approve, switch to a safer Human-led path, or confirm a policy block.
 9. Task Detail shows the final recommendation, governance result, selected option, lifecycle, outcome, and audit trail.
+10. The Agent Runner can generate deterministic local demo output only when governance and Human review allow Agent execution.
 
 Direct navigation to Recommendation or Task Detail does not preload a hidden
 demo task. Those screens show empty states until the user analyzes a task or
@@ -82,9 +83,10 @@ opens one from Dashboard.
 - Governance status for Approved for launch, Needs human review, and Blocked paths
 - Curated marketplace-style execution option selection
 - Human review and override controls
+- Controlled local Agent Runner with deterministic draft output
 - Lifecycle and audit trail for each task
 - Built-in deterministic demo scenarios
-- Browser-local custom tasks and Human review decisions through `localStorage`
+- Browser-local custom tasks, Human review decisions, and Agent run outputs through `localStorage`
 - Lightweight scenario validation command with `11/11` expected checks
 - Static deployment readiness through Vite build output in `app/dist`
 
@@ -99,11 +101,11 @@ Recommended judge flow:
 2. Open New Task.
    Show the scenario picker and explain that each scenario uses the same frontend decision flow.
 3. Run `task_001`.
-   This demonstrates an Agent path that is Approved for launch with the Research Analyst Agent.
+   This demonstrates an Agent path that is Approved for launch with the Research Analyst Agent. In Task Detail, use `Run demo agent` to show controlled local draft output.
 4. Run `task_002`.
-   This demonstrates a Hybrid path where an Agent can draft but Human review is required before launch.
+   This demonstrates a Hybrid path where an Agent can draft but Human review is required before launch. The Agent Runner stays paused until the recommended option is approved.
 5. Run `task_003`.
-   This demonstrates a Blocked path where governance prevents unsafe launch.
+   This demonstrates a Blocked path where governance prevents unsafe launch and no Agent run button is exposed.
 6. Open Task Detail.
    Show recommendation, governance, Human review, lifecycle, outcome, and audit trail.
 7. Optional: create a custom local task.
@@ -118,9 +120,10 @@ Human-AgentOS is not just a static task list. It models the operating layer arou
 - It applies governance before work launches.
 - It selects eligible Agent or Human execution options from curated sample capability profiles.
 - It supports Human review when policy says a person must stay in control.
+- It includes a controlled local Agent Runner that only produces output after the route is allowed.
 - It records lifecycle and audit information so agentic decisions can be reviewed later.
 
-Important boundary: the current app demonstrates an agentic workflow control plane, not production agent execution. It does not connect to real external agents or run real agent APIs yet.
+Important boundary: the current app demonstrates an agentic workflow control plane with a deterministic local demo runner, not production agent execution. It does not connect to real external agents or run real agent APIs yet.
 
 ## Models and tools used
 
@@ -136,7 +139,7 @@ Inside the app itself:
 
 - No real external Agent execution API is connected yet.
 - No OpenAI API key or other model API key is used by the frontend.
-- The app uses deterministic local JavaScript logic to simulate recommendation, governance, marketplace selection, lifecycle, and audit behavior.
+- The app uses deterministic local JavaScript logic to simulate recommendation, governance, marketplace selection, controlled Agent output, lifecycle, and audit behavior.
 - The app demonstrates how an organization could control agentic work before connecting real execution systems.
 - This means the AI usage is in the build workflow and product concept, while the submitted app itself stays frontend-only and deterministic.
 
@@ -150,7 +153,7 @@ If the submission form requires exact model names, use:
 - Vite
 - Tailwind CSS
 - Plain JavaScript data and logic modules
-- Browser `localStorage` for local custom tasks and Human review decisions
+- Browser `localStorage` for local custom tasks, Human review decisions, and Agent run outputs
 - Node-based scenario validation script
 - Static frontend build output in `app/dist`
 
@@ -176,9 +179,9 @@ Result: 11/11 scenarios passed
 - No authentication
 - No database
 - No APIs
-- No real external agent execution
+- No real external agent execution; Agent Runner output is deterministic local demo output
 - No durable shared storage
-- Custom tasks and Human review decisions persist only in each browser through `localStorage`
+- Custom tasks, Human review decisions, and Agent run outputs persist only in each browser through `localStorage`
 - Built-in demo scenarios are deterministic sample data
 - Source code, live demo, and demo video URLs still need final links
 
@@ -187,6 +190,7 @@ Result: 11/11 scenarios passed
 Possible next steps after the hackathon demo:
 
 - Connect real agent execution providers behind the curated marketplace layer
+- Add a secure backend/provider adapter for live model calls instead of putting API keys in the frontend
 - Add backend storage for shared tasks, approvals, lifecycle events, and audit trails
 - Add user accounts and role-based approval flows
 - Expand governance rules into an editable policy configuration surface

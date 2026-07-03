@@ -1,3 +1,4 @@
+import { AgentRunnerPanel } from "../components/AgentRunnerPanel"
 import { GovernanceStatusCard } from "../components/GovernanceStatusCard"
 import { PageHeader } from "../components/PageHeader"
 import { PrimaryButton } from "../components/PrimaryButton"
@@ -5,6 +6,11 @@ import { SectionCard } from "../components/SectionCard"
 import { formatLabel } from "../components/formatLabel"
 import { StatusBadge } from "../components/StatusBadge"
 import { TaskSummaryCard } from "../components/TaskSummaryCard"
+import {
+  buildAuditTrailWithAgentRun,
+  buildLifecycleWithAgentRun,
+  getAgentRunnerState,
+} from "../logic/agentRunner"
 
 function LifecycleStepList({ lifecycle }) {
   return (
@@ -202,9 +208,11 @@ function getExecutionHint(execution) {
 }
 
 export function TaskDetailPage({
+  agentRun,
   flowResult,
   onNavigate,
   onHumanReviewDecision,
+  onRunAgent,
 }) {
   if (!flowResult) {
     return (
@@ -253,6 +261,19 @@ export function TaskDetailPage({
     lifecycle,
     auditTrail,
   } = flowResult
+  const agentRunForCurrentFlow =
+    agentRun &&
+    getAgentRunnerState(flowResult, agentRun).status === "agent_output_ready"
+      ? agentRun
+      : null
+  const visibleLifecycle = buildLifecycleWithAgentRun(
+    lifecycle,
+    agentRunForCurrentFlow,
+  )
+  const visibleAuditTrail = buildAuditTrailWithAgentRun(
+    auditTrail,
+    agentRunForCurrentFlow,
+  )
 
   return (
     <>
@@ -358,11 +379,17 @@ export function TaskDetailPage({
           onHumanReviewDecision={onHumanReviewDecision}
         />
 
+        <AgentRunnerPanel
+          agentRun={agentRun}
+          flowResult={flowResult}
+          onRunAgent={onRunAgent}
+        />
+
         <SectionCard
           title="Execution lifecycle"
           description="Step-by-step state showing whether the task launched, paused for review, or stopped by policy."
         >
-          <LifecycleStepList lifecycle={lifecycle} />
+          <LifecycleStepList lifecycle={visibleLifecycle} />
         </SectionCard>
 
         <div className="grid gap-6 lg:grid-cols-2">
@@ -506,7 +533,7 @@ export function TaskDetailPage({
           title="Audit trail"
           description="Evidence record showing what the system or Human reviewer did, and why the task is in its current state."
         >
-          <AuditTrailList auditTrail={auditTrail} />
+          <AuditTrailList auditTrail={visibleAuditTrail} />
         </SectionCard>
       </div>
     </>

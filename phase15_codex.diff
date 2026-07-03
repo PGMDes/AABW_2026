@@ -1,0 +1,1093 @@
+diff --git a/app/src/App.jsx b/app/src/App.jsx
+index e28f4e0..9145d0a 100644
+--- a/app/src/App.jsx
++++ b/app/src/App.jsx
+@@ -3,11 +3,14 @@ import { AppShell } from "./components/AppShell"
+ import { tasks as demoTasks } from "./data"
+ import {
+   clearStoredLocalSession,
++  getStoredAgentRunResults,
+   getStoredCustomTasks,
+   getStoredHumanReviewDecisions,
++  saveStoredAgentRunResults,
+   saveStoredCustomTasks,
+   saveStoredHumanReviewDecisions,
+ } from "./logic/localSessionStore"
++import { createDemoAgentRun } from "./logic/agentRunner"
+ import { buildTaskFlow } from "./logic/taskFlowEngine"
+ import { DashboardPage } from "./pages/DashboardPage"
+ import { NewTaskPage } from "./pages/NewTaskPage"
+@@ -23,6 +26,9 @@ function App() {
+   const [humanReviewDecisions, setHumanReviewDecisions] = useState(() =>
+     getStoredHumanReviewDecisions(),
+   )
++  const [agentRunResults, setAgentRunResults] = useState(() =>
++    getStoredAgentRunResults(),
++  )
+ 
+   const demoTasksWithSource = demoTasks.map((task) => ({
+     ...task,
+@@ -86,12 +92,41 @@ function App() {
+ 
+       return nextDecisions
+     })
++
++    setAgentRunResults((currentResults) => {
++      const nextResults = { ...currentResults }
++      delete nextResults[taskId]
++
++      saveStoredAgentRunResults(nextResults)
++
++      return nextResults
++    })
++  }
++
++  function handleRunDemoAgent(flowResult) {
++    const agentRun = createDemoAgentRun(flowResult)
++
++    if (!agentRun) {
++      return
++    }
++
++    setAgentRunResults((currentResults) => {
++      const nextResults = {
++        ...currentResults,
++        [agentRun.taskId]: agentRun,
++      }
++
++      saveStoredAgentRunResults(nextResults)
++
++      return nextResults
++    })
+   }
+ 
+   function handleResetLocalState() {
+     clearStoredLocalSession()
+     setCustomTasks([])
+     setHumanReviewDecisions({})
++    setAgentRunResults({})
+     setSelectedTaskId(null)
+     setAnalyzedTaskId(null)
+     setCurrentPage("dashboard")
+@@ -106,6 +141,9 @@ function App() {
+   const detailFlowResult = detailTask
+     ? buildTaskFlow(detailTask, humanReviewDecisions[detailTask.id])
+     : null
++  const detailAgentRun = detailTask
++    ? agentRunResults[detailTask.id] || null
++    : null
+ 
+   let page
+ 
+@@ -124,15 +162,18 @@ function App() {
+   } else if (currentPage === "detail") {
+     page = (
+       <TaskDetailPage
++        agentRun={detailAgentRun}
+         flowResult={detailFlowResult}
+         onNavigate={navigate}
+         onHumanReviewDecision={handleHumanReviewDecision}
++        onRunAgent={handleRunDemoAgent}
+       />
+     )
+   } else {
+     page = (
+       <DashboardPage
+         customTaskCount={customTasks.length}
++        agentRunCount={Object.keys(agentRunResults).length}
+         humanReviewDecisions={humanReviewDecisions}
+         onNavigate={navigate}
+         onResetLocalState={handleResetLocalState}
+diff --git a/app/src/components/AgentRunnerPanel.jsx b/app/src/components/AgentRunnerPanel.jsx
+new file mode 100644
+index 0000000..2333972
+--- /dev/null
++++ b/app/src/components/AgentRunnerPanel.jsx
+@@ -0,0 +1,151 @@
++import { getAgentRunnerState } from "../logic/agentRunner"
++import { formatLabel } from "./formatLabel"
++import { PrimaryButton } from "./PrimaryButton"
++import { SectionCard } from "./SectionCard"
++import { StatusBadge } from "./StatusBadge"
++
++function DetailList({ title, items }) {
++  if (!items.length) {
++    return null
++  }
++
++  return (
++    <div>
++      <h4 className="text-sm font-semibold text-slate-950">{title}</h4>
++      <ul className="mt-2 space-y-2 text-sm leading-6 text-slate-700">
++        {items.map((item) => (
++          <li key={item} className="rounded-md bg-slate-50 px-3 py-2">
++            {item}
++          </li>
++        ))}
++      </ul>
++    </div>
++  )
++}
++
++function AgentRunSteps({ steps }) {
++  return (
++    <ol className="grid gap-3 lg:grid-cols-3">
++      {steps.map((step) => (
++        <li
++          key={step.id}
++          className="rounded-md border border-slate-200 bg-white p-4"
++        >
++          <div className="mb-2 flex flex-wrap items-center gap-2">
++            <h4 className="text-sm font-semibold text-slate-950">
++              {step.label}
++            </h4>
++            <StatusBadge value={step.status} />
++          </div>
++          <p className="text-sm leading-6 text-slate-600">{step.detail}</p>
++        </li>
++      ))}
++    </ol>
++  )
++}
++
++function AgentOutput({ agentRun }) {
++  return (
++    <div className="space-y-5 rounded-md border border-cyan-200 bg-cyan-50 p-4">
++      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
++        <div>
++          <p className="text-sm font-semibold text-cyan-950">Agent output</p>
++          <h3 className="mt-1 text-lg font-semibold text-slate-950">
++            {agentRun.output.title}
++          </h3>
++        </div>
++        <div className="flex flex-wrap gap-2">
++          <StatusBadge value="local_deterministic" />
++          <StatusBadge
++            value="agent_output_ready"
++            label={`${agentRun.confidence}% confidence`}
++          />
++        </div>
++      </div>
++
++      <dl className="grid gap-3 text-sm sm:grid-cols-2">
++        <div className="rounded-md bg-white p-3">
++          <dt className="font-medium text-slate-500">Run ID</dt>
++          <dd className="mt-1 break-words text-slate-900">{agentRun.id}</dd>
++        </div>
++        <div className="rounded-md bg-white p-3">
++          <dt className="font-medium text-slate-500">Generated at</dt>
++          <dd className="mt-1 text-slate-900">{agentRun.generatedAt}</dd>
++        </div>
++      </dl>
++
++      <AgentRunSteps steps={agentRun.steps} />
++
++      <div>
++        <h4 className="text-sm font-semibold text-slate-950">
++          Generated draft
++        </h4>
++        <pre className="mt-2 whitespace-pre-wrap rounded-md bg-white p-4 text-sm leading-6 text-slate-700">
++          {agentRun.output.draft}
++        </pre>
++      </div>
++
++      <div className="grid gap-4 lg:grid-cols-2">
++        <DetailList title="Assumptions" items={agentRun.output.assumptions} />
++        <DetailList
++          title="Risks / Human review checklist"
++          items={[...agentRun.output.risks, ...agentRun.output.reviewChecklist]}
++        />
++      </div>
++
++      <DetailList title="Limitations" items={agentRun.output.limitations} />
++    </div>
++  )
++}
++
++export function AgentRunnerPanel({ flowResult, agentRun, onRunAgent }) {
++  const { selectedOption, execution, governance } = flowResult
++  const runnerState = getAgentRunnerState(flowResult, agentRun)
++
++  return (
++    <SectionCard
++      title="Agent Runner"
++      description="Controlled execution surface for safe agentic work. The default run is deterministic local demo output, not a live model API call."
++    >
++      <div className="space-y-5">
++        <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
++          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
++            <div>
++              <div className="mb-2 flex flex-wrap items-center gap-2">
++                <StatusBadge value={runnerState.status} />
++                <StatusBadge value={execution.launchStatus} />
++                {selectedOption ? (
++                  <StatusBadge
++                    value={selectedOption.pathType}
++                    label={`Selected: ${formatLabel(selectedOption.pathType)}`}
++                  />
++                ) : null}
++              </div>
++              <h3 className="text-lg font-semibold text-slate-950">
++                {runnerState.title}
++              </h3>
++              <p className="mt-2 text-sm leading-6 text-slate-600">
++                {runnerState.message}
++              </p>
++              {runnerState.status === "blocked" ? (
++                <p className="mt-2 text-sm font-medium text-rose-700">
++                  {governance.policyReason}
++                </p>
++              ) : null}
++            </div>
++
++            {runnerState.canRun ? (
++              <PrimaryButton onClick={() => onRunAgent(flowResult)}>
++                {agentRun ? "Regenerate demo output" : "Run demo agent"}
++              </PrimaryButton>
++            ) : null}
++          </div>
++        </div>
++
++        {agentRun && runnerState.status === "agent_output_ready" ? (
++          <AgentOutput agentRun={agentRun} />
++        ) : null}
++      </div>
++    </SectionCard>
++  )
++}
+diff --git a/app/src/components/StatusBadge.jsx b/app/src/components/StatusBadge.jsx
+index a276325..86749b0 100644
+--- a/app/src/components/StatusBadge.jsx
++++ b/app/src/components/StatusBadge.jsx
+@@ -27,6 +27,11 @@ const badgeStyles = {
+   demo: "bg-slate-100 text-slate-700 ring-slate-200",
+   local: "bg-cyan-50 text-cyan-700 ring-cyan-200",
+   submitted: "bg-blue-50 text-blue-700 ring-blue-200",
++  waiting_on_review: "bg-amber-50 text-amber-700 ring-amber-200",
++  human_led: "bg-amber-50 text-amber-700 ring-amber-200",
++  not_available: "bg-slate-100 text-slate-600 ring-slate-200",
++  agent_output_ready: "bg-cyan-50 text-cyan-700 ring-cyan-200",
++  local_deterministic: "bg-slate-100 text-slate-700 ring-slate-200",
+ }
+ 
+ import { formatLabel } from "./formatLabel"
+diff --git a/app/src/components/formatLabel.js b/app/src/components/formatLabel.js
+index 28861d9..8a935d0 100644
+--- a/app/src/components/formatLabel.js
++++ b/app/src/components/formatLabel.js
+@@ -20,6 +20,11 @@ export function formatLabel(value) {
+     ready_to_launch: "Ready to launch",
+     low_medium: "Low to medium",
+     medium_high: "Medium to high",
++    waiting_on_review: "Waiting for review",
++    human_led: "Human-led",
++    not_available: "Not available",
++    agent_output_ready: "Agent output ready",
++    local_deterministic: "Local demo mode",
+   }
+ 
+   if (labelOverrides[value]) {
+diff --git a/app/src/logic/agentRunner.js b/app/src/logic/agentRunner.js
+new file mode 100644
+index 0000000..9ca62ea
+--- /dev/null
++++ b/app/src/logic/agentRunner.js
+@@ -0,0 +1,305 @@
++const RUN_TIMESTAMP = "2026-07-03T11:15:00Z"
++
++function formatValue(value) {
++  if (!value) return "not set"
++
++  return String(value).replaceAll("_", " ")
++}
++
++function getRunnerAgentName(selectedOption) {
++  if (!selectedOption) return "Demo Agent"
++
++  return selectedOption.displayName.replace(" + Human Reviewer", "")
++}
++
++function buildRunId(task, selectedOption) {
++  const optionPart = selectedOption?.sourceId || selectedOption?.id || "option"
++
++  return `agent_run_${task.id}_${optionPart}_v1`
++}
++
++function buildStep(id, label, detail) {
++  return {
++    id,
++    label,
++    detail,
++    status: "completed",
++  }
++}
++
++function buildDraft({ task, analysis, selectedOption }) {
++  const agentName = getRunnerAgentName(selectedOption)
++
++  if (analysis.taskType === "research_brief") {
++    return [
++      `Draft from ${agentName}`,
++      "",
++      `Topic: ${task.title}`,
++      "",
++      "1. Market frame",
++      "AI competitors should be grouped by workflow depth, data access, and buyer trust. The strongest near-term threat is not only model quality; it is how quickly each competitor can become part of a team's daily operating system.",
++      "",
++      "2. Competitive signals to verify",
++      "- Which competitors already own the workflow where the buyer starts the task.",
++      "- Which products can show clear governance, auditability, and human approval controls.",
++      "- Which competitors are positioned as safe adoption layers instead of isolated agent tools.",
++      "",
++      "3. Initial recommendation",
++      "Prioritize the competitors that combine useful automation with visible control. The strongest positioning for Human-AgentOS is the governance and routing layer that helps leaders decide when Agent, Human, or Hybrid execution is appropriate.",
++    ].join("\n")
++  }
++
++  if (analysis.taskType === "memo_or_strategy") {
++    return [
++      `Draft from ${agentName}`,
++      "",
++      `Memo topic: ${task.title}`,
++      "",
++      "Executive summary",
++      "The organization should scale AI adoption through controlled workflows, not isolated experiments. The immediate opportunity is faster knowledge work, but the risk is inconsistent routing, weak approval discipline, and unclear accountability.",
++      "",
++      "Recommended stance",
++      "Use Hybrid execution for leadership-facing work: let an Agent create the first structured draft, then require a Human reviewer to validate assumptions, tone, business risk, and final recommendations before launch.",
++      "",
++      "Decision points for Human review",
++      "- Confirm whether the recommendation is politically and operationally realistic.",
++      "- Check that sensitive assumptions are not overstated.",
++      "- Decide whether the memo is ready for leadership distribution.",
++    ].join("\n")
++  }
++
++  if (analysis.taskType === "document_review") {
++    return [
++      `Draft from ${agentName}`,
++      "",
++      `Review target: ${task.title}`,
++      "",
++      "Initial gap review",
++      "The policy should be checked for clear ownership, allowed data categories, required Human approval points, and escalation rules when an Agent cannot safely complete the work.",
++      "",
++      "Likely gaps",
++      "- Approval rules may be implied but not tied to specific task risk levels.",
++      "- Agent outputs may not have a required acceptance or rejection step.",
++      "- Audit trail expectations may not say who records the final decision.",
++      "",
++      "Recommended next pass",
++      "Have the policy owner validate each gap, then convert confirmed gaps into plain-language controls that can be enforced before Agent launch.",
++    ].join("\n")
++  }
++
++  return [
++    `Draft from ${agentName}`,
++    "",
++    `Task: ${task.title}`,
++    "",
++    "Controlled demo output",
++    "The demo runner created a structured first pass from the task description, recommendation, governance result, and selected execution option.",
++    "",
++    "Recommended next pass",
++    "A Human reviewer should verify facts, business context, sensitive details, and whether the output is ready to use.",
++  ].join("\n")
++}
++
++function buildAssumptions({ task, analysis }) {
++  return [
++    `The task is treated as ${formatValue(analysis.taskType)} work.`,
++    `The intended audience is ${formatValue(task.audience)}.`,
++    `The expected output is ${task.expectedOutput || "a concise work product"}.`,
++  ]
++}
++
++function buildRisks({ analysis, selectedOption }) {
++  const risks = [
++    "Verify facts and source quality before using the draft outside the demo.",
++    "Confirm the output matches the requested audience, tone, and business context.",
++  ]
++
++  if (analysis.requiredJudgment === "high") {
++    risks.push("High-judgment claims need Human validation before launch.")
++  }
++
++  if (selectedOption?.pathType === "hybrid") {
++    risks.push("Hybrid execution requires the Human reviewer to approve final use.")
++  }
++
++  return risks
++}
++
++function buildReviewChecklist({ governance, selectedOption }) {
++  const checklist = [
++    "Check whether the draft answers the original task.",
++    "Review sensitive or leadership-facing claims before sharing.",
++    "Record whether the output should be accepted, edited, or rerouted.",
++  ]
++
++  if (governance.approvalRequired) {
++    checklist.push("Confirm the Human approval decision is recorded before use.")
++  }
++
++  if (selectedOption?.whyLimited?.length) {
++    checklist.push("Review the selected option limitations before accepting output.")
++  }
++
++  return checklist
++}
++
++export function getAgentRunnerState(flowResult, agentRun) {
++  const { governance, selectedOption, execution, humanReview } = flowResult
++
++  if (
++    governance.status === "blocked" ||
++    humanReview?.decision?.decisionStatus === "blocked" ||
++    execution.launchStatus === "blocked"
++  ) {
++    return {
++      status: "blocked",
++      canRun: false,
++      title: "Policy blocked",
++      message:
++        "Governance blocks launch for this task, so no demo agent can run.",
++    }
++  }
++
++  if (execution.launchStatus === "pending_approval") {
++    return {
++      status: "waiting_on_review",
++      canRun: false,
++      title: "Waiting for Human review",
++      message:
++        "The Agent runner is paused until a Human reviewer approves the recommended option.",
++    }
++  }
++
++  if (!selectedOption) {
++    return {
++      status: "not_available",
++      canRun: false,
++      title: "No execution option selected",
++      message:
++        "The demo runner needs an eligible selected option before it can create output.",
++    }
++  }
++
++  if (selectedOption.sourceType !== "agent") {
++    return {
++      status: "human_led",
++      canRun: false,
++      title: "Human-led execution",
++      message:
++        "This task is routed to a Human-led option, so no demo agent run is started.",
++    }
++  }
++
++  if (execution.launchStatus !== "launched") {
++    return {
++      status: "not_launched",
++      canRun: false,
++      title: "Not launched",
++      message:
++        "The selected Agent option has not launched yet, so output is not available.",
++    }
++  }
++
++  if (agentRun) {
++    return {
++      status: "agent_output_ready",
++      canRun: true,
++      title: "Agent output ready",
++      message:
++        "A deterministic local demo run is saved for this task in this browser.",
++    }
++  }
++
++  return {
++    status: "ready_to_launch",
++    canRun: true,
++    title: "Ready to run demo agent",
++    message:
++      "Run a deterministic local agent simulation that creates a draft deliverable without calling an external API.",
++  }
++}
++
++export function createDemoAgentRun(flowResult) {
++  const state = getAgentRunnerState(flowResult, null)
++
++  if (!state.canRun) {
++    return null
++  }
++
++  const { task, analysis, governance, selectedOption, execution } = flowResult
++  const runnerName = getRunnerAgentName(selectedOption)
++
++  return {
++    id: buildRunId(task, selectedOption),
++    taskId: task.id,
++    executionId: execution.id,
++    optionId: selectedOption.id,
++    runnerName,
++    runMode: "local_deterministic",
++    status: "completed",
++    generatedAt: RUN_TIMESTAMP,
++    confidence: Math.max(70, Math.min(96, selectedOption.fitScore - 4)),
++    steps: [
++      buildStep(
++        "read_task_context",
++        "Read task context",
++        `Reviewed the task request, expected output, and ${formatValue(analysis.taskType)} classification.`,
++      ),
++      buildStep(
++        "apply_governance_context",
++        "Applied governance context",
++        `Checked that current launch status is ${formatValue(execution.launchStatus)} before generating output.`,
++      ),
++      buildStep(
++        "draft_deliverable",
++        "Drafted deliverable",
++        `Generated a first-pass ${formatValue(analysis.taskType)} output for Human review.`,
++      ),
++    ],
++    output: {
++      title: `${task.expectedOutput || "Draft output"} - demo agent draft`,
++      draft: buildDraft({ task, analysis, selectedOption }),
++      assumptions: buildAssumptions({ task, analysis }),
++      risks: buildRisks({ analysis, selectedOption }),
++      reviewChecklist: buildReviewChecklist({ governance, selectedOption }),
++      limitations: [
++        "This is deterministic local demo output, not a live external model response.",
++        "A Human reviewer should verify facts, tone, and sensitive details before use.",
++      ],
++    },
++  }
++}
++
++export function buildLifecycleWithAgentRun(lifecycle, agentRun) {
++  if (!agentRun) return lifecycle
++
++  return {
++    ...lifecycle,
++    currentStage: "agent_output_ready",
++    steps: [
++      ...lifecycle.steps,
++      {
++        id: "agent_runner",
++        label: "Agent runner",
++        description: `${agentRun.runnerName} generated a controlled local draft output for Human review.`,
++        status: "agent_output_ready",
++      },
++    ],
++  }
++}
++
++export function buildAuditTrailWithAgentRun(auditTrail, agentRun) {
++  if (!agentRun) return auditTrail
++
++  return [
++    ...auditTrail,
++    {
++      id: `${agentRun.taskId}_audit_011_agent_runner_completed`,
++      label: "Demo agent run completed",
++      description: `${agentRun.runnerName} generated local demo output ${agentRun.id}.`,
++      actorType: "agent",
++      relativeTimestamp: "T+25m",
++      status: "completed",
++    },
++  ]
++}
+diff --git a/app/src/logic/localSessionStore.js b/app/src/logic/localSessionStore.js
+index e80d638..9139b2b 100644
+--- a/app/src/logic/localSessionStore.js
++++ b/app/src/logic/localSessionStore.js
+@@ -1,5 +1,6 @@
+ const CUSTOM_TASKS_KEY = "humanAgentOS.customTasks"
+ const HUMAN_REVIEW_DECISIONS_KEY = "humanAgentOS.humanReviewDecisions"
++const AGENT_RUN_RESULTS_KEY = "humanAgentOS.agentRunResults"
+ 
+ function getLocalStorage() {
+   if (typeof window === "undefined") {
+@@ -112,6 +113,80 @@ function normalizeHumanReviewDecisions(value) {
+   )
+ }
+ 
++function normalizeTextList(value) {
++  if (!Array.isArray(value)) {
++    return []
++  }
++
++  return value.map((item) => normalizeText(item)).filter(Boolean)
++}
++
++function normalizeAgentRunSteps(value) {
++  if (!Array.isArray(value)) {
++    return []
++  }
++
++  return value
++    .filter(isObject)
++    .map((step) => ({
++      id: normalizeText(step.id),
++      label: normalizeText(step.label),
++      detail: normalizeText(step.detail),
++      status: normalizeText(step.status, "completed"),
++    }))
++    .filter((step) => step.id && step.label)
++}
++
++function normalizeAgentRunResult(value, fallbackTaskId = "") {
++  if (!isObject(value)) {
++    return null
++  }
++
++  const output = isObject(value.output) ? value.output : {}
++  const taskId = normalizeText(value.taskId, fallbackTaskId)
++  const id = normalizeText(value.id)
++
++  if (!id || !taskId) {
++    return null
++  }
++
++  return {
++    id,
++    taskId,
++    executionId: normalizeText(value.executionId),
++    optionId: normalizeText(value.optionId),
++    runnerName: normalizeText(value.runnerName, "Demo Agent"),
++    runMode: normalizeText(value.runMode, "local_deterministic"),
++    status: normalizeText(value.status, "completed"),
++    generatedAt: normalizeText(value.generatedAt),
++    confidence: Number(value.confidence) || 0,
++    steps: normalizeAgentRunSteps(value.steps),
++    output: {
++      title: normalizeText(output.title, "Agent output"),
++      draft: normalizeText(output.draft),
++      assumptions: normalizeTextList(output.assumptions),
++      risks: normalizeTextList(output.risks),
++      reviewChecklist: normalizeTextList(output.reviewChecklist),
++      limitations: normalizeTextList(output.limitations),
++    },
++  }
++}
++
++function normalizeAgentRunResults(value) {
++  if (!isObject(value)) {
++    return {}
++  }
++
++  return Object.fromEntries(
++    Object.entries(value)
++      .map(([taskId, agentRun]) => [
++        taskId,
++        normalizeAgentRunResult(agentRun, taskId),
++      ])
++      .filter(([, agentRun]) => agentRun),
++  )
++}
++
+ export function getStoredCustomTasks() {
+   const storedTasks = readJson(CUSTOM_TASKS_KEY, [])
+ 
+@@ -143,6 +218,14 @@ export function saveStoredHumanReviewDecisions(humanReviewDecisions) {
+   )
+ }
+ 
++export function getStoredAgentRunResults() {
++  return normalizeAgentRunResults(readJson(AGENT_RUN_RESULTS_KEY, {}))
++}
++
++export function saveStoredAgentRunResults(agentRunResults) {
++  writeJson(AGENT_RUN_RESULTS_KEY, normalizeAgentRunResults(agentRunResults))
++}
++
+ export function clearStoredLocalSession() {
+   const storage = getLocalStorage()
+ 
+@@ -153,6 +236,7 @@ export function clearStoredLocalSession() {
+   try {
+     storage.removeItem(CUSTOM_TASKS_KEY)
+     storage.removeItem(HUMAN_REVIEW_DECISIONS_KEY)
++    storage.removeItem(AGENT_RUN_RESULTS_KEY)
+   } catch {
+     // Ignore storage failures so reset never blocks the app UI.
+   }
+diff --git a/app/src/pages/DashboardPage.jsx b/app/src/pages/DashboardPage.jsx
+index fffe641..8c16ff6 100644
+--- a/app/src/pages/DashboardPage.jsx
++++ b/app/src/pages/DashboardPage.jsx
+@@ -140,6 +140,7 @@ function getSelectedOptionText(flow) {
+ }
+ 
+ export function DashboardPage({
++  agentRunCount = 0,
+   customTaskCount = 0,
+   humanReviewDecisions = {},
+   onNavigate,
+@@ -155,7 +156,7 @@ export function DashboardPage({
+   ).length
+   const humanReviewDecisionCount = Object.keys(humanReviewDecisions).length
+   const hasLocalSessionState =
+-    customTaskCount > 0 || humanReviewDecisionCount > 0
++    customTaskCount > 0 || humanReviewDecisionCount > 0 || agentRunCount > 0
+   const approvedForLaunchCount = taskFlows.filter(
+     (flow) => flow.governance.status === "approved_for_launch",
+   ).length
+@@ -200,7 +201,8 @@ export function DashboardPage({
+               {currentUser.name} can test the wedge workflow: route work to
+               Human / Agent / Hybrid, apply governance, record Human review,
+               and keep an audit trail. Built-in scenarios stay fixed; local
+-              custom tasks and review choices are saved only in this browser.
++              custom tasks, review choices, and Agent outputs are saved only in
++              this browser.
+             </p>
+           </div>
+           <PrimaryButton
+diff --git a/app/src/pages/TaskDetailPage.jsx b/app/src/pages/TaskDetailPage.jsx
+index b7cdd7a..962cfe1 100644
+--- a/app/src/pages/TaskDetailPage.jsx
++++ b/app/src/pages/TaskDetailPage.jsx
+@@ -1,3 +1,4 @@
++import { AgentRunnerPanel } from "../components/AgentRunnerPanel"
+ import { GovernanceStatusCard } from "../components/GovernanceStatusCard"
+ import { PageHeader } from "../components/PageHeader"
+ import { PrimaryButton } from "../components/PrimaryButton"
+@@ -5,6 +6,11 @@ import { SectionCard } from "../components/SectionCard"
+ import { formatLabel } from "../components/formatLabel"
+ import { StatusBadge } from "../components/StatusBadge"
+ import { TaskSummaryCard } from "../components/TaskSummaryCard"
++import {
++  buildAuditTrailWithAgentRun,
++  buildLifecycleWithAgentRun,
++  getAgentRunnerState,
++} from "../logic/agentRunner"
+ 
+ function LifecycleStepList({ lifecycle }) {
+   return (
+@@ -202,9 +208,11 @@ function getExecutionHint(execution) {
+ }
+ 
+ export function TaskDetailPage({
++  agentRun,
+   flowResult,
+   onNavigate,
+   onHumanReviewDecision,
++  onRunAgent,
+ }) {
+   if (!flowResult) {
+     return (
+@@ -253,6 +261,19 @@ export function TaskDetailPage({
+     lifecycle,
+     auditTrail,
+   } = flowResult
++  const agentRunForCurrentFlow =
++    agentRun &&
++    getAgentRunnerState(flowResult, agentRun).status === "agent_output_ready"
++      ? agentRun
++      : null
++  const visibleLifecycle = buildLifecycleWithAgentRun(
++    lifecycle,
++    agentRunForCurrentFlow,
++  )
++  const visibleAuditTrail = buildAuditTrailWithAgentRun(
++    auditTrail,
++    agentRunForCurrentFlow,
++  )
+ 
+   return (
+     <>
+@@ -358,11 +379,17 @@ export function TaskDetailPage({
+           onHumanReviewDecision={onHumanReviewDecision}
+         />
+ 
++        <AgentRunnerPanel
++          agentRun={agentRun}
++          flowResult={flowResult}
++          onRunAgent={onRunAgent}
++        />
++
+         <SectionCard
+           title="Execution lifecycle"
+           description="Step-by-step state showing whether the task launched, paused for review, or stopped by policy."
+         >
+-          <LifecycleStepList lifecycle={lifecycle} />
++          <LifecycleStepList lifecycle={visibleLifecycle} />
+         </SectionCard>
+ 
+         <div className="grid gap-6 lg:grid-cols-2">
+@@ -506,7 +533,7 @@ export function TaskDetailPage({
+           title="Audit trail"
+           description="Evidence record showing what the system or Human reviewer did, and why the task is in its current state."
+         >
+-          <AuditTrailList auditTrail={auditTrail} />
++          <AuditTrailList auditTrail={visibleAuditTrail} />
+         </SectionCard>
+       </div>
+     </>
+diff --git a/docs/01_MVP_BUILD_PLAN.md b/docs/01_MVP_BUILD_PLAN.md
+index 40ef31c..11900ae 100644
+--- a/docs/01_MVP_BUILD_PLAN.md
++++ b/docs/01_MVP_BUILD_PLAN.md
+@@ -62,6 +62,7 @@ We should build this MVP in small phases. Each phase should produce something vi
+ ### Phase 12: Hackathon submission package and judge-facing explanation
+ ### Phase 13: Judge clarity and Founder Mode positioning polish
+ ### Phase 14: User-flow realism and empty states
++### Phase 15: Controlled Agent Runner
+ 
+ ---
+ 
+@@ -779,6 +780,55 @@ npm.cmd --prefix app run validate:scenarios
+ 
+ ---
+ 
++## Phase 15: Controlled Agent Runner
++
++### Goal
++
++Show that Human-AgentOS is not only a routing and governance demo. It also has
++a controlled execution surface where approved Agent or Hybrid work can produce
++a draft output safely.
++
++This phase stays frontend-only. It does not add a backend, authentication,
++database, APIs, dependencies, committed secrets, or required live model calls.
++The default Agent Runner is deterministic local JavaScript.
++
++### Expected output
++
++By the end of this phase, the app should provide:
++
++- an Agent Runner panel on Task Detail
++- `Run demo agent` for launched Agent-path tasks
++- deterministic local draft output with run steps, assumptions, risks,
++  limitations, and a Human review checklist
++- saved Agent run results in browser `localStorage`
++- reset local demo state clears custom tasks, Human review decisions, and Agent
++  run results
++- Hybrid work pauses the runner until Human review approves the recommended
++  option
++- Human-led overrides show a Human-led state instead of running an Agent
++- blocked work explains the policy stop and never exposes a run button
++- lifecycle and audit trail display the saved Agent run after output is
++  generated
++- unchanged deterministic scenario validation behavior
++
++### Phase 15 commands
++
++Run these before handing the phase back:
++
++```bash
++git status --short
++npm.cmd --prefix app run build
++npm.cmd --prefix app run validate:scenarios
++```
++
++Also create:
++
++```bash
++phase15_codex.diff
++```
++
++---
++
+ ## Recommended build order
+ 
+ Build in this order, even if it feels too simple at first.
+diff --git a/docs/06_UI_SCREENS.md b/docs/06_UI_SCREENS.md
+index 4d4b199..1cd202d 100644
+--- a/docs/06_UI_SCREENS.md
++++ b/docs/06_UI_SCREENS.md
+@@ -594,6 +594,7 @@ It is the final state of the demo flow.
+ - explanation reasons
+ - governance result
+ - human review decision panel when governance requires it
++- Agent Runner panel for controlled local Agent execution
+ - selected option
+ - execution status
+ - lifecycle status
+@@ -609,6 +610,7 @@ It is the final state of the demo flow.
+ - `RecommendationSummaryCard`
+ - `GovernanceSummaryCard`
+ - `HumanReviewDecisionPanel`
++- `AgentRunnerPanel`
+ - `ExecutionStatusCard`
+ - `OutcomeReviewCard`
+ - `LifecycleStepList`
+@@ -627,6 +629,7 @@ It is the final state of the demo flow.
+ - `MarketplaceOption`
+ - `ExecutionRecord`
+ - `OutcomeReview`
++- `AgentRunResult`
+ - `LifecycleState`
+ - `AuditEvent`
+ 
+@@ -634,6 +637,7 @@ It is the final state of the demo flow.
+ 
+ - review status
+ - review output summary
++- run a deterministic demo agent when governance and Human review allow it
+ - optionally return to dashboard
+ 
+ ### What happens after the action
+@@ -878,6 +882,7 @@ Add a small `Reset local demo state` control on the Dashboard. It should:
+ 
+ - clear local custom tasks
+ - clear persisted Human review decisions
++- clear saved Agent run outputs
+ - leave built-in demo scenarios untouched
+ - stay disabled or unobtrusive when there is no local state to clear
+ 
+@@ -957,6 +962,64 @@ directly. It should not depend on browser navigation state.
+ 
+ ---
+ 
++## Phase 15 controlled Agent Runner
++
++Phase 15 adds a controlled execution surface to Task Detail while keeping the
++demo frontend-only and deterministic.
++
++### Agent Runner panel
++
++Task Detail should include an `Agent Runner` panel for the selected task record.
++The panel should make clear that the default runner is local deterministic demo
++logic, not a live model API call.
++
++For launched Agent-path work:
++
++- show `Run demo agent`
++- generate a local draft deliverable
++- show runner steps
++- show confidence, assumptions, limitations, and Human review notes
++- save the Agent output in browser `localStorage`
++- append Agent-run evidence to the visible lifecycle and audit trail
++
++For Hybrid work:
++
++- before Human approval, show that the Agent run is waiting for Human review
++- after `Approve recommended option`, allow `Run demo agent`
++- after `Switch to human-led execution`, show a Human-led state and do not run
++  an Agent
++
++For blocked work:
++
++- show the governance policy block reason
++- do not show a launch or run button
++- never expose Agent output for `task_003`
++
++### Agent output section
++
++When a demo Agent run exists, show:
++
++- generated draft
++- assumptions
++- risks and Human review checklist
++- limitations
++- deterministic run ID
++- deterministic generated timestamp
++
++### Local persistence
++
++Agent run results are saved only in this browser through `localStorage`.
++`Reset local demo state` should clear Agent outputs along with custom tasks and
++Human review decisions.
++
++### Validation boundary
++
++The scenario validator should remain deterministic and should not read
++`localStorage` or browser UI state. Agent Runner output is a UI/session layer on
++top of the existing task-flow result.
++
++---
++
+ ## Blocked-by-policy screen behavior
+ 
+ This is how the UI should behave when a path or option is blocked.
+diff --git a/docs/11_SUBMISSION_PACKAGE.md b/docs/11_SUBMISSION_PACKAGE.md
+index 9817c6f..62950c6 100644
+--- a/docs/11_SUBMISSION_PACKAGE.md
++++ b/docs/11_SUBMISSION_PACKAGE.md
+@@ -69,6 +69,7 @@ The build process also followed a Founder Mode pattern: use agentic development
+ 7. The marketplace logic selects an eligible execution option when one is allowed.
+ 8. Human review controls let a reviewer approve, switch to a safer Human-led path, or confirm a policy block.
+ 9. Task Detail shows the final recommendation, governance result, selected option, lifecycle, outcome, and audit trail.
++10. The Agent Runner can generate deterministic local demo output only when governance and Human review allow Agent execution.
+ 
+ Direct navigation to Recommendation or Task Detail does not preload a hidden
+ demo task. Those screens show empty states until the user analyzes a task or
+@@ -82,9 +83,10 @@ opens one from Dashboard.
+ - Governance status for Approved for launch, Needs human review, and Blocked paths
+ - Curated marketplace-style execution option selection
+ - Human review and override controls
++- Controlled local Agent Runner with deterministic draft output
+ - Lifecycle and audit trail for each task
+ - Built-in deterministic demo scenarios
+-- Browser-local custom tasks and Human review decisions through `localStorage`
++- Browser-local custom tasks, Human review decisions, and Agent run outputs through `localStorage`
+ - Lightweight scenario validation command with `11/11` expected checks
+ - Static deployment readiness through Vite build output in `app/dist`
+ 
+@@ -99,11 +101,11 @@ Recommended judge flow:
+ 2. Open New Task.
+    Show the scenario picker and explain that each scenario uses the same frontend decision flow.
+ 3. Run `task_001`.
+-   This demonstrates an Agent path that is Approved for launch with the Research Analyst Agent.
++   This demonstrates an Agent path that is Approved for launch with the Research Analyst Agent. In Task Detail, use `Run demo agent` to show controlled local draft output.
+ 4. Run `task_002`.
+-   This demonstrates a Hybrid path where an Agent can draft but Human review is required before launch.
++   This demonstrates a Hybrid path where an Agent can draft but Human review is required before launch. The Agent Runner stays paused until the recommended option is approved.
+ 5. Run `task_003`.
+-   This demonstrates a Blocked path where governance prevents unsafe launch.
++   This demonstrates a Blocked path where governance prevents unsafe launch and no Agent run button is exposed.
+ 6. Open Task Detail.
+    Show recommendation, governance, Human review, lifecycle, outcome, and audit trail.
+ 7. Optional: create a custom local task.
+@@ -118,9 +120,10 @@ Human-AgentOS is not just a static task list. It models the operating layer arou
+ - It applies governance before work launches.
+ - It selects eligible Agent or Human execution options from curated sample capability profiles.
+ - It supports Human review when policy says a person must stay in control.
++- It includes a controlled local Agent Runner that only produces output after the route is allowed.
+ - It records lifecycle and audit information so agentic decisions can be reviewed later.
+ 
+-Important boundary: the current app demonstrates an agentic workflow control plane, not production agent execution. It does not connect to real external agents or run real agent APIs yet.
++Important boundary: the current app demonstrates an agentic workflow control plane with a deterministic local demo runner, not production agent execution. It does not connect to real external agents or run real agent APIs yet.
+ 
+ ## Models and tools used
+ 
+@@ -136,7 +139,7 @@ Inside the app itself:
+ 
+ - No real external Agent execution API is connected yet.
+ - No OpenAI API key or other model API key is used by the frontend.
+-- The app uses deterministic local JavaScript logic to simulate recommendation, governance, marketplace selection, lifecycle, and audit behavior.
++- The app uses deterministic local JavaScript logic to simulate recommendation, governance, marketplace selection, controlled Agent output, lifecycle, and audit behavior.
+ - The app demonstrates how an organization could control agentic work before connecting real execution systems.
+ - This means the AI usage is in the build workflow and product concept, while the submitted app itself stays frontend-only and deterministic.
+ 
+@@ -150,7 +153,7 @@ If the submission form requires exact model names, use:
+ - Vite
+ - Tailwind CSS
+ - Plain JavaScript data and logic modules
+-- Browser `localStorage` for local custom tasks and Human review decisions
++- Browser `localStorage` for local custom tasks, Human review decisions, and Agent run outputs
+ - Node-based scenario validation script
+ - Static frontend build output in `app/dist`
+ 
+@@ -176,9 +179,9 @@ Result: 11/11 scenarios passed
+ - No authentication
+ - No database
+ - No APIs
+-- No real external agent execution
++- No real external agent execution; Agent Runner output is deterministic local demo output
+ - No durable shared storage
+-- Custom tasks and Human review decisions persist only in each browser through `localStorage`
++- Custom tasks, Human review decisions, and Agent run outputs persist only in each browser through `localStorage`
+ - Built-in demo scenarios are deterministic sample data
+ - Source code, live demo, and demo video URLs still need final links
+ 
+@@ -187,6 +190,7 @@ Result: 11/11 scenarios passed
+ Possible next steps after the hackathon demo:
+ 
+ - Connect real agent execution providers behind the curated marketplace layer
++- Add a secure backend/provider adapter for live model calls instead of putting API keys in the frontend
+ - Add backend storage for shared tasks, approvals, lifecycle events, and audit trails
+ - Add user accounts and role-based approval flows
+ - Expand governance rules into an editable policy configuration surface

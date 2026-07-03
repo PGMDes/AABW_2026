@@ -27,6 +27,11 @@ const badgeStyles = {
   demo: "bg-slate-100 text-slate-700 ring-slate-200",
   local: "bg-cyan-50 text-cyan-700 ring-cyan-200",
   submitted: "bg-blue-50 text-blue-700 ring-blue-200",
+  waiting_on_review: "bg-amber-50 text-amber-700 ring-amber-200",
+  human_led: "bg-amber-50 text-amber-700 ring-amber-200",
+  not_available: "bg-slate-100 text-slate-600 ring-slate-200",
+  agent_output_ready: "bg-cyan-50 text-cyan-700 ring-cyan-200",
+  local_deterministic: "bg-slate-100 text-slate-700 ring-slate-200",
 }
 
 import { formatLabel } from "./formatLabel"

@@ -594,6 +594,7 @@ It is the final state of the demo flow.
 - explanation reasons
 - governance result
 - human review decision panel when governance requires it
+- Agent Runner panel for controlled local Agent execution
 - selected option
 - execution status
 - lifecycle status
@@ -609,6 +610,7 @@ It is the final state of the demo flow.
 - `RecommendationSummaryCard`
 - `GovernanceSummaryCard`
 - `HumanReviewDecisionPanel`
+- `AgentRunnerPanel`
 - `ExecutionStatusCard`
 - `OutcomeReviewCard`
 - `LifecycleStepList`
@@ -627,6 +629,7 @@ It is the final state of the demo flow.
 - `MarketplaceOption`
 - `ExecutionRecord`
 - `OutcomeReview`
+- `AgentRunResult`
 - `LifecycleState`
 - `AuditEvent`
 
@@ -634,6 +637,7 @@ It is the final state of the demo flow.
 
 - review status
 - review output summary
+- run a deterministic demo agent when governance and Human review allow it
 - optionally return to dashboard
 
 ### What happens after the action
@@ -878,6 +882,7 @@ Add a small `Reset local demo state` control on the Dashboard. It should:
 
 - clear local custom tasks
 - clear persisted Human review decisions
+- clear saved Agent run outputs
 - leave built-in demo scenarios untouched
 - stay disabled or unobtrusive when there is no local state to clear
 
@@ -954,6 +959,64 @@ Keep page state easy to understand:
 
 The validator should continue to call the deterministic task-flow logic
 directly. It should not depend on browser navigation state.
+
+---
+
+## Phase 15 controlled Agent Runner
+
+Phase 15 adds a controlled execution surface to Task Detail while keeping the
+demo frontend-only and deterministic.
+
+### Agent Runner panel
+
+Task Detail should include an `Agent Runner` panel for the selected task record.
+The panel should make clear that the default runner is local deterministic demo
+logic, not a live model API call.
+
+For launched Agent-path work:
+
+- show `Run demo agent`
+- generate a local draft deliverable
+- show runner steps
+- show confidence, assumptions, limitations, and Human review notes
+- save the Agent output in browser `localStorage`
+- append Agent-run evidence to the visible lifecycle and audit trail
+
+For Hybrid work:
+
+- before Human approval, show that the Agent run is waiting for Human review
+- after `Approve recommended option`, allow `Run demo agent`
+- after `Switch to human-led execution`, show a Human-led state and do not run
+  an Agent
+
+For blocked work:
+
+- show the governance policy block reason
+- do not show a launch or run button
+- never expose Agent output for `task_003`
+
+### Agent output section
+
+When a demo Agent run exists, show:
+
+- generated draft
+- assumptions
+- risks and Human review checklist
+- limitations
+- deterministic run ID
+- deterministic generated timestamp
+
+### Local persistence
+
+Agent run results are saved only in this browser through `localStorage`.
+`Reset local demo state` should clear Agent outputs along with custom tasks and
+Human review decisions.
+
+### Validation boundary
+
+The scenario validator should remain deterministic and should not read
+`localStorage` or browser UI state. Agent Runner output is a UI/session layer on
+top of the existing task-flow result.
 
 ---
 

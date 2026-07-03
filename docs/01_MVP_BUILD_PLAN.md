@@ -62,6 +62,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 12: Hackathon submission package and judge-facing explanation
 ### Phase 13: Judge clarity and Founder Mode positioning polish
 ### Phase 14: User-flow realism and empty states
+### Phase 15: Controlled Agent Runner
 
 ---
 
@@ -775,6 +776,55 @@ Run these before handing the phase back:
 ```bash
 npm.cmd --prefix app run build
 npm.cmd --prefix app run validate:scenarios
+```
+
+---
+
+## Phase 15: Controlled Agent Runner
+
+### Goal
+
+Show that Human-AgentOS is not only a routing and governance demo. It also has
+a controlled execution surface where approved Agent or Hybrid work can produce
+a draft output safely.
+
+This phase stays frontend-only. It does not add a backend, authentication,
+database, APIs, dependencies, committed secrets, or required live model calls.
+The default Agent Runner is deterministic local JavaScript.
+
+### Expected output
+
+By the end of this phase, the app should provide:
+
+- an Agent Runner panel on Task Detail
+- `Run demo agent` for launched Agent-path tasks
+- deterministic local draft output with run steps, assumptions, risks,
+  limitations, and a Human review checklist
+- saved Agent run results in browser `localStorage`
+- reset local demo state clears custom tasks, Human review decisions, and Agent
+  run results
+- Hybrid work pauses the runner until Human review approves the recommended
+  option
+- Human-led overrides show a Human-led state instead of running an Agent
+- blocked work explains the policy stop and never exposes a run button
+- lifecycle and audit trail display the saved Agent run after output is
+  generated
+- unchanged deterministic scenario validation behavior
+
+### Phase 15 commands
+
+Run these before handing the phase back:
+
+```bash
+git status --short
+npm.cmd --prefix app run build
+npm.cmd --prefix app run validate:scenarios
+```
+
+Also create:
+
+```bash
+phase15_codex.diff
 ```
 
 ---

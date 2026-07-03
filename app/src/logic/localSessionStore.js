@@ -1,5 +1,6 @@
 const CUSTOM_TASKS_KEY = "humanAgentOS.customTasks"
 const HUMAN_REVIEW_DECISIONS_KEY = "humanAgentOS.humanReviewDecisions"
+const AGENT_RUN_RESULTS_KEY = "humanAgentOS.agentRunResults"
 
 function getLocalStorage() {
   if (typeof window === "undefined") {
@@ -112,6 +113,80 @@ function normalizeHumanReviewDecisions(value) {
   )
 }
 
+function normalizeTextList(value) {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  return value.map((item) => normalizeText(item)).filter(Boolean)
+}
+
+function normalizeAgentRunSteps(value) {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  return value
+    .filter(isObject)
+    .map((step) => ({
+      id: normalizeText(step.id),
+      label: normalizeText(step.label),
+      detail: normalizeText(step.detail),
+      status: normalizeText(step.status, "completed"),
+    }))
+    .filter((step) => step.id && step.label)
+}
+
+function normalizeAgentRunResult(value, fallbackTaskId = "") {
+  if (!isObject(value)) {
+    return null
+  }
+
+  const output = isObject(value.output) ? value.output : {}
+  const taskId = normalizeText(value.taskId, fallbackTaskId)
+  const id = normalizeText(value.id)
+
+  if (!id || !taskId) {
+    return null
+  }
+
+  return {
+    id,
+    taskId,
+    executionId: normalizeText(value.executionId),
+    optionId: normalizeText(value.optionId),
+    runnerName: normalizeText(value.runnerName, "Demo Agent"),
+    runMode: normalizeText(value.runMode, "local_deterministic"),
+    status: normalizeText(value.status, "completed"),
+    generatedAt: normalizeText(value.generatedAt),
+    confidence: Number(value.confidence) || 0,
+    steps: normalizeAgentRunSteps(value.steps),
+    output: {
+      title: normalizeText(output.title, "Agent output"),
+      draft: normalizeText(output.draft),
+      assumptions: normalizeTextList(output.assumptions),
+      risks: normalizeTextList(output.risks),
+      reviewChecklist: normalizeTextList(output.reviewChecklist),
+      limitations: normalizeTextList(output.limitations),
+    },
+  }
+}
+
+function normalizeAgentRunResults(value) {
+  if (!isObject(value)) {
+    return {}
+  }
+
+  return Object.fromEntries(
+    Object.entries(value)
+      .map(([taskId, agentRun]) => [
+        taskId,
+        normalizeAgentRunResult(agentRun, taskId),
+      ])
+      .filter(([, agentRun]) => agentRun),
+  )
+}
+
 export function getStoredCustomTasks() {
   const storedTasks = readJson(CUSTOM_TASKS_KEY, [])
 
@@ -143,6 +218,14 @@ export function saveStoredHumanReviewDecisions(humanReviewDecisions) {
   )
 }
 
+export function getStoredAgentRunResults() {
+  return normalizeAgentRunResults(readJson(AGENT_RUN_RESULTS_KEY, {}))
+}
+
+export function saveStoredAgentRunResults(agentRunResults) {
+  writeJson(AGENT_RUN_RESULTS_KEY, normalizeAgentRunResults(agentRunResults))
+}
+
 export function clearStoredLocalSession() {
   const storage = getLocalStorage()
 
@@ -153,6 +236,7 @@ export function clearStoredLocalSession() {
   try {
     storage.removeItem(CUSTOM_TASKS_KEY)
     storage.removeItem(HUMAN_REVIEW_DECISIONS_KEY)
+    storage.removeItem(AGENT_RUN_RESULTS_KEY)
   } catch {
     // Ignore storage failures so reset never blocks the app UI.
   }
