@@ -60,6 +60,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 10: Static deployment and final submission packaging
 ### Phase 11: Frontend QA and submission-readiness pass
 ### Phase 12: Hackathon submission package and judge-facing explanation
+### Phase 13: Judge clarity and Founder Mode positioning polish
 
 ---
 
@@ -710,6 +711,30 @@ By the end of this phase, the repo should provide:
 - a compact Dashboard summary of what the demo proves
 - TODO placeholders for the source code URL, live demo URL, demo video URL, and
   exact development model names if the submission form asks for them
+- unchanged build and scenario validation behavior
+
+---
+
+## Phase 13: Judge clarity and Founder Mode positioning polish
+
+### Goal
+
+Make the app's value obvious in the first 60 seconds for hackathon judges.
+
+This phase stays frontend-only and presentational. It does not change
+recommendation, governance, execution, scenario validation, or localStorage
+behavior.
+
+### Expected output
+
+By the end of this phase, the repo should provide:
+
+- stronger Dashboard positioning for the Founder Mode track
+- clearer explanation that Human-AgentOS is a control plane for agentic work
+- sharper scenario proof text for the five deterministic demo scenarios
+- Task Detail copy that explains recommendation, governance, Human review,
+  lifecycle, and audit trail as separate control-plane concepts
+- Founder Mode alignment notes in `docs/11_SUBMISSION_PACKAGE.md`
 - unchanged build and scenario validation behavior
 
 ---

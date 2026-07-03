@@ -19,11 +19,11 @@ const walkthroughSteps = [
 ]
 
 const demoProofPoints = [
-  "Routes work to Human, Agent, or Hybrid paths.",
-  "Applies governance before launch.",
-  "Supports Human review and safer overrides.",
-  "Records lifecycle and audit trail evidence.",
-  "Keeps custom tasks local to this browser.",
+  "Routes work to Human, Agent, or Hybrid execution paths.",
+  "Checks governance before any launch decision.",
+  "Supports Human review to approve, reroute, or block work.",
+  "Records lifecycle and audit trail evidence for every scenario.",
+  "Supports local custom tasks without adding backend infrastructure.",
 ]
 
 function SummaryMetric({ label, value, hint, status }) {
@@ -98,7 +98,7 @@ function DemoProofPanel() {
   return (
     <SectionCard
       title="What this demo proves"
-      description="Judge-facing summary of the working MVP loop."
+      description="The focused control layer before connecting real agent integrations."
     >
       <ul className="space-y-2 text-sm leading-6 text-slate-700">
         {demoProofPoints.map((point) => (
@@ -182,7 +182,7 @@ export function DashboardPage({
     <>
       <PageHeader
         title="Human-AgentOS"
-        description="Operational demo for routing knowledge work to a Human, an Agent, or a Hybrid team with visible governance."
+        description="Founder Mode demo: a control plane for agentic work that routes tasks, checks governance, and records audit evidence before teams scale real agent execution."
         action={
           <PrimaryButton onClick={() => onNavigate("newTask")}>
             New Task
@@ -194,11 +194,13 @@ export function DashboardPage({
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-sm font-semibold text-cyan-900">
-              Welcome back, {currentUser.name}
+              Control plane for agentic work
             </p>
             <p className="mt-1 text-sm text-cyan-800">
-              Built-in scenarios stay fixed. Local custom tasks and Human
-              review choices are saved only in this browser.
+              {currentUser.name} can test the wedge workflow: route work to
+              Human / Agent / Hybrid, apply governance, record Human review,
+              and keep an audit trail. Built-in scenarios stay fixed; local
+              custom tasks and review choices are saved only in this browser.
             </p>
           </div>
           <PrimaryButton

@@ -26,7 +26,9 @@ TODO: Add demo video URL if recorded.
 
 ## Problem statement
 
-Teams are adopting AI agents faster than their operating systems can manage them. Today, decisions about when to use a human, an AI agent, or a human-agent team are often made manually, inconsistently, and without a clear audit trail.
+Teams are adopting AI agents faster than their operating systems can manage them. The hard question is no longer only "Can an agent do this?" It is "Should this task go to a Human, an Agent, or a Hybrid team, and what governance should happen before launch?"
+
+Today, those decisions are often made manually, inconsistently, and without a clear audit trail.
 
 That creates risk:
 
@@ -38,11 +40,23 @@ That creates risk:
 
 ## Solution summary
 
-Human-AgentOS is a frontend-only MVP demo for a decision-first workforce control plane.
+Human-AgentOS is a frontend-only MVP demo for a decision-first workforce control plane for agentic work.
 
 It helps an Innovation / AI transformation lead submit a knowledge-work task, see whether the work should go to a Human, an Agent, or a Hybrid team, understand why that route was recommended, apply governance, select a curated execution option, and review the lifecycle and audit trail.
 
-The demo is intentionally narrow. It proves the core workflow before adding backend infrastructure, authentication, databases, APIs, or real external agent execution.
+The demo is intentionally narrow. It proves the workflow and control layer before adding backend infrastructure, authentication, databases, APIs, or real external agent execution.
+
+## Founder Mode alignment
+
+This project fits the Founder Mode track because it starts with a real operating pain: teams want to move faster with AI agents, but they need a way to decide where agents are safe, where humans should stay accountable, and where a hybrid team is the right wedge.
+
+Human-AgentOS does not try to become a broad enterprise platform first. It focuses on one sharp workflow:
+
+`submit task -> recommend Human / Agent / Hybrid -> apply governance -> review if needed -> launch or block -> record audit trail`
+
+That focused wedge makes the product understandable, testable, and extensible. The current MVP proves the control layer before scaling into real integrations, shared storage, authentication, or production agent execution.
+
+The build process also followed a Founder Mode pattern: use agentic development tools to move quickly, but keep deterministic scenario validation as a guardrail so speed does not break the demo story.
 
 ## How it works
 
@@ -112,6 +126,7 @@ The project used AI assistance during planning, implementation, and review:
 - Codex in VSCode implemented code phases, documentation updates, validation checks, and scoped frontend polish.
 - ChatGPT acted as advisor, orchestrator, reviewer, and product explanation partner across the build.
 - The in-repo scenario validator was used as a regression guardrail to protect deterministic demo behavior.
+- The validation loop kept the product wedge stable while the UI and submission package became clearer for judges.
 
 Inside the app itself:
 
@@ -119,6 +134,7 @@ Inside the app itself:
 - No OpenAI API key or other model API key is used by the frontend.
 - The app uses deterministic local JavaScript logic to simulate recommendation, governance, marketplace selection, lifecycle, and audit behavior.
 - The app demonstrates how an organization could control agentic work before connecting real execution systems.
+- This means the AI usage is in the build workflow and product concept, while the submitted app itself stays frontend-only and deterministic.
 
 If the submission form requires exact model names, use:
 

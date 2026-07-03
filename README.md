@@ -83,6 +83,8 @@ The validator checks the baseline demo scenarios and the Human review decision s
 - Phase 9: custom local tasks, persisted Human review decisions, Demo/Local labels, and reset local demo state
 - Phase 10: static deployment readiness and final submission packaging
 - Phase 11: frontend QA, accessibility polish, and submission-readiness notes
+- Phase 12: Founder Mode submission package and judge-facing explanation
+- Phase 13: first-60-seconds judge clarity and Founder Mode positioning polish
 
 ## Local Demo Persistence
 
