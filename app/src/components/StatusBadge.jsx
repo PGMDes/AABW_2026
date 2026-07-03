@@ -32,6 +32,10 @@ const badgeStyles = {
   not_available: "bg-slate-100 text-slate-600 ring-slate-200",
   agent_output_ready: "bg-cyan-50 text-cyan-700 ring-cyan-200",
   local_deterministic: "bg-slate-100 text-slate-700 ring-slate-200",
+  agent_output_review: "bg-cyan-50 text-cyan-700 ring-cyan-200",
+  accepted_for_use: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+  needs_revision: "bg-amber-50 text-amber-700 ring-amber-200",
+  rerouted_to_human: "bg-amber-50 text-amber-700 ring-amber-200",
 }
 
 import { formatLabel } from "./formatLabel"

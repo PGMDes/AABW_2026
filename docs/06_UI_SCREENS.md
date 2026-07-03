@@ -1020,6 +1020,75 @@ top of the existing task-flow result.
 
 ---
 
+## Phase 16 agent output review
+
+Phase 16 adds the final Human decision gate after the controlled local Agent
+Runner produces output.
+
+### Agent output review panel
+
+Task Detail should show an `Agent output review` panel only when a valid Agent
+run output exists for the selected task.
+
+Before output exists:
+
+- do not show final output review actions
+- keep the existing Agent Runner waiting, ready, Human-led, and blocked states
+  unchanged
+
+After output exists, show three Human decision actions:
+
+- `Accept output`
+- `Request revision`
+- `Reroute to Human`
+
+### Decision behavior
+
+`Accept output` should:
+
+- mark the Agent output as accepted
+- show a final state such as `Accepted for use`
+- add lifecycle and audit evidence that a Human accepted the Agent output
+
+`Request revision` should:
+
+- mark the Agent output as needing revision
+- show a clear revision state
+- avoid automatic regeneration; a new draft appears only if the user runs the
+  demo agent again
+- add lifecycle and audit evidence that a Human requested revision
+
+`Reroute to Human` should:
+
+- mark the post-output decision as Human-rerouted
+- show that final execution is Human-led
+- keep the Agent output visible as context, not as the accepted final work
+- add lifecycle and audit evidence that a Human rerouted final execution
+
+### Local persistence and reset
+
+Output review decisions are browser-local demo state. They are saved through
+`localStorage` with the same prototype boundary as custom tasks, Human review
+decisions, and Agent run outputs.
+
+`Reset local demo state` should clear:
+
+- custom local tasks
+- Human review decisions
+- Agent run outputs
+- Agent output review decisions
+
+### Guardrails
+
+Human-led and blocked tasks should not show output review actions unless there
+is a valid Agent output for the current flow. Blocked `task_003` must never show
+Agent run controls or Agent output acceptance controls.
+
+The deterministic scenario validator should not depend on `localStorage`, Agent
+run output, or output review decisions.
+
+---
+
 ## Blocked-by-policy screen behavior
 
 This is how the UI should behave when a path or option is blocked.

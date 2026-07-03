@@ -63,6 +63,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 13: Judge clarity and Founder Mode positioning polish
 ### Phase 14: User-flow realism and empty states
 ### Phase 15: Controlled Agent Runner
+### Phase 16: Agent Output Review and Final Decision Gate
 
 ---
 
@@ -825,6 +826,55 @@ Also create:
 
 ```bash
 phase15_codex.diff
+```
+
+---
+
+## Phase 16: Agent Output Review and Final Decision Gate
+
+### Goal
+
+Add a final Human decision gate after the controlled local Agent Runner creates
+output.
+
+This phase stays frontend-only. It does not add a backend, database,
+authentication, APIs, secrets, external services, dependencies, or live model
+calls. Agent output review decisions are saved only in browser `localStorage`.
+
+### Expected output
+
+By the end of this phase, the app should provide:
+
+- no output review actions until a valid Agent output exists
+- an `Agent output review` panel after a controlled demo Agent run completes
+- Human decision actions:
+  - `Accept output`
+  - `Request revision`
+  - `Reroute to Human`
+- saved output review decisions in browser `localStorage`
+- lifecycle and audit trail evidence for accepted, revision-requested, and
+  Human-rerouted output decisions
+- `Request revision` state that does not automatically regenerate output
+- `Reroute to Human` state that clearly marks final execution as Human-led
+- reset local demo state clears custom tasks, Human review decisions, Agent run
+  outputs, and Agent output review decisions
+- blocked `task_003` still never exposes Agent run or output acceptance controls
+- unchanged deterministic scenario validation behavior
+
+### Phase 16 commands
+
+Run these before handing the phase back:
+
+```bash
+git status --short
+npm.cmd --prefix app run build
+npm.cmd --prefix app run validate:scenarios
+```
+
+Also create:
+
+```bash
+phase16_codex.diff
 ```
 
 ---

@@ -25,6 +25,10 @@ export function formatLabel(value) {
     not_available: "Not available",
     agent_output_ready: "Agent output ready",
     local_deterministic: "Local demo mode",
+    agent_output_review: "Agent output review",
+    accepted_for_use: "Accepted for use",
+    needs_revision: "Needs revision",
+    rerouted_to_human: "Rerouted to Human",
   }
 
   if (labelOverrides[value]) {

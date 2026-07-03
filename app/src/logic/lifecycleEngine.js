@@ -9,6 +9,11 @@ export const lifecycleConcepts = [
   "in_progress",
   "completed",
   "reviewed",
+  "agent_output_ready",
+  "agent_output_review",
+  "accepted_for_use",
+  "needs_revision",
+  "rerouted_to_human",
 ]
 
 export function getGovernanceLifecycleState(governanceResult) {

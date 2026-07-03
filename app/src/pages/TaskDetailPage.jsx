@@ -1,3 +1,4 @@
+import { AgentOutputReviewPanel } from "../components/AgentOutputReviewPanel"
 import { AgentRunnerPanel } from "../components/AgentRunnerPanel"
 import { GovernanceStatusCard } from "../components/GovernanceStatusCard"
 import { PageHeader } from "../components/PageHeader"
@@ -6,6 +7,11 @@ import { SectionCard } from "../components/SectionCard"
 import { formatLabel } from "../components/formatLabel"
 import { StatusBadge } from "../components/StatusBadge"
 import { TaskSummaryCard } from "../components/TaskSummaryCard"
+import {
+  buildAuditTrailWithAgentOutputReview,
+  buildLifecycleWithAgentOutputReview,
+  getValidAgentOutputReviewDecision,
+} from "../logic/agentOutputReview"
 import {
   buildAuditTrailWithAgentRun,
   buildLifecycleWithAgentRun,
@@ -209,9 +215,11 @@ function getExecutionHint(execution) {
 
 export function TaskDetailPage({
   agentRun,
+  outputReviewDecision,
   flowResult,
   onNavigate,
   onHumanReviewDecision,
+  onOutputReviewDecision,
   onRunAgent,
 }) {
   if (!flowResult) {
@@ -266,13 +274,25 @@ export function TaskDetailPage({
     getAgentRunnerState(flowResult, agentRun).status === "agent_output_ready"
       ? agentRun
       : null
-  const visibleLifecycle = buildLifecycleWithAgentRun(
+  const outputReviewDecisionForCurrentFlow = getValidAgentOutputReviewDecision(
+    agentRunForCurrentFlow,
+    outputReviewDecision,
+  )
+  const visibleLifecycleWithAgentRun = buildLifecycleWithAgentRun(
     lifecycle,
     agentRunForCurrentFlow,
   )
-  const visibleAuditTrail = buildAuditTrailWithAgentRun(
+  const visibleLifecycle = buildLifecycleWithAgentOutputReview(
+    visibleLifecycleWithAgentRun,
+    outputReviewDecisionForCurrentFlow,
+  )
+  const visibleAuditTrailWithAgentRun = buildAuditTrailWithAgentRun(
     auditTrail,
     agentRunForCurrentFlow,
+  )
+  const visibleAuditTrail = buildAuditTrailWithAgentOutputReview(
+    visibleAuditTrailWithAgentRun,
+    outputReviewDecisionForCurrentFlow,
   )
 
   return (
@@ -383,6 +403,12 @@ export function TaskDetailPage({
           agentRun={agentRun}
           flowResult={flowResult}
           onRunAgent={onRunAgent}
+        />
+
+        <AgentOutputReviewPanel
+          agentRun={agentRunForCurrentFlow}
+          outputReviewDecision={outputReviewDecisionForCurrentFlow}
+          onOutputReviewDecision={onOutputReviewDecision}
         />
 
         <SectionCard

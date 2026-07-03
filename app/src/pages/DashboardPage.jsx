@@ -140,6 +140,7 @@ function getSelectedOptionText(flow) {
 }
 
 export function DashboardPage({
+  agentOutputReviewDecisionCount = 0,
   agentRunCount = 0,
   customTaskCount = 0,
   humanReviewDecisions = {},
@@ -156,7 +157,10 @@ export function DashboardPage({
   ).length
   const humanReviewDecisionCount = Object.keys(humanReviewDecisions).length
   const hasLocalSessionState =
-    customTaskCount > 0 || humanReviewDecisionCount > 0 || agentRunCount > 0
+    customTaskCount > 0 ||
+    humanReviewDecisionCount > 0 ||
+    agentRunCount > 0 ||
+    agentOutputReviewDecisionCount > 0
   const approvedForLaunchCount = taskFlows.filter(
     (flow) => flow.governance.status === "approved_for_launch",
   ).length
@@ -201,8 +205,13 @@ export function DashboardPage({
               {currentUser.name} can test the wedge workflow: route work to
               Human / Agent / Hybrid, apply governance, record Human review,
               and keep an audit trail. Built-in scenarios stay fixed; local
-              custom tasks, review choices, and Agent outputs are saved only in
-              this browser.
+              custom tasks, review choices, Agent outputs, and output review
+              decisions are saved only in this browser.
+            </p>
+            <p className="mt-2 text-xs font-medium text-cyan-900">
+              Local session: {customTaskCount} custom tasks,{" "}
+              {humanReviewDecisionCount} Human reviews, {agentRunCount} Agent
+              outputs, {agentOutputReviewDecisionCount} output reviews.
             </p>
           </div>
           <PrimaryButton

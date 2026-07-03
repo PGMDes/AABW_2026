@@ -52,7 +52,7 @@ This project fits the Founder Mode track because it starts with a real operating
 
 Human-AgentOS does not try to become a broad enterprise platform first. It focuses on one sharp workflow:
 
-`submit task -> recommend Human / Agent / Hybrid -> apply governance -> review if needed -> launch or block -> record audit trail`
+`submit task -> recommend Human / Agent / Hybrid -> apply governance -> review if needed -> run controlled Agent output when allowed -> review output -> accept, revise, or reroute -> record audit trail`
 
 That focused wedge makes the product understandable, testable, and extensible. The current MVP proves the control layer before scaling into real integrations, shared storage, authentication, or production agent execution.
 
@@ -68,8 +68,9 @@ The build process also followed a Founder Mode pattern: use agentic development 
 6. Governance rules decide whether the task is Approved for launch, Needs human review, or Blocked.
 7. The marketplace logic selects an eligible execution option when one is allowed.
 8. Human review controls let a reviewer approve, switch to a safer Human-led path, or confirm a policy block.
-9. Task Detail shows the final recommendation, governance result, selected option, lifecycle, outcome, and audit trail.
-10. The Agent Runner can generate deterministic local demo output only when governance and Human review allow Agent execution.
+9. The Agent Runner can generate deterministic local demo output only when governance and Human review allow Agent execution.
+10. Agent output review lets a Human accept the output, request revision, or reroute final execution to a Human-led path.
+11. Task Detail shows the final recommendation, governance result, selected option, Agent run, output review decision, lifecycle, outcome, and audit trail.
 
 Direct navigation to Recommendation or Task Detail does not preload a hidden
 demo task. Those screens show empty states until the user analyzes a task or
@@ -84,6 +85,7 @@ opens one from Dashboard.
 - Curated marketplace-style execution option selection
 - Human review and override controls
 - Controlled local Agent Runner with deterministic draft output
+- Agent output review gate for Accept output, Request revision, and Reroute to Human decisions
 - Lifecycle and audit trail for each task
 - Built-in deterministic demo scenarios
 - Browser-local custom tasks, Human review decisions, and Agent run outputs through `localStorage`
@@ -101,13 +103,13 @@ Recommended judge flow:
 2. Open New Task.
    Show the scenario picker and explain that each scenario uses the same frontend decision flow.
 3. Run `task_001`.
-   This demonstrates an Agent path that is Approved for launch with the Research Analyst Agent. In Task Detail, use `Run demo agent` to show controlled local draft output.
+   This demonstrates an Agent path that is Approved for launch with the Research Analyst Agent. In Task Detail, use `Run demo agent`, then use `Accept output` to show the post-output Human decision gate.
 4. Run `task_002`.
    This demonstrates a Hybrid path where an Agent can draft but Human review is required before launch. The Agent Runner stays paused until the recommended option is approved.
 5. Run `task_003`.
    This demonstrates a Blocked path where governance prevents unsafe launch and no Agent run button is exposed.
 6. Open Task Detail.
-   Show recommendation, governance, Human review, lifecycle, outcome, and audit trail.
+   Show recommendation, governance, Human review, Agent run output, Agent output review, lifecycle, outcome, and audit trail.
 7. Optional: create a custom local task.
    Explain that custom work persists only in the current browser through `localStorage`.
 
@@ -121,6 +123,7 @@ Human-AgentOS is not just a static task list. It models the operating layer arou
 - It selects eligible Agent or Human execution options from curated sample capability profiles.
 - It supports Human review when policy says a person must stay in control.
 - It includes a controlled local Agent Runner that only produces output after the route is allowed.
+- It adds a post-output Human decision gate so Agent work can be accepted, revised, or rerouted before final use.
 - It records lifecycle and audit information so agentic decisions can be reviewed later.
 
 Important boundary: the current app demonstrates an agentic workflow control plane with a deterministic local demo runner, not production agent execution. It does not connect to real external agents or run real agent APIs yet.
@@ -153,7 +156,7 @@ If the submission form requires exact model names, use:
 - Vite
 - Tailwind CSS
 - Plain JavaScript data and logic modules
-- Browser `localStorage` for local custom tasks, Human review decisions, and Agent run outputs
+- Browser `localStorage` for local custom tasks, Human review decisions, Agent run outputs, and Agent output review decisions
 - Node-based scenario validation script
 - Static frontend build output in `app/dist`
 
@@ -181,7 +184,7 @@ Result: 11/11 scenarios passed
 - No APIs
 - No real external agent execution; Agent Runner output is deterministic local demo output
 - No durable shared storage
-- Custom tasks, Human review decisions, and Agent run outputs persist only in each browser through `localStorage`
+- Custom tasks, Human review decisions, Agent run outputs, and Agent output review decisions persist only in each browser through `localStorage`
 - Built-in demo scenarios are deterministic sample data
 - Source code, live demo, and demo video URLs still need final links
 

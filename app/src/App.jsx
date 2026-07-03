@@ -3,13 +3,16 @@ import { AppShell } from "./components/AppShell"
 import { tasks as demoTasks } from "./data"
 import {
   clearStoredLocalSession,
+  getStoredAgentOutputReviewDecisions,
   getStoredAgentRunResults,
   getStoredCustomTasks,
   getStoredHumanReviewDecisions,
+  saveStoredAgentOutputReviewDecisions,
   saveStoredAgentRunResults,
   saveStoredCustomTasks,
   saveStoredHumanReviewDecisions,
 } from "./logic/localSessionStore"
+import { createAgentOutputReviewDecision } from "./logic/agentOutputReview"
 import { createDemoAgentRun } from "./logic/agentRunner"
 import { buildTaskFlow } from "./logic/taskFlowEngine"
 import { DashboardPage } from "./pages/DashboardPage"
@@ -28,6 +31,9 @@ function App() {
   )
   const [agentRunResults, setAgentRunResults] = useState(() =>
     getStoredAgentRunResults(),
+  )
+  const [agentOutputReviewDecisions, setAgentOutputReviewDecisions] = useState(
+    () => getStoredAgentOutputReviewDecisions(),
   )
 
   const demoTasksWithSource = demoTasks.map((task) => ({
@@ -101,6 +107,15 @@ function App() {
 
       return nextResults
     })
+
+    setAgentOutputReviewDecisions((currentDecisions) => {
+      const nextDecisions = { ...currentDecisions }
+      delete nextDecisions[taskId]
+
+      saveStoredAgentOutputReviewDecisions(nextDecisions)
+
+      return nextDecisions
+    })
   }
 
   function handleRunDemoAgent(flowResult) {
@@ -120,6 +135,38 @@ function App() {
 
       return nextResults
     })
+
+    setAgentOutputReviewDecisions((currentDecisions) => {
+      const nextDecisions = { ...currentDecisions }
+      delete nextDecisions[agentRun.taskId]
+
+      saveStoredAgentOutputReviewDecisions(nextDecisions)
+
+      return nextDecisions
+    })
+  }
+
+  function handleAgentOutputReviewDecision(taskId, action, agentRun) {
+    const outputReviewDecision = createAgentOutputReviewDecision({
+      taskId,
+      action,
+      agentRun,
+    })
+
+    if (!outputReviewDecision) {
+      return
+    }
+
+    setAgentOutputReviewDecisions((currentDecisions) => {
+      const nextDecisions = {
+        ...currentDecisions,
+        [taskId]: outputReviewDecision,
+      }
+
+      saveStoredAgentOutputReviewDecisions(nextDecisions)
+
+      return nextDecisions
+    })
   }
 
   function handleResetLocalState() {
@@ -127,6 +174,7 @@ function App() {
     setCustomTasks([])
     setHumanReviewDecisions({})
     setAgentRunResults({})
+    setAgentOutputReviewDecisions({})
     setSelectedTaskId(null)
     setAnalyzedTaskId(null)
     setCurrentPage("dashboard")
@@ -143,6 +191,9 @@ function App() {
     : null
   const detailAgentRun = detailTask
     ? agentRunResults[detailTask.id] || null
+    : null
+  const detailOutputReviewDecision = detailTask
+    ? agentOutputReviewDecisions[detailTask.id] || null
     : null
 
   let page
@@ -163,9 +214,11 @@ function App() {
     page = (
       <TaskDetailPage
         agentRun={detailAgentRun}
+        outputReviewDecision={detailOutputReviewDecision}
         flowResult={detailFlowResult}
         onNavigate={navigate}
         onHumanReviewDecision={handleHumanReviewDecision}
+        onOutputReviewDecision={handleAgentOutputReviewDecision}
         onRunAgent={handleRunDemoAgent}
       />
     )
@@ -174,6 +227,9 @@ function App() {
       <DashboardPage
         customTaskCount={customTasks.length}
         agentRunCount={Object.keys(agentRunResults).length}
+        agentOutputReviewDecisionCount={
+          Object.keys(agentOutputReviewDecisions).length
+        }
         humanReviewDecisions={humanReviewDecisions}
         onNavigate={navigate}
         onResetLocalState={handleResetLocalState}

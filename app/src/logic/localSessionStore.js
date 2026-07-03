@@ -1,6 +1,10 @@
+import { getAgentOutputReviewAction } from "./agentOutputReview.js"
+
 const CUSTOM_TASKS_KEY = "humanAgentOS.customTasks"
 const HUMAN_REVIEW_DECISIONS_KEY = "humanAgentOS.humanReviewDecisions"
 const AGENT_RUN_RESULTS_KEY = "humanAgentOS.agentRunResults"
+const AGENT_OUTPUT_REVIEW_DECISIONS_KEY =
+  "humanAgentOS.agentOutputReviewDecisions"
 
 function getLocalStorage() {
   if (typeof window === "undefined") {
@@ -187,6 +191,37 @@ function normalizeAgentRunResults(value) {
   )
 }
 
+function normalizeAgentOutputReviewDecisions(value) {
+  if (!isObject(value)) {
+    return {}
+  }
+
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([, decision]) => isObject(decision))
+      .map(([taskId, decision]) => {
+        const action = normalizeText(decision.action)
+
+        return [
+          taskId,
+          {
+            taskId: normalizeText(decision.taskId, taskId),
+            action,
+            agentRunId: normalizeText(decision.agentRunId),
+            actorName: normalizeText(decision.actorName, "Jordan Lee"),
+            decidedAt: normalizeText(decision.decidedAt),
+          },
+        ]
+      })
+      .filter(
+        ([, decision]) =>
+          decision.taskId &&
+          decision.agentRunId &&
+          getAgentOutputReviewAction(decision.action),
+      ),
+  )
+}
+
 export function getStoredCustomTasks() {
   const storedTasks = readJson(CUSTOM_TASKS_KEY, [])
 
@@ -226,6 +261,19 @@ export function saveStoredAgentRunResults(agentRunResults) {
   writeJson(AGENT_RUN_RESULTS_KEY, normalizeAgentRunResults(agentRunResults))
 }
 
+export function getStoredAgentOutputReviewDecisions() {
+  return normalizeAgentOutputReviewDecisions(
+    readJson(AGENT_OUTPUT_REVIEW_DECISIONS_KEY, {}),
+  )
+}
+
+export function saveStoredAgentOutputReviewDecisions(outputReviewDecisions) {
+  writeJson(
+    AGENT_OUTPUT_REVIEW_DECISIONS_KEY,
+    normalizeAgentOutputReviewDecisions(outputReviewDecisions),
+  )
+}
+
 export function clearStoredLocalSession() {
   const storage = getLocalStorage()
 
@@ -237,6 +285,7 @@ export function clearStoredLocalSession() {
     storage.removeItem(CUSTOM_TASKS_KEY)
     storage.removeItem(HUMAN_REVIEW_DECISIONS_KEY)
     storage.removeItem(AGENT_RUN_RESULTS_KEY)
+    storage.removeItem(AGENT_OUTPUT_REVIEW_DECISIONS_KEY)
   } catch {
     // Ignore storage failures so reset never blocks the app UI.
   }
