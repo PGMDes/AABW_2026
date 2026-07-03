@@ -1326,3 +1326,37 @@ Use it when changing scenario data or decision logic so the demo keeps covering:
 - hybrid path
 - needs human review path
 - blocked path
+
+---
+
+## Phase 5 Human Review Scenario Behavior
+
+Phase 5 keeps the same five Phase 4 scenarios, then adds frontend-only review
+decisions for the scenarios where governance requires a human checkpoint.
+
+No backend, database, auth, API, or external approval service is added.
+
+### Baseline behavior still expected before a user decision
+
+| Task ID | Baseline governance | Baseline launch status | Baseline lifecycle |
+|---|---|---|---|
+| `task_001` | `approved_for_launch` | `launched` | `reviewed` |
+| `task_002` | `needs_human_review` | `pending_approval` | `selected` |
+| `task_003` | `blocked` | `not_launched` | `blocked` |
+| `task_004` | `needs_human_review` | `pending_approval` | `selected` |
+| `task_005` | `needs_human_review` | `pending_approval` | `selected` |
+
+### Review actions to demo
+
+| Task ID | Useful Phase 5 action | Expected result |
+|---|---|---|
+| `task_002` | `Approve recommended option` | Hybrid option launches and audit records an approved human review decision |
+| `task_002` | `Switch to human-led execution` | Selection changes to `Strategy Lead` and launches as human-led work |
+| `task_003` | `Confirm policy block` | No option launches; audit records a blocked human review decision |
+| `task_004` | `Approve recommended option` | `Strategy Lead` launches as the human-led path |
+| `task_005` | `Approve recommended option` | Policy review hybrid option launches after approval |
+| `task_005` | `Switch to human-led execution` | Selection changes to `Policy Owner` and launches as human-led work |
+
+The blocked scenario must not show a launched agent option. Human-led fallback
+is only allowed when the governance result includes the `human` path in
+`allowedPaths`.

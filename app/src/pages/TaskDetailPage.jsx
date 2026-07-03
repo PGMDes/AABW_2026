@@ -70,13 +70,114 @@ function AuditTrailList({ auditTrail }) {
   )
 }
 
-export function TaskDetailPage({ flowResult, onNavigate }) {
+function HumanReviewPanel({
+  taskId,
+  humanReview,
+  selectedOption,
+  onHumanReviewDecision,
+}) {
+  if (!humanReview?.required) {
+    return null
+  }
+
+  const decision = humanReview.decision
+  const canRecordDecision = typeof onHumanReviewDecision === "function"
+
+  return (
+    <SectionCard
+      title="Human review decision"
+      description="Governance requires a human decision before this task can move forward."
+    >
+      <div className="space-y-4">
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-4">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <StatusBadge value={humanReview.status} />
+            {selectedOption ? (
+              <StatusBadge
+                value={selectedOption.pathType}
+                label={`Current option: ${formatLabel(selectedOption.pathType)}`}
+              />
+            ) : null}
+          </div>
+          <p className="text-sm leading-6 text-amber-950">
+            {humanReview.reason}
+          </p>
+
+          {decision ? (
+            <div className="mt-3 rounded-md bg-white px-3 py-2 text-sm text-slate-700">
+              <p className="font-semibold text-slate-950">
+                Decision recorded by {decision.actorName}
+              </p>
+              <p className="mt-1 leading-6">{decision.reason}</p>
+              <p className="mt-1 text-slate-500">
+                Selected option after decision:{" "}
+                {decision.selectedOptionName || "No launch option"}
+              </p>
+            </div>
+          ) : null}
+
+          {humanReview.launchUnavailable &&
+          !humanReview.humanFallbackAvailable ? (
+            <p className="mt-3 text-sm font-medium text-rose-700">
+              Launch is unavailable because no governance-approved human,
+              agent, or hybrid path is open.
+            </p>
+          ) : null}
+        </div>
+
+        <div className="grid gap-3 lg:grid-cols-3">
+          {humanReview.actions.map((action) => (
+            <div
+              key={action.id}
+              className="flex flex-col justify-between rounded-md border border-slate-200 bg-slate-50 p-4"
+            >
+              <div>
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <h3 className="text-sm font-semibold text-slate-950">
+                    {action.label}
+                  </h3>
+                  <StatusBadge value={action.decisionStatus} />
+                </div>
+                <p className="text-sm leading-6 text-slate-600">
+                  {action.enabled ? action.description : action.disabledReason}
+                </p>
+                {action.resultingOptionName ? (
+                  <p className="mt-2 text-sm font-medium text-slate-800">
+                    Result: {action.resultingOptionName}
+                  </p>
+                ) : null}
+              </div>
+              <PrimaryButton
+                variant={
+                  action.decisionStatus === "blocked"
+                    ? "secondary"
+                    : "primary"
+                }
+                disabled={!action.enabled || !canRecordDecision}
+                onClick={() => onHumanReviewDecision(taskId, action.id)}
+              >
+                {action.label}
+              </PrimaryButton>
+            </div>
+          ))}
+        </div>
+      </div>
+    </SectionCard>
+  )
+}
+
+export function TaskDetailPage({
+  flowResult,
+  onNavigate,
+  onHumanReviewDecision,
+}) {
   const {
     task,
     analysis,
     recommendation,
     explanation,
     governance,
+    humanReview,
     selectedOption,
     execution,
     outcome,
@@ -177,6 +278,13 @@ export function TaskDetailPage({ flowResult, onNavigate }) {
         </div>
 
         <GovernanceStatusCard governance={governance} />
+
+        <HumanReviewPanel
+          taskId={task.id}
+          humanReview={humanReview}
+          selectedOption={selectedOption}
+          onHumanReviewDecision={onHumanReviewDecision}
+        />
 
         <SectionCard
           title="Execution lifecycle"

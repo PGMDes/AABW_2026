@@ -75,6 +75,18 @@ const EXECUTION_PROFILES = [
     whyLimited: [],
   },
   {
+    id: "human_role_003",
+    sourceType: "human_role",
+    displayName: "Policy Owner",
+    pathType: "human",
+    trustTier: "human_review",
+    sensitiveDataSuitability: "medium_high",
+    supportedTaskTypes: ["document_review", "policy_review"],
+    baseFitScore: 78,
+    whyShown: ["Can own policy review when automation needs to be bypassed"],
+    whyLimited: [],
+  },
+  {
     id: "human_role_002",
     sourceType: "human_role",
     displayName: "Strategy Lead",

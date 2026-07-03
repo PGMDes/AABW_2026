@@ -2,7 +2,65 @@ function buildExecutionId(taskId) {
   return `execution_${taskId}`
 }
 
-export function createExecutionRecord(task, recommendation, selectedOption) {
+function getDemoOutcomeCopy(executionRecord, taskAnalysis) {
+  if (taskAnalysis.taskType === "research_brief") {
+    return {
+      outputSummary: "Draft market research brief created",
+      reviewOutcome: "accepted_with_minor_edits",
+      editLevel: "minor",
+      reviewNotes:
+        "Good first pass. Reviewer adjusted competitor prioritization and wording.",
+    }
+  }
+
+  if (executionRecord.selectedPath === "human") {
+    return {
+      outputSummary: "Human-led execution completed",
+      reviewOutcome: "human_led_completed",
+      editLevel: "reviewed",
+      reviewNotes: "Human owner completed the work after review approval.",
+    }
+  }
+
+  if (executionRecord.selectedPath === "hybrid") {
+    return {
+      outputSummary: "Human-agent review completed",
+      reviewOutcome: "approved_after_review",
+      editLevel: "reviewed",
+      reviewNotes:
+        "Human reviewer approved the assisted workflow and validated the result.",
+    }
+  }
+
+  return {
+    outputSummary: "Demo execution completed",
+    reviewOutcome: "demo_completed",
+    editLevel: "demo",
+    reviewNotes: "Demo task reached the generated completion state.",
+  }
+}
+
+export function createExecutionRecord(
+  task,
+  recommendation,
+  selectedOption,
+  humanReview = null,
+) {
+  const reviewDecisionStatus = humanReview?.decision?.decisionStatus
+
+  if (reviewDecisionStatus === "blocked") {
+    return {
+      id: buildExecutionId(task.id),
+      taskId: task.id,
+      selectedPath: selectedOption?.pathType || null,
+      selectedOptionId: selectedOption?.id || null,
+      selectedOptionType: selectedOption?.sourceType || null,
+      approvalStatus: "blocked",
+      launchStatus: "blocked",
+      launchedAt: null,
+    }
+  }
+
   if (!selectedOption) {
     return {
       id: buildExecutionId(task.id),
@@ -17,7 +75,9 @@ export function createExecutionRecord(task, recommendation, selectedOption) {
   }
 
   const blocked = selectedOption.eligible === false
-  const approvalRequired = selectedOption.approvalRequired === true
+  const approvalRequired =
+    selectedOption.approvalRequired === true &&
+    reviewDecisionStatus !== "approved"
 
   let approvalStatus = "not_required"
   let launchStatus = "launched"
@@ -31,6 +91,8 @@ export function createExecutionRecord(task, recommendation, selectedOption) {
     approvalStatus = "pending"
     launchStatus = "pending_approval"
     launchedAt = null
+  } else if (reviewDecisionStatus === "approved") {
+    approvalStatus = "approved"
   }
 
   return {
@@ -50,26 +112,25 @@ export function createDemoOutcomeReview(executionRecord, taskAnalysis) {
     return null
   }
 
-  const isResearchBrief = taskAnalysis.taskType === "research_brief"
+  const outcomeCopy = getDemoOutcomeCopy(executionRecord, taskAnalysis)
 
   return {
     id: `outcome_${executionRecord.id}`,
     executionId: executionRecord.id,
     status: "completed",
-    outputSummary: isResearchBrief
-      ? "Draft market research brief created"
-      : "Demo execution completed",
-    reviewOutcome: isResearchBrief
-      ? "accepted_with_minor_edits"
-      : "demo_completed",
-    editLevel: isResearchBrief ? "minor" : "demo",
-    reviewNotes: isResearchBrief
-      ? "Good first pass. Reviewer adjusted competitor prioritization and wording."
-      : "Demo task reached the generated completion state.",
+    ...outcomeCopy,
   }
 }
 
-export function getTaskStatusFromExecution(governanceResult, executionRecord) {
+export function getTaskStatusFromExecution(
+  governanceResult,
+  executionRecord,
+  humanReview = null,
+) {
+  if (humanReview?.decision?.decisionStatus === "blocked") {
+    return "blocked"
+  }
+
   if (executionRecord.launchStatus === "launched") {
     return "completed"
   }

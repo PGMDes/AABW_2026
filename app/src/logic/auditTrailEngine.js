@@ -43,11 +43,43 @@ function getLaunchEventStatus(execution, governanceState) {
   return "pending"
 }
 
+function buildHumanReviewEvent({ task, governance, humanReview }) {
+  if (!humanReview?.required) {
+    return null
+  }
+
+  if (humanReview.decision) {
+    return buildEvent({
+      taskId: task.id,
+      id: "audit_005_human_review_decision",
+      label: "Human review decision",
+      description: `${humanReview.decision.actorName} recorded decision: ${humanReview.decision.reason}`,
+      actorType: "human",
+      relativeTimestamp: "T+04m",
+      status: humanReview.decision.decisionStatus,
+    })
+  }
+
+  return buildEvent({
+    taskId: task.id,
+    id: "audit_005_human_review_decision",
+    label: "Human review decision",
+    description:
+      governance.status === "blocked"
+        ? "Human review can confirm the policy block, but launch is unavailable."
+        : "Human review is required before launch can proceed.",
+    actorType: "human",
+    relativeTimestamp: "T+04m",
+    status: governance.status === "blocked" ? "blocked" : "needs_human_review",
+  })
+}
+
 export function buildAuditTrail({
   task,
   analysis,
   recommendation,
   governance,
+  humanReview,
   selectedOption,
   execution,
   outcome,
@@ -56,6 +88,7 @@ export function buildAuditTrail({
   const executionActorType = getExecutionActorType(selectedOption)
   const launchEventStatus = getLaunchEventStatus(execution, governanceState)
   const hasLaunched = execution?.launchStatus === "launched"
+  const isLaunchBlocked = execution?.launchStatus === "blocked"
   const isCompleted = outcome?.status === "completed"
   const isReviewed = Boolean(outcome?.reviewOutcome)
 
@@ -96,31 +129,36 @@ export function buildAuditTrail({
       relativeTimestamp: "T+03m",
       status: governanceState,
     }),
+    buildHumanReviewEvent({ task, governance, humanReview }),
     buildEvent({
       taskId: task.id,
-      id: "audit_005_option_selected",
+      id: "audit_006_option_selected",
       label: "Execution option selected",
       description: selectedOption
         ? `${selectedOption.displayName} was selected for the ${formatValue(selectedOption.pathType)} path.`
-        : "No eligible execution option has been selected.",
+        : isLaunchBlocked
+          ? "No execution option was selected because launch was blocked."
+          : "No eligible execution option has been selected.",
       actorType: "human",
-      relativeTimestamp: "T+04m",
-      status: selectedOption ? "completed" : "pending",
+      relativeTimestamp: "T+05m",
+      status: selectedOption ? "completed" : isLaunchBlocked ? "blocked" : "pending",
     }),
     buildEvent({
       taskId: task.id,
-      id: "audit_006_execution_launched",
+      id: "audit_007_execution_launched",
       label: "Execution launched",
       description: hasLaunched
         ? `Execution launched through ${selectedOption.displayName}.`
-        : "Execution is waiting for approval or an eligible launch option.",
+        : isLaunchBlocked
+          ? "Execution was blocked and did not launch."
+          : "Execution is waiting for approval or an eligible launch option.",
       actorType: "human",
-      relativeTimestamp: "T+05m",
+      relativeTimestamp: "T+06m",
       status: launchEventStatus,
     }),
     buildEvent({
       taskId: task.id,
-      id: "audit_007_execution_in_progress",
+      id: "audit_008_execution_in_progress",
       label: "Execution in progress",
       description: hasLaunched
         ? `${selectedOption.displayName} worked on the task.`
@@ -131,7 +169,7 @@ export function buildAuditTrail({
     }),
     buildEvent({
       taskId: task.id,
-      id: "audit_008_execution_completed",
+      id: "audit_009_execution_completed",
       label: "Execution completed",
       description: outcome?.outputSummary || "No completed output is available yet.",
       actorType: executionActorType,
@@ -140,7 +178,7 @@ export function buildAuditTrail({
     }),
     buildEvent({
       taskId: task.id,
-      id: "audit_009_outcome_reviewed",
+      id: "audit_010_outcome_reviewed",
       label: "Outcome reviewed",
       description: isReviewed
         ? `Human review recorded: ${formatValue(outcome.reviewOutcome)}.`
@@ -149,5 +187,5 @@ export function buildAuditTrail({
       relativeTimestamp: "T+50m",
       status: isReviewed ? "completed" : "pending",
     }),
-  ]
+  ].filter(Boolean)
 }

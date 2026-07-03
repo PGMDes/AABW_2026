@@ -40,7 +40,7 @@ Each of those steps should produce a clear object.
 
 ## Object list
 
-The MVP uses these 12 objects:
+The MVP uses these 13 objects:
 
 1. `Task`
 2. `TaskAnalysis`
@@ -54,6 +54,7 @@ The MVP uses these 12 objects:
 10. `OutcomeReview`
 11. `LifecycleState`
 12. `AuditEvent`
+13. `HumanReviewDecision`
 
 ---
 
@@ -638,6 +639,66 @@ The user needs to trust the decision path. A readable audit trail makes the work
 
 ---
 
+## 13. HumanReviewDecision
+
+### What it means in simple words
+
+`HumanReviewDecision` stores what a reviewer decided when governance requires a
+human checkpoint.
+
+It is separate from `GovernanceResult` because governance says what the policy
+requires, while the human review decision says what the user actually chose.
+
+### Why the app needs it
+
+Phase 5 adds three user choices for review-required tasks:
+
+- approve the recommended option
+- switch to a human-led execution option
+- block execution
+
+Blocked tasks can also record that a human confirmed the policy block.
+
+### Important fields
+
+- `id`
+- `taskId`
+- `action`
+- `decisionStatus`
+- `selectedPath`
+- `selectedOptionId`
+- `selectedOptionName`
+- `actorName`
+- `actorRole`
+- `decidedAt`
+- `reason`
+
+### Example JSON
+
+```json
+{
+  "id": "review_task_002_approve_recommended",
+  "taskId": "task_002",
+  "action": "approve_recommended",
+  "decisionStatus": "approved",
+  "selectedPath": "hybrid",
+  "selectedOptionId": "task_002_agent_003",
+  "selectedOptionName": "Executive Memo Agent + Human Reviewer",
+  "actorName": "Maya Chen",
+  "actorRole": "AI Transformation Lead",
+  "decidedAt": "2026-07-03T11:05:00Z",
+  "reason": "Human reviewer approved the recommended execution option."
+}
+```
+
+### Which step creates or uses it
+
+- created on `Task Detail / Execution Tracker`
+- used by execution, lifecycle, and audit trail generation
+- stored only in frontend state for the current demo session
+
+---
+
 ## How the objects connect together
 
 This is the simplest way to understand the object relationships.
@@ -648,6 +709,7 @@ Task
   -> RecommendationRecord
   -> RecommendationExplanation
   -> GovernanceResult
+  -> HumanReviewDecision
   -> MarketplaceOption(s)
   -> ExecutionRecord
   -> OutcomeReview
@@ -665,6 +727,7 @@ Supporting objects used by marketplace:
 - one `Task` has one `RecommendationRecord`
 - one `Task` has one `RecommendationExplanation`
 - one `Task` has one `GovernanceResult`
+- one `Task` can have zero or one `HumanReviewDecision` in the first demo
 - one `Task` can have many `MarketplaceOption` items
 - one `Task` has zero or one `ExecutionRecord` in the first demo
 - one `ExecutionRecord` has zero or one `OutcomeReview`
@@ -781,6 +844,7 @@ For the first build, these objects should be hardcoded in frontend files, sample
 - `RecommendationRecord`
 - `RecommendationExplanation`
 - `GovernanceResult`
+- `HumanReviewDecision`
 - `AgentProfile`
 - `HumanRoleProfile`
 - `MarketplaceOption`
@@ -800,11 +864,12 @@ Note: `LifecycleState` and `AuditEvent` can be generated from the task flow inst
 5. `RecommendationRecord`
 6. `RecommendationExplanation`
 7. `GovernanceResult`
-8. `MarketplaceOption`
-9. `ExecutionRecord`
-10. `OutcomeReview`
-11. `LifecycleState`
-12. `AuditEvent`
+8. `HumanReviewDecision`
+9. `MarketplaceOption`
+10. `ExecutionRecord`
+11. `OutcomeReview`
+12. `LifecycleState`
+13. `AuditEvent`
 
 ### Why hardcode first
 
@@ -1024,11 +1089,12 @@ If the builder wants the smallest possible first version, start with these objec
 5. `RecommendationRecord`
 6. `RecommendationExplanation`
 7. `GovernanceResult`
-8. `MarketplaceOption`
-9. `ExecutionRecord`
-10. `OutcomeReview`
-11. `LifecycleState`
-12. `AuditEvent`
+8. `HumanReviewDecision`
+9. `MarketplaceOption`
+10. `ExecutionRecord`
+11. `OutcomeReview`
+12. `LifecycleState`
+13. `AuditEvent`
 
 This order works because it lets the main screens appear early.
 

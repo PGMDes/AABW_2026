@@ -589,6 +589,7 @@ It is the final state of the demo flow.
 - recommendation result
 - explanation reasons
 - governance result
+- human review decision panel when governance requires it
 - selected option
 - execution status
 - lifecycle status
@@ -603,6 +604,7 @@ It is the final state of the demo flow.
 - `AnalysisSummaryCard`
 - `RecommendationSummaryCard`
 - `GovernanceSummaryCard`
+- `HumanReviewDecisionPanel`
 - `ExecutionStatusCard`
 - `OutcomeReviewCard`
 - `LifecycleStepList`
@@ -617,6 +619,7 @@ It is the final state of the demo flow.
 - `RecommendationRecord`
 - `RecommendationExplanation`
 - `GovernanceResult`
+- `HumanReviewDecision`
 - `MarketplaceOption`
 - `ExecutionRecord`
 - `OutcomeReview`
@@ -700,6 +703,53 @@ For a first frontend demo, it is okay to fake approval with:
 stored in local state.
 
 Do not build a real approval system yet.
+
+---
+
+## Phase 5 human review controls
+
+Phase 5 adds a `Human review decision` panel to `Task Detail / Execution
+Tracker`.
+
+Show this panel when governance returns:
+
+- `needs_human_review`
+- `blocked`
+
+Do not show it for clean `approved_for_launch` tasks.
+
+### Review-required panel actions
+
+When governance returns `needs_human_review`, the panel should offer:
+
+- `Approve recommended option`
+- `Switch to human-led execution`
+- `Block execution`
+
+The `Switch to human-led execution` button should only be enabled when the
+marketplace has an eligible human-led option and governance allows the `human`
+path.
+
+### Blocked panel actions
+
+When governance returns `blocked`, the panel must show that launch is
+unavailable.
+
+Only enable a human-led fallback if governance still allows the `human` path.
+If governance blocks every path, show only a safe review action such as
+`Confirm policy block`.
+
+### What changes after a decision
+
+After the user records a decision:
+
+- the selected option may change
+- execution can move from `pending_approval` to `launched`
+- execution can move to `blocked`
+- lifecycle shows a human review step
+- audit trail shows a `Human review decision` event
+
+All of this remains frontend-only sample behavior.
 
 ---
 

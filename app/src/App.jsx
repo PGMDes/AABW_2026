@@ -11,7 +11,8 @@ import "./App.css"
 function App() {
   const [currentPage, setCurrentPage] = useState("dashboard")
   const [activeTaskId, setActiveTaskId] = useState("task_001")
-  const [generatedResult, setGeneratedResult] = useState(null)
+  const [generatedTask, setGeneratedTask] = useState(null)
+  const [humanReviewDecisions, setHumanReviewDecisions] = useState({})
 
   function navigate(pageName, taskId = activeTaskId) {
     setActiveTaskId(taskId)
@@ -19,16 +20,28 @@ function App() {
   }
 
   function handleAnalyzeTask(task) {
-    setGeneratedResult(buildTaskFlow(task))
+    setGeneratedTask(task)
     setActiveTaskId(task.id)
     setCurrentPage("recommendation")
   }
 
+  function handleHumanReviewDecision(taskId, action) {
+    setHumanReviewDecisions((currentDecisions) => ({
+      ...currentDecisions,
+      [taskId]: {
+        taskId,
+        action,
+      },
+    }))
+  }
+
   const sampleTask = tasks.find((task) => task.id === activeTaskId) || tasks[0]
-  const activeFlowResult =
-    generatedResult?.task.id === activeTaskId
-      ? generatedResult
-      : buildTaskFlow(sampleTask)
+  const activeTask =
+    generatedTask?.id === activeTaskId ? generatedTask : sampleTask
+  const activeFlowResult = buildTaskFlow(
+    activeTask,
+    humanReviewDecisions[activeTaskId],
+  )
 
   let page
 
@@ -46,6 +59,7 @@ function App() {
       <TaskDetailPage
         flowResult={activeFlowResult}
         onNavigate={navigate}
+        onHumanReviewDecision={handleHumanReviewDecision}
       />
     )
   } else {

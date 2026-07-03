@@ -1,6 +1,7 @@
 export const lifecycleConcepts = [
   "recommended",
   "approved",
+  "human_review",
   "needs_human_review",
   "blocked",
   "selected",
@@ -48,6 +49,7 @@ export function buildLifecycleState({
   task,
   recommendation,
   governance,
+  humanReview,
   selectedOption,
   execution,
   outcome,
@@ -56,7 +58,9 @@ export function buildLifecycleState({
   const hasSelection = Boolean(selectedOption && execution?.selectedOptionId)
   const hasLaunched = execution?.launchStatus === "launched"
   const isBlocked =
-    governanceState === "blocked" || execution?.launchStatus === "blocked"
+    governanceState === "blocked" ||
+    execution?.launchStatus === "blocked" ||
+    humanReview?.decision?.decisionStatus === "blocked"
   const isCompleted = outcome?.status === "completed"
   const isReviewed = Boolean(outcome?.reviewOutcome)
 
@@ -89,6 +93,30 @@ export function buildLifecycleState({
     return "pending"
   })()
 
+  const humanReviewStatus = (() => {
+    if (!humanReview?.required) return "completed"
+    if (humanReview.decision?.decisionStatus === "approved") return "approved"
+    if (humanReview.decision?.decisionStatus === "blocked") return "blocked"
+    if (governanceState === "blocked") return "blocked"
+    return "needs_human_review"
+  })()
+
+  const humanReviewDescription = (() => {
+    if (!humanReview?.required) {
+      return "No extra human review is required before launch."
+    }
+
+    if (humanReview.decision) {
+      return humanReview.decision.reason
+    }
+
+    if (governanceState === "blocked") {
+      return "Launch is unavailable because governance blocks every execution path."
+    }
+
+    return "Human review is required before this option can launch."
+  })()
+
   return {
     taskId: task.id,
     currentStage,
@@ -106,6 +134,12 @@ export function buildLifecycleState({
         governanceLabelByState[governanceState],
         governance.policyReason,
         governanceState,
+      ),
+      buildStep(
+        "human_review",
+        "Human review",
+        humanReviewDescription,
+        humanReviewStatus,
       ),
       buildStep(
         "selected",

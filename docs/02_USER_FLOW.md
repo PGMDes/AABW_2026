@@ -954,6 +954,48 @@ Then the user can open the task detail page and see what happened:
 
 That is the full story of the first MVP demo.
 
+## Phase 5 human review and override flow
+
+Phase 5 adds the missing control-plane behavior for tasks where governance says
+`needs_human_review` or `blocked`.
+
+This is still frontend-only. The app does not add auth, a backend, a database,
+or external approval services. A human decision is stored in React state for the
+current browser session.
+
+### Where review happens
+
+Human review happens on `Task Detail / Execution Tracker` because that page
+already shows the recommendation, governance result, selected option, lifecycle,
+execution status, and audit trail together.
+
+### If governance says `needs_human_review`
+
+The user can choose one of three deterministic review decisions:
+
+- `Approve recommended option`: approves the current recommended eligible option and launches it in the demo.
+- `Switch to human-led execution`: overrides the selected option with an eligible human-led option when governance allows one.
+- `Block execution`: records that the human reviewer stopped the task from launching.
+
+After the decision:
+
+- lifecycle shows the human review step as `approved` or `blocked`
+- execution status updates from `pending_approval` to `launched` or `blocked`
+- the audit trail records a `Human review decision` event
+- approved launches create the same kind of demo outcome record as other launched work
+
+### If governance says `blocked`
+
+Blocked tasks must still not launch an agent.
+
+The review panel shows that launch is unavailable. It only offers a human-led
+fallback when the existing governance result still allows the `human` path and
+there is an eligible human option.
+
+For the current `task_003` blocked scenario, governance blocks `human`, `agent`,
+and `hybrid`, so the app does not offer a human-led launch fallback. It only lets
+the user confirm the policy block.
+
 ## First path to build
 
 Build the happy path first.
