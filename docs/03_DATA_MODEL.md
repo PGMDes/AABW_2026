@@ -56,6 +56,10 @@ The MVP uses these 13 objects:
 12. `AuditEvent`
 13. `HumanReviewDecision`
 
+Phase 9 also adds a frontend-only `LocalSessionState` helper for browser
+`localStorage`. It is not a backend data model. It only stores custom demo tasks
+and Human review decisions for the current browser.
+
 ---
 
 ## 1. Task
@@ -82,6 +86,8 @@ The app cannot analyze or recommend anything until it knows what the user wants 
 - `urgency`
 - `budgetRange`
 - `status`
+- `source`
+- `createdAt`
 
 ### Example JSON
 
@@ -96,7 +102,9 @@ The app cannot analyze or recommend anything until it knows what the user wants 
   "sensitivity": "low",
   "urgency": "medium",
   "budgetRange": "low",
-  "status": "submitted"
+  "status": "submitted",
+  "source": "demo",
+  "createdAt": "2026-07-03T10:30:00Z"
 }
 ```
 
@@ -695,7 +703,61 @@ Blocked tasks can also record that a human confirmed the policy block.
 
 - created on `Task Detail / Execution Tracker`
 - used by execution, lifecycle, and audit trail generation
-- stored only in frontend state for the current demo session
+- stored in frontend state and, in Phase 9, persisted in browser `localStorage`
+  for the current browser only
+
+---
+
+## Phase 9 LocalSessionState
+
+### What it means in simple words
+
+`LocalSessionState` is the small browser-only storage layer for demo realism.
+
+It lets a user create a custom task, refresh the browser, and still see that
+task on the Dashboard. It also keeps Human review decisions after refresh.
+
+### Why the app needs it
+
+The built-in demo scenarios are deterministic and should not change. But a live
+prototype should also let a judge try their own task and see it behave like a
+real frontend workflow.
+
+### Important fields
+
+```json
+{
+  "customTasks": [
+    {
+      "id": "custom_task_1783060000000",
+      "title": "Summarize internal notes from a customer workshop",
+      "source": "local",
+      "status": "submitted"
+    }
+  ],
+  "humanReviewDecisions": {
+    "task_002": {
+      "taskId": "task_002",
+      "action": "approve_recommended"
+    }
+  }
+}
+```
+
+### Storage rules
+
+- stored only in browser `localStorage`
+- safe to clear with `Reset local demo state`
+- never used by `validate:scenarios`
+- never modifies built-in demo scenario data
+- falls back to empty local state if the stored JSON is invalid
+- does not throw if `localStorage` is unavailable
+
+### Which step creates or uses it
+
+- custom tasks are created from `New Task`
+- Human review decisions are created from `Task Detail`
+- Dashboard reads both so refresh keeps the local session visible
 
 ---
 

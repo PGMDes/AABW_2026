@@ -11,6 +11,7 @@ This repository is intentionally scoped to a clickable frontend demo:
 - React + Vite app in `app/`
 - hardcoded sample tasks, marketplace options, governance results, lifecycle states, and audit events
 - deterministic recommendation, governance, marketplace, execution, lifecycle, and scenario validation logic
+- localStorage persistence for browser-local custom tasks and Human review decisions
 - no backend
 - no database
 - no authentication
@@ -71,6 +72,13 @@ The validator checks the baseline demo scenarios and the Human review decision s
 - Phase 6: scenario validation guardrails
 - Phase 7: product walkthrough polish
 - Phase 8: GitHub-ready README, live demo walkthrough, demo checklist, and compact dashboard walkthrough order
+- Phase 9: custom local tasks, persisted Human review decisions, Demo/Local labels, and reset local demo state
+
+## Local Demo Persistence
+
+Custom tasks and Human review decisions persist in browser `localStorage` only. They are local to the current browser and can be cleared with `Reset local demo state` on the Dashboard.
+
+The built-in demo scenarios are still fixed sample data, and `validate:scenarios` checks only those deterministic scenarios.
 
 ## Important Demo Scenarios
 

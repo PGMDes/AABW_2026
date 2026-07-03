@@ -88,8 +88,10 @@ export function RecommendationPage({ flowResult, onContinue }) {
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <p className="text-sm leading-6 text-slate-600">
-                This usually means governance blocked launch. Continue to the
-                detail view to see the policy stop, lifecycle, and audit trail.
+                This can happen when governance blocks launch or when the
+                current sample marketplace does not have a direct match.
+                Continue to the detail view to see the lifecycle and audit
+                trail.
               </p>
               <PrimaryButton onClick={onContinue}>Continue to Detail</PrimaryButton>
             </div>

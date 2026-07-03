@@ -1436,3 +1436,28 @@ The blocked scenario still expects:
 
 Dashboard metrics and scenario preview badges should be derived from the same
 generated task flow and scenario expectation data used by the validator.
+
+---
+
+## Phase 9 Local Session Demo Data Boundary
+
+Phase 9 adds browser-local custom tasks and persisted Human review decisions,
+but it does not change the deterministic demo scenario set.
+
+Local custom tasks:
+
+- are generated from the New Task form
+- use IDs such as `custom_task_<timestamp>`
+- are saved only in browser `localStorage`
+- are shown with a `Local` badge
+- run through the same generated task flow as built-in demo tasks
+
+Built-in scenario tasks:
+
+- stay in the source-controlled sample data
+- are shown with a `Demo` badge
+- keep the same expected outputs used by `validate:scenarios`
+
+The scenario validator should continue to validate only the built-in demo
+scenarios and Human review decision scenarios. It should not read
+`localStorage`, depend on custom tasks, or weaken the `11/11` checks.

@@ -11,6 +11,7 @@ export function TaskSummaryCard({ task }) {
             <h3 className="text-xl font-semibold text-slate-950">
               {task.title}
             </h3>
+            <StatusBadge value={task.source === "local" ? "local" : "demo"} />
             <StatusBadge value={task.status} />
           </div>
           <p className="text-sm leading-6 text-slate-600">{task.description}</p>

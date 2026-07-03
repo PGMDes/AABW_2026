@@ -370,14 +370,19 @@ export function TaskDetailPage({
                 </ul>
               </div>
             ) : (
-              <div className="rounded-md border border-rose-200 bg-rose-50 p-4">
+              <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
                 <div className="mb-2 flex flex-wrap gap-2">
-                  <StatusBadge value="blocked" />
+                  <StatusBadge
+                    value={
+                      governance.status === "blocked" ? "blocked" : "pending"
+                    }
+                  />
                   <StatusBadge value="not_launched" />
                 </div>
-                <p className="text-sm leading-6 text-rose-900">
-                  No execution option is selected because governance blocked
-                  launch for this scenario.
+                <p className="text-sm leading-6 text-slate-600">
+                  {governance.status === "blocked"
+                    ? "No execution option is selected because governance blocked launch for this task."
+                    : "No execution option is selected because the current sample marketplace does not have a direct match for this task yet."}
                 </p>
               </div>
             )}

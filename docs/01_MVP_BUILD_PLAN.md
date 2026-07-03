@@ -56,6 +56,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 6: Scenario validation guardrails
 ### Phase 7: Product walkthrough polish
 ### Phase 8: Demo readiness and GitHub walkthrough
+### Phase 9: Custom task realism and local session persistence
 
 ---
 
@@ -586,6 +587,39 @@ For the live app:
 ```bash
 npm.cmd --prefix app run dev -- --host 127.0.0.1
 ```
+
+---
+
+## Phase 9: Custom task realism and local session persistence
+
+### Goal
+
+Make the frontend feel less like a static scenario viewer while preserving all
+deterministic demo scenarios.
+
+This phase stays frontend-only. It does not add a backend, database,
+authentication, APIs, external services, dependencies, or a new testing
+framework.
+
+### Expected output
+
+By the end of this phase, the app should provide:
+
+- browser-local custom task persistence with `localStorage`
+- custom task IDs like `custom_task_<timestamp>`
+- custom tasks shown on the Dashboard with a `Local` badge
+- built-in scenario tasks still shown with a `Demo` badge
+- custom tasks openable in Task Detail and run through the same
+  `buildTaskFlow(task)` pipeline as demo tasks
+- persisted Human review decisions in the current browser
+- a Dashboard `Reset local demo state` button that clears local custom tasks and
+  review decisions without changing built-in demo scenarios
+- scenario validation that still checks only the deterministic demo scenarios
+
+### Important boundary
+
+`localStorage` is only a prototype convenience. It is not a backend, database,
+auth layer, API, or source of truth for the deterministic scenario validator.
 
 ---
 

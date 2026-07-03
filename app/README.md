@@ -11,6 +11,8 @@ The app is frontend-only. It uses sample data and local React state to show the 
 - select an execution option
 - show lifecycle, audit trail, Human review, and outcome state
 
+Custom tasks and Human review decisions are saved in browser `localStorage` only. Use the Dashboard `Reset local demo state` button to clear them.
+
 There is no backend, database, auth, API, or external service integration yet.
 
 ## Commands

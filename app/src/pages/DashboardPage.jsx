@@ -1,6 +1,5 @@
 import {
   currentUser,
-  tasks,
 } from "../data"
 import { PageHeader } from "../components/PageHeader"
 import { PrimaryButton } from "../components/PrimaryButton"
@@ -96,9 +95,35 @@ function getNextStepHint(flow) {
   return "Ready for walkthrough"
 }
 
-export function DashboardPage({ onNavigate }) {
-  const taskFlows = tasks.map((task) => buildTaskFlow(task))
+function getSelectedOptionText(flow) {
+  if (flow.selectedOption) {
+    return `Selected option: ${flow.selectedOption.displayName}`
+  }
+
+  if (flow.governance.status === "blocked") {
+    return "Selected option: none because governance blocks launch"
+  }
+
+  return "Selected option: no eligible sample option yet"
+}
+
+export function DashboardPage({
+  customTaskCount = 0,
+  humanReviewDecisions = {},
+  onNavigate,
+  onResetLocalState,
+  tasks,
+}) {
+  const taskFlows = tasks.map((task) =>
+    buildTaskFlow(task, humanReviewDecisions[task.id]),
+  )
   const totalTasks = taskFlows.length
+  const demoTaskCount = taskFlows.filter(
+    (flow) => flow.task.source !== "local",
+  ).length
+  const humanReviewDecisionCount = Object.keys(humanReviewDecisions).length
+  const hasLocalSessionState =
+    customTaskCount > 0 || humanReviewDecisionCount > 0
   const approvedForLaunchCount = taskFlows.filter(
     (flow) => flow.governance.status === "approved_for_launch",
   ).length
@@ -134,21 +159,31 @@ export function DashboardPage({ onNavigate }) {
       />
 
       <div className="mb-6 rounded-lg border border-cyan-200 bg-cyan-50 p-4">
-        <p className="text-sm font-semibold text-cyan-900">
-          Welcome back, {currentUser.name}
-        </p>
-        <p className="mt-1 text-sm text-cyan-800">
-          This walkthrough uses sample data only. It shows decisioning,
-          governance, execution selection, and outcome tracking without a
-          backend.
-        </p>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-cyan-900">
+              Welcome back, {currentUser.name}
+            </p>
+            <p className="mt-1 text-sm text-cyan-800">
+              Built-in scenarios stay fixed. Local custom tasks and Human
+              review choices are saved only in this browser.
+            </p>
+          </div>
+          <PrimaryButton
+            disabled={!hasLocalSessionState}
+            variant="secondary"
+            onClick={onResetLocalState}
+          >
+            Reset local demo state
+          </PrimaryButton>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <SummaryMetric
           label="Total tasks"
           value={totalTasks}
-          hint="Demo scenarios"
+          hint={`${demoTaskCount} demo, ${customTaskCount} local`}
         />
         <SummaryMetric
           label="Approved for launch"
@@ -176,13 +211,12 @@ export function DashboardPage({ onNavigate }) {
         </div>
 
         <SectionCard
-          title="Demo task queue"
-          description="Each row opens the task detail view used in the product walkthrough."
+          title="Task queue"
+          description="Demo scenarios are built in. Local tasks are saved in this browser."
         >
           <div className="space-y-3">
             {taskFlows.map((taskFlow) => {
-              const { task, recommendation, governance, selectedOption } =
-                taskFlow
+              const { task, recommendation, governance } = taskFlow
 
               return (
                 <button
@@ -193,13 +227,16 @@ export function DashboardPage({ onNavigate }) {
                 >
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                      <p className="font-semibold text-slate-950">
-                        {task.title}
-                      </p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-semibold text-slate-950">
+                          {task.title}
+                        </p>
+                        <StatusBadge
+                          value={task.source === "local" ? "local" : "demo"}
+                        />
+                      </div>
                       <p className="mt-1 text-sm text-slate-600">
-                        {selectedOption
-                          ? `Selected option: ${selectedOption.displayName}`
-                          : "Selected option: none because governance blocks launch"}
+                        {getSelectedOptionText(taskFlow)}
                       </p>
                       <p className="mt-1 text-xs font-medium text-slate-500">
                         {getNextStepHint(taskFlow)}

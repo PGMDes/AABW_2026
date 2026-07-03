@@ -847,6 +847,66 @@ screen, not a documentation page.
 
 ---
 
+## Phase 9 custom task and local session UI
+
+Phase 9 keeps the deterministic demo scenarios but adds browser-local session
+realism.
+
+### Dashboard local session behavior
+
+The Dashboard task queue should show both:
+
+- built-in scenario tasks with a `Demo` badge
+- user-created browser-local tasks with a `Local` badge
+
+The summary metric for total tasks should make it clear how many are demo tasks
+and how many are local tasks.
+
+Add a small `Reset local demo state` control on the Dashboard. It should:
+
+- clear local custom tasks
+- clear persisted Human review decisions
+- leave built-in demo scenarios untouched
+- stay disabled or unobtrusive when there is no local state to clear
+
+### New Task custom behavior
+
+The New Task screen should still start with the demo scenario picker.
+
+If the user edits a form field or clicks `Start custom task`, the task becomes a
+local custom task. On submit, the app should:
+
+- generate a local ID such as `custom_task_<timestamp>`
+- save the task in browser `localStorage`
+- route the task through the same task flow engine as demo tasks
+- show the result on Recommendation and Task Detail
+- add the task to the Dashboard queue with a `Local` badge
+
+### Task Detail local behavior
+
+Task Detail should show the same sections for local tasks as for demo tasks:
+
+- Task summary
+- recommendation summary
+- analyzed attributes
+- governance status
+- Human review when needed
+- lifecycle
+- selected execution option
+- outcome summary
+- audit trail
+
+If a local custom task has no eligible sample marketplace option, the UI should
+explain that the current sample marketplace does not have a direct match yet.
+This is different from a policy block.
+
+### Persistence boundary
+
+This is browser `localStorage` only. It is not a backend, database, API, auth
+system, or durable product storage.
+
+---
+
 ## Blocked-by-policy screen behavior
 
 This is how the UI should behave when a path or option is blocked.

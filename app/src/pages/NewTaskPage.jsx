@@ -10,6 +10,19 @@ import { PrimaryButton } from "../components/PrimaryButton"
 import { SectionCard } from "../components/SectionCard"
 import { StatusBadge } from "../components/StatusBadge"
 import { formatLabel } from "../components/formatLabel"
+import { createLocalTaskFromFormData } from "../logic/localSessionStore"
+
+const customTaskFormData = {
+  id: "",
+  title: "",
+  description: "",
+  expectedOutput: "",
+  deadline: "2026-07-15",
+  audience: "internal",
+  sensitivity: "low",
+  urgency: "medium",
+  budgetRange: "low",
+}
 
 function Field({ label, children }) {
   return (
@@ -90,11 +103,33 @@ function ScenarioPreview({ scenario }) {
   )
 }
 
-export function NewTaskPage({ onAnalyze }) {
+function CustomTaskPreview() {
+  return (
+    <div className="rounded-md border border-slate-200 bg-white p-4">
+      <p className="text-xs font-semibold uppercase tracking-normal text-slate-500">
+        Local custom task
+      </p>
+      <h3 className="mt-2 text-lg font-semibold text-slate-950">
+        Saved in this browser
+      </h3>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <StatusBadge value="local" />
+        <StatusBadge value="submitted" />
+      </div>
+      <p className="mt-3 text-sm leading-6 text-slate-600">
+        This task will use the same taskFlowEngine as the demo scenarios, then
+        appear on the Dashboard as a local task.
+      </p>
+    </div>
+  )
+}
+
+export function NewTaskPage({ existingTaskIds = [], onAnalyze }) {
   const defaultScenario = getDemoScenarioById(defaultDemoScenarioId)
   const [selectedScenarioId, setSelectedScenarioId] = useState(
     defaultScenario.id,
   )
+  const [isCustomMode, setIsCustomMode] = useState(false)
   const [formData, setFormData] = useState(() =>
     getTaskFormData(defaultScenario.task),
   )
@@ -105,12 +140,20 @@ export function NewTaskPage({ onAnalyze }) {
     const scenario = getDemoScenarioById(scenarioId)
 
     setSelectedScenarioId(scenario.id)
+    setIsCustomMode(false)
     setFormData(getTaskFormData(scenario.task))
     setShowError(false)
   }
 
+  function startCustomTask() {
+    setIsCustomMode(true)
+    setFormData(customTaskFormData)
+    setShowError(false)
+  }
+
   function updateField(fieldName, value) {
-    setFormData((current) => ({ ...current, [fieldName]: value }))
+    setIsCustomMode(true)
+    setFormData((current) => ({ ...current, id: "", [fieldName]: value }))
   }
 
   function handleSubmit(event) {
@@ -121,11 +164,15 @@ export function NewTaskPage({ onAnalyze }) {
       return
     }
 
-    onAnalyze({
-      ...formData,
-      id: formData.id || "task_custom",
-      status: "submitted",
-    })
+    const task = isCustomMode
+      ? createLocalTaskFromFormData(formData, existingTaskIds)
+      : {
+          ...formData,
+          source: "demo",
+          status: "submitted",
+        }
+
+    onAnalyze(task)
   }
 
   return (
@@ -137,28 +184,39 @@ export function NewTaskPage({ onAnalyze }) {
 
       <SectionCard
         title="Demo scenario"
-        description="The picker fills the form and shows what the scenario is meant to prove."
+        description="Pick a built-in scenario, or edit the form to save a local custom task in this browser."
       >
         <div className="grid gap-4 lg:grid-cols-[1fr_1.1fr]">
-          <Field label="Load demo scenario">
-            <SelectInput
-              value={selectedScenarioId}
-              onChange={loadScenario}
-              options={demoScenarios.map((scenario) => ({
-                label: scenario.label,
-                value: scenario.id,
-              }))}
-            />
-          </Field>
+          <div className="space-y-3">
+            <Field label="Load demo scenario">
+              <SelectInput
+                value={selectedScenarioId}
+                onChange={loadScenario}
+                options={demoScenarios.map((scenario) => ({
+                  label: scenario.label,
+                  value: scenario.id,
+                }))}
+              />
+            </Field>
+            <PrimaryButton variant="secondary" onClick={startCustomTask}>
+              Start custom task
+            </PrimaryButton>
+          </div>
 
-          <ScenarioPreview scenario={selectedScenario} />
+          {isCustomMode ? (
+            <CustomTaskPreview />
+          ) : (
+            <ScenarioPreview scenario={selectedScenario} />
+          )}
         </div>
       </SectionCard>
 
       <SectionCard title="Task intake form" className="mt-6">
         <form onSubmit={handleSubmit} className="space-y-5">
           <p className="rounded-md bg-slate-50 px-3 py-2 text-sm text-slate-700">
-            {selectedScenario.description}
+            {isCustomMode
+              ? "Local custom tasks are saved only in this browser until you reset local demo state."
+              : selectedScenario.description}
           </p>
 
           <Field label="Task title">
