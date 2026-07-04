@@ -92,6 +92,18 @@ opens one from Dashboard.
 - Lightweight scenario validation command with `11/11` expected checks
 - Static deployment readiness through Vite build output in `app/dist`
 
+## Hackathon evidence docs
+
+Use these docs as the main judge-facing evidence pack:
+
+- [Executive Briefing](15_EXECUTIVE_BRIEFING.md)
+- [Architecture](12_ARCHITECTURE.md)
+- [Domain model](13_DOMAIN_MODEL.md)
+- [Hackathon Benchmark Alignment](16_HACKATHON_BENCHMARK_ALIGNMENT.md)
+- [Production Contracts](17_PRODUCTION_CONTRACTS.md)
+- [Live Test Plan](18_LIVE_TEST_PLAN.md)
+- [Demo Script](14_DEMO_SCRIPT.md)
+
 ## Demo scenario walkthrough
 
 Use the full walkthrough script in `docs/08_DEMO_WALKTHROUGH.md`. Use
@@ -216,3 +228,7 @@ Possible next steps after the hackathon demo:
 - [ ] Review `docs/12_ARCHITECTURE.md`
 - [ ] Review `docs/13_DOMAIN_MODEL.md`
 - [ ] Review `docs/14_DEMO_SCRIPT.md`
+- [ ] Review `docs/15_EXECUTIVE_BRIEFING.md`
+- [ ] Review `docs/16_HACKATHON_BENCHMARK_ALIGNMENT.md`
+- [ ] Review `docs/17_PRODUCTION_CONTRACTS.md`
+- [ ] Review `docs/18_LIVE_TEST_PLAN.md`

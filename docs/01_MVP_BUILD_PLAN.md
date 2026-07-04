@@ -65,6 +65,7 @@ We should build this MVP in small phases. Each phase should produce something vi
 ### Phase 15: Controlled Agent Runner
 ### Phase 16: Agent Output Review and Final Decision Gate
 ### Phase 17: Repository and architecture professionalization
+### Phase 18: Hackathon evidence and executive briefing pack
 
 ---
 
@@ -920,6 +921,47 @@ Also create:
 
 ```bash
 phase17_codex.diff
+```
+
+---
+
+## Phase 18: Hackathon evidence and executive briefing pack
+
+### Goal
+
+Create a judge-facing evidence pack that maps the project to common hackathon
+benchmarks without changing frontend behavior.
+
+This phase is documentation-only. It does not add backend infrastructure,
+authentication, databases, APIs, dependencies, live model calls, secrets, or new
+product features.
+
+### Expected output
+
+By the end of this phase, the repo should provide:
+
+- `docs/15_EXECUTIVE_BRIEFING.md` for concise founder and judge framing
+- `docs/16_HACKATHON_BENCHMARK_ALIGNMENT.md` mapping judging criteria to repo evidence
+- `docs/17_PRODUCTION_CONTRACTS.md` describing future backend, database, queue, provider adapter, and audit contracts without claiming implementation
+- `docs/18_LIVE_TEST_PLAN.md` covering manual operational MVP checks for `task_001`, `task_002`, `task_003`, local state reset, `localStorage`, and blocked Agent launch prevention
+- README links to the evidence pack
+- submission-package links to the evidence pack
+- unchanged build and scenario validation behavior
+
+### Phase 18 commands
+
+Run these before handing the phase back:
+
+```bash
+git status --short
+npm.cmd --prefix app run build
+npm.cmd --prefix app run validate:scenarios
+```
+
+Also create:
+
+```bash
+phase18_codex.diff
 ```
 
 ---

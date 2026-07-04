@@ -56,6 +56,16 @@ Recommended click path:
 7. On approved Agent work, click `Run demo agent`.
 8. After output exists, choose `Accept output`, `Request revision`, or `Reroute to Human`.
 
+## Hackathon Evidence
+
+- [Executive Briefing](docs/15_EXECUTIVE_BRIEFING.md)
+- [Architecture](docs/12_ARCHITECTURE.md)
+- [Domain model](docs/13_DOMAIN_MODEL.md)
+- [Hackathon Benchmark Alignment](docs/16_HACKATHON_BENCHMARK_ALIGNMENT.md)
+- [Production Contracts](docs/17_PRODUCTION_CONTRACTS.md)
+- [Live Test Plan](docs/18_LIVE_TEST_PLAN.md)
+- [Demo Script](docs/14_DEMO_SCRIPT.md)
+
 ## Architecture
 
 ```mermaid
@@ -196,6 +206,10 @@ Scenario examples:
 - [Architecture](docs/12_ARCHITECTURE.md)
 - [Domain model](docs/13_DOMAIN_MODEL.md)
 - [Demo script](docs/14_DEMO_SCRIPT.md)
+- [Executive briefing](docs/15_EXECUTIVE_BRIEFING.md)
+- [Hackathon benchmark alignment](docs/16_HACKATHON_BENCHMARK_ALIGNMENT.md)
+- [Production contracts](docs/17_PRODUCTION_CONTRACTS.md)
+- [Live test plan](docs/18_LIVE_TEST_PLAN.md)
 
 ## Production Roadmap
 
