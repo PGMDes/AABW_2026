@@ -28,12 +28,32 @@ Expected validator ending:
 Result: 11/11 scenarios passed
 ```
 
+## Automated E2E verification
+
+Run the Playwright browser tests from the repository root:
+
+```bash
+npm.cmd --prefix app run test:e2e
+```
+
+This command starts the Vite app on a local Playwright test port and verifies:
+
+- fresh load opens Dashboard and keeps Recommendation / Task Detail empty until user action
+- `task_001` Agent path can run demo Agent output and accept it
+- `task_002` Hybrid path waits for Human review before Agent output can run
+- `task_003` Blocked path has no Agent run or output review controls
+- reset local demo state clears saved Agent output and output review state
+
+These tests strengthen technical evidence for judges, but they do not replace
+the manual video or screenshot walkthrough when presentation evidence is needed.
+
 ## Evidence capture checklist
 
 Capture screenshots or video clips of:
 
 - terminal output for build success
 - terminal output for `Result: 11/11 scenarios passed`
+- terminal output for the Playwright `test:e2e` run
 - Dashboard summary metrics and task queue
 - New Task scenario picker
 - Recommendation Result for each tested scenario

@@ -63,6 +63,7 @@ export function AgentOutputReviewPanel({
     <SectionCard
       title="Agent output review"
       description="Final Human decision gate after controlled Agent output. This is where the draft is accepted, sent back for revision, or rerouted to Human-led execution."
+      testId="agent-output-review"
     >
       <div className="space-y-5">
         <OutputReviewState decision={outputReviewDecision} />

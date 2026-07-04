@@ -1,6 +1,13 @@
-export function SectionCard({ title, description, children, className = "" }) {
+export function SectionCard({
+  title,
+  description,
+  children,
+  className = "",
+  testId,
+}) {
   return (
     <section
+      data-testid={testId}
       className={`rounded-lg border border-slate-200 bg-white p-5 shadow-sm ${className}`}
     >
       {title ? (

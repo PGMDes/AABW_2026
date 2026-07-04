@@ -132,6 +132,7 @@ That boundary is intentional. The goal is to prove the workflow before adding in
 - Tailwind CSS
 - Plain JavaScript data and logic modules
 - Node-based scenario validator
+- Playwright browser E2E tests for judge workflows
 - Browser `localStorage` for demo-only local state
 
 ## Setup Commands
@@ -170,6 +171,16 @@ The scenario validator should end with:
 ```text
 Result: 11/11 scenarios passed
 ```
+
+Optional technical verification for the main browser workflows:
+
+```bash
+npm.cmd --prefix app run test:e2e
+```
+
+The E2E command starts the Vite app through Playwright and checks the Dashboard
+empty-state behavior, `task_001` Agent flow, `task_002` Hybrid review gate,
+`task_003` blocked path, and local demo state reset.
 
 Optional local static preview:
 

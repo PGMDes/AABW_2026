@@ -106,6 +106,7 @@ export function AgentRunnerPanel({ flowResult, agentRun, onRunAgent }) {
     <SectionCard
       title="Agent Runner"
       description="Controlled execution surface for safe agentic work. The default run is deterministic local demo output, not a live model API call."
+      testId="agent-runner"
     >
       <div className="space-y-5">
         <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
