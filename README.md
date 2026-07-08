@@ -33,7 +33,7 @@ The demo lets an Innovation / AI transformation lead:
 - understand the main reasons and alternatives
 - apply governance before launch
 - select an eligible execution option from a curated sample marketplace
-- run controlled local Agent output only when allowed
+- run deterministic local Agent output, or optional live AI draft mode, only when allowed
 - record a Human output review decision
 - inspect lifecycle and audit trail evidence
 
@@ -53,8 +53,12 @@ Recommended click path:
 4. Click `Analyze Task`.
 5. Review `Recommendation Result`.
 6. Click `Continue to Detail`.
-7. On approved Agent work, click `Run demo agent`.
+7. On approved Agent work, keep the default `Deterministic demo runner` and click `Run demo agent`.
 8. After output exists, choose `Accept output`, `Request revision`, or `Reroute to Human`.
+
+Optional live AI draft mode is available only inside the Agent Runner after the
+task is allowed to run. It requires a user-entered session API key, is labeled
+as optional/demo, and is never shown for blocked work such as `task_003`.
 
 ## Hackathon Evidence
 
@@ -82,6 +86,7 @@ flowchart LR
   Lifecycle["lifecycleEngine"]
   Audit["auditTrailEngine"]
   Runner["agentRunner\nlocal deterministic output"]
+  LiveAdapter["liveAgentAdapter\noptional live draft source"]
   OutputReview["agentOutputReview\nfinal Human gate"]
   Storage["browser localStorage\ncustom tasks and demo decisions"]
 
@@ -96,7 +101,9 @@ flowchart LR
   Execute --> Lifecycle
   Execute --> Audit
   UI --> Runner
+  UI --> LiveAdapter
   Runner --> OutputReview
+  LiveAdapter --> OutputReview
   UI <--> Storage
 ```
 
@@ -108,19 +115,26 @@ This repository is a frontend-only MVP demo:
 
 - React + Vite app in `app/`
 - deterministic local JavaScript logic
+- optional live AI draft adapter that runs only when the user provides a session key
 - hardcoded demo tasks, policy rules, marketplace profiles, lifecycle, and audit data
 - browser `localStorage` for local custom tasks and demo review decisions
 - static build output in `app/dist`
 
+By default, the app works without secrets, network access, or any external
+model call. Live AI draft mode is pluggable execution only: it can draft text,
+but it cannot decide routing, governance, blocked status, lifecycle policy, or
+audit policy.
+
 It does not include:
 
 - backend
-- APIs
+- app-owned backend APIs
 - authentication
 - database
 - queues
-- live model calls
-- external agent providers
+- required live model calls
+- server-side external agent providers
+- committed API keys or `.env` secrets
 - production observability
 
 That boundary is intentional. The goal is to prove the workflow before adding infrastructure.
@@ -164,6 +178,8 @@ Run these before handing off or presenting:
 ```bash
 npm.cmd --prefix app run build
 npm.cmd --prefix app run validate:scenarios
+npm.cmd --prefix app run test:e2e
+npm.cmd --prefix app run lint
 ```
 
 The scenario validator should end with:
@@ -172,15 +188,11 @@ The scenario validator should end with:
 Result: 11/11 scenarios passed
 ```
 
-Optional technical verification for the main browser workflows:
-
-```bash
-npm.cmd --prefix app run test:e2e
-```
-
 The E2E command starts the Vite app through Playwright and checks the Dashboard
 empty-state behavior, `task_001` Agent flow, `task_002` Hybrid review gate,
-`task_003` blocked path, and local demo state reset.
+`task_003` blocked path, the default deterministic Agent Runner mode, live-mode
+visibility guardrails, and local demo state reset. It does not require a real
+API key or network call.
 
 Optional local static preview:
 

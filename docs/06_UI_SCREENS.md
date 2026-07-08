@@ -1018,6 +1018,31 @@ The scenario validator should remain deterministic and should not read
 `localStorage` or browser UI state. Agent Runner output is a UI/session layer on
 top of the existing task-flow result.
 
+### Phase 19B optional live AI draft mode
+
+Agent Runner may show an `Execution mode` control only when the runner is
+already allowed to run.
+
+The control has two modes:
+
+- `Deterministic demo runner`
+- `Optional live AI draft`
+
+The deterministic demo runner remains the default and must work without an API
+key or network call. Optional live AI draft mode can ask for a session-only API
+key in the UI, but that key must not be saved to `localStorage`.
+
+Live AI draft mode is execution-only. It may generate draft text, but it must
+not decide recommendation, governance, blocked status, lifecycle policy, audit
+policy, or final output acceptance.
+
+For blocked work such as `task_003`:
+
+- do not show the execution mode control
+- do not show `Run demo agent`
+- do not show `Run live AI draft`
+- do not show Agent output review controls
+
 ---
 
 ## Phase 16 agent output review

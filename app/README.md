@@ -11,9 +11,9 @@ The app is frontend-only. It uses sample data and local React state to show the 
 - select an execution option
 - show lifecycle, audit trail, Human review, and outcome state
 
-Custom tasks and Human review decisions are saved in browser `localStorage` only. Use the Dashboard `Reset local demo state` button to clear them.
+Custom tasks, Human review decisions, Agent outputs, and Agent output review decisions are saved in browser `localStorage` only. Use the Dashboard `Reset local demo state` button to clear them.
 
-There is no backend, database, auth, API, or external service integration yet.
+There is no backend, database, auth, app-owned API, committed secret, or required external service. Optional live AI draft mode can call a provider only after the user enters a session-only API key in the Agent Runner UI; policy decisions stay deterministic.
 
 ## Commands
 
@@ -39,6 +39,18 @@ Validate demo scenarios:
 
 ```bash
 npm.cmd run validate:scenarios
+```
+
+Run the browser E2E checks:
+
+```bash
+npm.cmd run test:e2e
+```
+
+Run lint:
+
+```bash
+npm.cmd run lint
 ```
 
 Preview the built static app:

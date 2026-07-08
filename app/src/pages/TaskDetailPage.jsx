@@ -221,6 +221,7 @@ export function TaskDetailPage({
   onHumanReviewDecision,
   onOutputReviewDecision,
   onRunAgent,
+  onRunLiveAgent,
 }) {
   if (!flowResult) {
     return (
@@ -403,6 +404,7 @@ export function TaskDetailPage({
           agentRun={agentRun}
           flowResult={flowResult}
           onRunAgent={onRunAgent}
+          onRunLiveAgent={onRunLiveAgent}
         />
 
         <AgentOutputReviewPanel

@@ -740,9 +740,28 @@ real frontend workflow.
       "taskId": "task_002",
       "action": "approve_recommended"
     }
+  },
+  "agentRunResults": {
+    "task_001": {
+      "id": "agent_run_task_001_agent_research_v1",
+      "taskId": "task_001",
+      "runMode": "local_deterministic",
+      "status": "completed"
+    }
+  },
+  "agentOutputReviewDecisions": {
+    "task_001": {
+      "taskId": "task_001",
+      "agentRunId": "agent_run_task_001_agent_research_v1",
+      "action": "accept_output"
+    }
   }
 }
 ```
+
+Optional live AI draft runs use the same `agentRunResults` shape with
+`runMode: "live_ai_draft"` plus provider metadata such as `provider`,
+`providerRunId`, and `model`. API keys are not part of `LocalSessionState`.
 
 ### Storage rules
 
@@ -757,7 +776,9 @@ real frontend workflow.
 
 - custom tasks are created from `New Task`
 - Human review decisions are created from `Task Detail`
-- Dashboard reads both so refresh keeps the local session visible
+- Agent run outputs and Agent output review decisions are created from
+  `Task Detail`
+- Dashboard reads this local state so refresh keeps the demo session visible
 
 ---
 

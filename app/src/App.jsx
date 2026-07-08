@@ -14,6 +14,7 @@ import {
 } from "./logic/localSessionStore"
 import { createAgentOutputReviewDecision } from "./logic/agentOutputReview"
 import { createDemoAgentRun } from "./logic/agentRunner"
+import { createLiveAgentRun } from "./logic/liveAgentAdapter"
 import { buildTaskFlow } from "./logic/taskFlowEngine"
 import { DashboardPage } from "./pages/DashboardPage"
 import { NewTaskPage } from "./pages/NewTaskPage"
@@ -118,9 +119,7 @@ function App() {
     })
   }
 
-  function handleRunDemoAgent(flowResult) {
-    const agentRun = createDemoAgentRun(flowResult)
-
+  function saveAgentRun(agentRun) {
     if (!agentRun) {
       return
     }
@@ -144,6 +143,24 @@ function App() {
 
       return nextDecisions
     })
+  }
+
+  function handleRunDemoAgent(flowResult) {
+    saveAgentRun(createDemoAgentRun(flowResult))
+  }
+
+  async function handleRunLiveAgent(flowResult, { apiKey } = {}) {
+    const result = await createLiveAgentRun({ flowResult, apiKey })
+    const agentRun = result.ok ? result.agentRun : result.fallback?.agentRun
+
+    if (agentRun) {
+      saveAgentRun(agentRun)
+    }
+
+    return {
+      ...result,
+      fallbackSaved: Boolean(!result.ok && agentRun),
+    }
   }
 
   function handleAgentOutputReviewDecision(taskId, action, agentRun) {
@@ -220,6 +237,7 @@ function App() {
         onHumanReviewDecision={handleHumanReviewDecision}
         onOutputReviewDecision={handleAgentOutputReviewDecision}
         onRunAgent={handleRunDemoAgent}
+        onRunLiveAgent={handleRunLiveAgent}
       />
     )
   } else {

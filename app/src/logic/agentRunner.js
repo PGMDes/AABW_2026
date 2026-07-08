@@ -18,6 +18,22 @@ function buildRunId(task, selectedOption) {
   return `agent_run_${task.id}_${optionPart}_v1`
 }
 
+export function getAgentRunModeLabel(agentRun) {
+  if (agentRun?.runMode === "live_ai_draft") {
+    return "Live AI draft"
+  }
+
+  return "Local deterministic"
+}
+
+function getAgentRunDescription(agentRun) {
+  if (agentRun?.runMode === "live_ai_draft") {
+    return "optional live AI draft"
+  }
+
+  return "deterministic local demo run"
+}
+
 function buildStep(id, label, detail) {
   return {
     id,
@@ -205,8 +221,7 @@ export function getAgentRunnerState(flowResult, agentRun) {
       status: "agent_output_ready",
       canRun: true,
       title: "Agent output ready",
-      message:
-        "A deterministic local demo run is saved for this task in this browser.",
+      message: `A ${getAgentRunDescription(agentRun)} is saved for this task in this browser.`,
     }
   }
 
@@ -273,6 +288,8 @@ export function createDemoAgentRun(flowResult) {
 export function buildLifecycleWithAgentRun(lifecycle, agentRun) {
   if (!agentRun) return lifecycle
 
+  const runDescription = getAgentRunDescription(agentRun)
+
   return {
     ...lifecycle,
     currentStage: "agent_output_ready",
@@ -281,7 +298,7 @@ export function buildLifecycleWithAgentRun(lifecycle, agentRun) {
       {
         id: "agent_runner",
         label: "Agent runner",
-        description: `${agentRun.runnerName} generated a controlled local draft output for Human review.`,
+        description: `${agentRun.runnerName} generated a controlled ${runDescription} for Human review.`,
         status: "agent_output_ready",
       },
     ],
@@ -291,12 +308,15 @@ export function buildLifecycleWithAgentRun(lifecycle, agentRun) {
 export function buildAuditTrailWithAgentRun(auditTrail, agentRun) {
   if (!agentRun) return auditTrail
 
+  const isLiveRun = agentRun.runMode === "live_ai_draft"
+  const runDescription = getAgentRunDescription(agentRun)
+
   return [
     ...auditTrail,
     {
       id: `${agentRun.taskId}_audit_011_agent_runner_completed`,
-      label: "Demo agent run completed",
-      description: `${agentRun.runnerName} generated local demo output ${agentRun.id}.`,
+      label: isLiveRun ? "Live AI draft completed" : "Demo agent run completed",
+      description: `${agentRun.runnerName} generated ${runDescription} ${agentRun.id}.`,
       actorType: "agent",
       relativeTimestamp: "T+25m",
       status: "completed",

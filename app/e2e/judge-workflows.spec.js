@@ -61,6 +61,8 @@ test("task_001 runs the approved Agent path through output acceptance", async ({
   await expect(page.getByTestId("agent-runner")).toContainText(
     "Ready to run demo agent",
   )
+  await expect(page.getByLabel(/Deterministic demo runner/)).toBeChecked()
+  await expect(page.getByLabel(/Optional live AI draft/)).toBeVisible()
   await page.getByRole("button", { name: "Run demo agent" }).click()
   await expect(page.getByTestId("agent-runner")).toContainText("Agent output")
   await expect(page.getByTestId("agent-output-review")).toContainText(
@@ -72,6 +74,43 @@ test("task_001 runs the approved Agent path through output acceptance", async ({
     "Accepted for use",
   )
   await expect(page.getByText("Agent output review decision")).toBeVisible()
+})
+
+test("optional live draft falls back to deterministic output without network", async ({
+  page,
+}) => {
+  await page.route("https://api.openai.com/v1/responses", async (route) => {
+    await route.fulfill({
+      status: 500,
+      contentType: "application/json",
+      body: JSON.stringify({
+        error: {
+          message: "Mock provider unavailable",
+        },
+      }),
+    })
+  })
+
+  await analyzeScenario(page, "Agent path")
+  await continueToDetail(page)
+
+  await page.getByLabel(/Optional live AI draft/).check()
+  await page
+    .getByLabel("Session API key for optional live AI draft")
+    .fill("sk-test-key")
+  await page.getByRole("button", { name: "Run live AI draft" }).click()
+
+  await expect(page.getByText("Live AI draft did not complete.")).toBeVisible()
+  await expect(
+    page.getByText("Mock provider unavailable", { exact: true }),
+  ).toBeVisible()
+  await expect(
+    page.getByText("Deterministic demo output was saved as the fallback."),
+  ).toBeVisible()
+  await expect(page.getByTestId("agent-runner")).toContainText("Agent output")
+  await expect(page.getByTestId("agent-output-review")).toContainText(
+    "Human decision pending",
+  )
 })
 
 test("task_002 waits for Human review before Agent run, then runs after approval", async ({
@@ -90,12 +129,14 @@ test("task_002 waits for Human review before Agent run, then runs after approval
     "Waiting for Human review",
   )
   await expect(page.getByRole("button", { name: "Run demo agent" })).toHaveCount(0)
+  await expect(page.getByLabel(/Optional live AI draft/)).toHaveCount(0)
   await expect(page.getByTestId("agent-output-review")).toHaveCount(0)
 
   await page.getByRole("button", { name: "Approve recommended option" }).click()
   await expect(page.getByTestId("agent-runner")).toContainText(
     "Ready to run demo agent",
   )
+  await expect(page.getByLabel(/Optional live AI draft/)).toBeVisible()
 
   await page.getByRole("button", { name: "Run demo agent" }).click()
   await expect(page.getByTestId("agent-runner")).toContainText("Agent output")
@@ -114,7 +155,10 @@ test("task_003 blocks launch without Agent run or output review controls", async
 
   await expect(page.getByText("No execution option is selected")).toBeVisible()
   await expect(page.getByTestId("agent-runner")).toContainText("Policy blocked")
+  await expect(page.getByLabel(/Deterministic demo runner/)).toHaveCount(0)
+  await expect(page.getByLabel(/Optional live AI draft/)).toHaveCount(0)
   await expect(page.getByRole("button", { name: "Run demo agent" })).toHaveCount(0)
+  await expect(page.getByRole("button", { name: "Run live AI draft" })).toHaveCount(0)
   await expect(page.getByRole("button", { name: "Accept output" })).toHaveCount(0)
   await expect(page.getByRole("button", { name: "Request revision" })).toHaveCount(0)
   await expect(page.getByRole("button", { name: "Reroute to Human" })).toHaveCount(0)

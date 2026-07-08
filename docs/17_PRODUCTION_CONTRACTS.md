@@ -4,7 +4,7 @@
 
 This document proposes future production contracts for `Human-AgentOS`.
 
-These contracts are not implemented in the current MVP. The current app uses frontend local state only: source-controlled demo data, deterministic JavaScript logic, and browser `localStorage` for local custom tasks, Human review decisions, Agent run outputs, and Agent output review decisions.
+These contracts are not implemented in the current MVP. The current app uses frontend local state only: source-controlled demo data, deterministic JavaScript logic, an optional browser-side live AI draft adapter, and browser `localStorage` for local custom tasks, Human review decisions, Agent run outputs, and Agent output review decisions.
 
 The goal of this document is to show how the same workflow could become production infrastructure without changing the product promise.
 
@@ -14,16 +14,22 @@ Current MVP:
 
 - React + Vite frontend
 - deterministic local task flow logic
+- optional live AI draft adapter after governance allows Agent Runner use
 - hardcoded demo data
 - browser `localStorage`
 - no backend
 - no database
 - no authentication
-- no APIs
+- no app-owned backend APIs
 - no queues
-- no live model calls
-- no external provider adapters
-- no secrets
+- no required live model calls
+- no production provider adapter
+- no committed secrets
+
+The optional live AI draft adapter is execution-only. It can produce draft text,
+but the deterministic product logic still controls recommendation, governance,
+blocked status, Human review gates, lifecycle policy, and audit policy. The
+session API key is entered in the UI and is not stored in `localStorage`.
 
 Future production infrastructure should preserve the same visible flow:
 
@@ -158,7 +164,7 @@ Stores real provider execution attempts after launch is allowed.
 | `provider_adapter_id` | `text` | Which backend adapter ran the work. |
 | `provider_run_id` | `text` | Provider-side run identifier, if available. |
 | `status` | `text` | Queued, running, completed, failed, canceled. |
-| `run_mode` | `text` | Production provider, sandbox, or local deterministic. |
+| `run_mode` | `text` | Production provider, sandbox, optional live draft, or local deterministic. |
 | `input_snapshot_json` | `json` | Versioned task and policy context sent to provider. |
 | `output_json` | `json` | Normalized output package. |
 | `error_json` | `json` | Error details if failed. |
@@ -215,7 +221,12 @@ Queue jobs should carry `task_id`, `execution_record_id`, `policy_version`, `pro
 
 ## Provider adapter concept
 
-Provider adapters should run behind the backend, not in the frontend.
+Production provider adapters should run behind the backend, not in the frontend.
+
+The current `liveAgentAdapter` is a demo-only browser adapter that proves the
+pluggable execution shape. It is not the production security pattern because a
+production app should not ask end users to place provider credentials in the
+browser.
 
 Responsibilities:
 
@@ -226,6 +237,7 @@ Responsibilities:
 - capture provider errors and latency
 - emit audit events and observability traces
 - prevent blocked or pending-review tasks from running
+- prevent models from changing routing, governance, blocked status, or audit policy
 
 The adapter boundary lets the product add OpenAI, other model providers, or specialized agent providers later while keeping the frontend workflow stable.
 
