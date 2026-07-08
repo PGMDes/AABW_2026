@@ -12,17 +12,29 @@ A decision-first workforce control plane that routes knowledge work to a Human, 
 
 Founder Mode track
 
-## Source code link
+## Submission field checklist
 
-TODO: Add source code URL.
+Use this list to close the final submission form.
+
+- [ ] Source code URL: paste the final GitHub repository URL.
+- [ ] Live demo URL: paste the deployed Vercel or Netlify URL.
+- [ ] Demo video URL: paste the final walkthrough video URL.
+- [ ] Screenshots: include Dashboard, Recommendation Result, Task Detail Agent path, Hybrid review gate, and Blocked path.
+- [ ] AI documentation: use the `Models and tools used` section below.
+- [x] Selected project target: Founder Mode.
+- [ ] Exact model/tool names: list ChatGPT, Codex in VSCode, and any exact model labels shown in the development tools used for the final submission.
+
+## Source code URL
+
+Final value: paste the GitHub repository URL during submission.
 
 ## Live demo URL
 
-TODO: Add live demo URL.
+Final value: paste the deployed app URL during submission.
 
-## Demo video
+## Demo video URL
 
-TODO: Add demo video URL if recorded.
+Final value: paste the recorded demo video URL during submission.
 
 ## Problem statement
 
@@ -85,6 +97,7 @@ opens one from Dashboard.
 - Curated marketplace-style execution option selection
 - Human review and override controls
 - Controlled local Agent Runner with deterministic draft output
+- Optional live AI draft adapter inside Agent Runner for local/demo verification
 - Agent output review gate for Accept output, Request revision, and Reroute to Human decisions
 - Lifecycle and audit trail for each task
 - Built-in deterministic demo scenarios
@@ -102,6 +115,7 @@ Use these docs as the main judge-facing evidence pack:
 - [Hackathon Benchmark Alignment](16_HACKATHON_BENCHMARK_ALIGNMENT.md)
 - [Production Contracts](17_PRODUCTION_CONTRACTS.md)
 - [Live Test Plan](18_LIVE_TEST_PLAN.md)
+- [Deployment QA](19_DEPLOYMENT_QA.md)
 - [Demo Script](14_DEMO_SCRIPT.md)
 
 ## Demo scenario walkthrough
@@ -139,29 +153,33 @@ Human-AgentOS is not just a static task list. It models the operating layer arou
 - It adds a post-output Human decision gate so Agent work can be accepted, revised, or rerouted before final use.
 - It records lifecycle and audit information so agentic decisions can be reviewed later.
 
-Important boundary: the current app demonstrates an agentic workflow control plane with a deterministic local demo runner, not production agent execution. It does not connect to real external agents or run real agent APIs yet.
+Important boundary: the current app demonstrates an agentic workflow control plane. The default runtime is deterministic local JavaScript. The optional live AI draft adapter is browser-side, demo/local only, and does not make governance, routing, blocked/unblocked, audit, or final approval decisions.
 
 ## Models and tools used
 
 The project used AI assistance during planning, implementation, and review:
 
-- ChatGPT / Codex was used as an AI coding and product planning assistant.
-- Codex in VSCode implemented code phases, documentation updates, validation checks, and scoped frontend polish.
 - ChatGPT acted as advisor, orchestrator, reviewer, and product explanation partner across the build.
+- Codex in VSCode acted as the IDE coding agent for implementation, documentation updates, validation checks, and scoped frontend polish.
 - The in-repo scenario validator was used as a regression guardrail to protect deterministic demo behavior.
 - The validation loop kept the product wedge stable while the UI and submission package became clearer for judges.
 
 Inside the app itself:
 
-- No real external Agent execution API is connected yet.
-- No OpenAI API key or other model API key is used by the frontend.
-- The app uses deterministic local JavaScript logic to simulate recommendation, governance, marketplace selection, controlled Agent output, lifecycle, and audit behavior.
-- The app demonstrates how an organization could control agentic work before connecting real execution systems.
-- This means the AI usage is in the build workflow and product concept, while the submitted app itself stays frontend-only and deterministic.
+- Runtime default: deterministic local JavaScript for recommendation, governance, marketplace selection, controlled Agent output, lifecycle, and audit behavior.
+- Runtime optional: live AI draft adapter inside Agent Runner. It can draft text only after the user enters a session-only API key in the browser UI.
+- The optional live adapter is demo/local only and should not use production, shared, or sensitive API keys.
+- The model never controls governance, routing, blocked/unblocked decisions, audit policy, or final approval.
+- Human output review still controls `Accept output`, `Request revision`, and `Reroute to Human`.
+- The app works fully without API keys or network access.
 
-If the submission form requires exact model names, use:
+Exact model/tool names to list:
 
-- TODO: Confirm exact ChatGPT / Codex model names used for development.
+- ChatGPT: advisor, orchestrator, and reviewer.
+- Codex in VSCode: coding agent.
+- Runtime default: deterministic local JavaScript.
+- Runtime optional: Agent Runner live AI draft adapter. The current adapter default model is `gpt-4.1` when live mode is used.
+- Add the exact ChatGPT/Codex model labels from the final development session if the submission form asks for model IDs.
 
 ## Technical stack
 
@@ -178,8 +196,19 @@ If the submission form requires exact model names, use:
 Run these commands before submission:
 
 ```bash
+npm --prefix app run build
+npm --prefix app run validate:scenarios
+npm --prefix app run test:e2e
+npm --prefix app run lint
+```
+
+Windows PowerShell equivalent:
+
+```bash
 npm.cmd --prefix app run build
 npm.cmd --prefix app run validate:scenarios
+npm.cmd --prefix app run test:e2e
+npm.cmd --prefix app run lint
 ```
 
 Expected scenario validation result:
@@ -194,12 +223,13 @@ Result: 11/11 scenarios passed
 - No backend
 - No authentication
 - No database
-- No APIs
-- No real external agent execution; Agent Runner output is deterministic local demo output
+- No app-owned backend APIs
+- No required external agent execution; the deterministic local runner is the default
+- Optional live AI draft mode is browser-side and for local/demo verification only
 - No durable shared storage
 - Custom tasks, Human review decisions, Agent run outputs, and Agent output review decisions persist only in each browser through `localStorage`
 - Built-in demo scenarios are deterministic sample data
-- Source code, live demo, and demo video URLs still need final links
+- Source code, live demo, demo video, and screenshot fields need final submission values
 
 ## Future roadmap
 
@@ -218,12 +248,18 @@ Possible next steps after the hackathon demo:
 
 - [x] Confirm track: Founder Mode track
 - [ ] Add source code URL
-- [ ] Add live demo URL if deployed
-- [ ] Add demo video URL if recorded
-- [ ] Run `npm.cmd --prefix app run build`
-- [ ] Run `npm.cmd --prefix app run validate:scenarios`
+- [ ] Add live demo URL
+- [ ] Add demo video URL
+- [ ] Add screenshots
+- [ ] Add AI documentation summary from this file
+- [ ] Add exact model/tool names from the final development session
+- [ ] Run `npm --prefix app run build`
+- [ ] Run `npm --prefix app run validate:scenarios`
+- [ ] Run `npm --prefix app run test:e2e`
+- [ ] Run `npm --prefix app run lint`
 - [ ] Review `docs/08_DEMO_WALKTHROUGH.md`
 - [ ] Review `docs/09_DEPLOYMENT.md`
+- [ ] Review `docs/19_DEPLOYMENT_QA.md`
 - [ ] Review `docs/10_QA_NOTES.md`
 - [ ] Review `docs/12_ARCHITECTURE.md`
 - [ ] Review `docs/13_DOMAIN_MODEL.md`

@@ -60,6 +60,15 @@ Optional live AI draft mode is available only inside the Agent Runner after the
 task is allowed to run. It requires a user-entered session API key, is labeled
 as optional/demo, and is never shown for blocked work such as `task_003`.
 
+## Judge Path
+
+For a fast submission review, use this order:
+
+1. Watch the demo video.
+2. Try the live app.
+3. Read the [Executive Briefing](docs/15_EXECUTIVE_BRIEFING.md).
+4. Optional: run the technical verification commands below.
+
 ## Hackathon Evidence
 
 - [Executive Briefing](docs/15_EXECUTIVE_BRIEFING.md)
@@ -68,6 +77,7 @@ as optional/demo, and is never shown for blocked work such as `task_003`.
 - [Hackathon Benchmark Alignment](docs/16_HACKATHON_BENCHMARK_ALIGNMENT.md)
 - [Production Contracts](docs/17_PRODUCTION_CONTRACTS.md)
 - [Live Test Plan](docs/18_LIVE_TEST_PLAN.md)
+- [Deployment QA](docs/19_DEPLOYMENT_QA.md)
 - [Demo Script](docs/14_DEMO_SCRIPT.md)
 
 ## Architecture
@@ -154,13 +164,13 @@ That boundary is intentional. The goal is to prove the workflow before adding in
 Install dependencies:
 
 ```bash
-npm.cmd --prefix app install
+npm --prefix app install
 ```
 
 Start the local dev server:
 
 ```bash
-npm.cmd --prefix app run dev -- --host 127.0.0.1
+npm --prefix app run dev -- --host 127.0.0.1
 ```
 
 Open the Vite URL printed in the terminal, usually:
@@ -169,11 +179,25 @@ Open the Vite URL printed in the terminal, usually:
 http://127.0.0.1:5173
 ```
 
-If you are not on Windows, use `npm` instead of `npm.cmd`.
+On Windows PowerShell, use `npm.cmd` if `npm` is blocked by execution policy:
+
+```bash
+npm.cmd --prefix app install
+npm.cmd --prefix app run dev -- --host 127.0.0.1
+```
 
 ## Validation Commands
 
 Run these before handing off or presenting:
+
+```bash
+npm --prefix app run build
+npm --prefix app run validate:scenarios
+npm --prefix app run test:e2e
+npm --prefix app run lint
+```
+
+Windows PowerShell equivalent:
 
 ```bash
 npm.cmd --prefix app run build
@@ -195,6 +219,12 @@ visibility guardrails, and local demo state reset. It does not require a real
 API key or network call.
 
 Optional local static preview:
+
+```bash
+npm --prefix app run preview -- --host 127.0.0.1
+```
+
+Windows PowerShell equivalent:
 
 ```bash
 npm.cmd --prefix app run preview -- --host 127.0.0.1
@@ -233,6 +263,7 @@ Scenario examples:
 - [Hackathon benchmark alignment](docs/16_HACKATHON_BENCHMARK_ALIGNMENT.md)
 - [Production contracts](docs/17_PRODUCTION_CONTRACTS.md)
 - [Live test plan](docs/18_LIVE_TEST_PLAN.md)
+- [Deployment QA](docs/19_DEPLOYMENT_QA.md)
 
 ## Production Roadmap
 
