@@ -64,10 +64,12 @@ as optional/demo, and is never shown for blocked work such as `task_003`.
 
 For a fast submission review, use this order:
 
-1. Watch the demo video.
-2. Try the live app.
+1. Watch the demo video: TODO, not recorded yet.
+2. Try the live app: https://aabw-2026.vercel.app/
 3. Read the [Executive Briefing](docs/15_EXECUTIVE_BRIEFING.md).
 4. Optional: run the technical verification commands below.
+
+Source code: [PGMDes/AABW_2026](https://github.com/PGMDes/AABW_2026)
 
 ## Hackathon Evidence
 

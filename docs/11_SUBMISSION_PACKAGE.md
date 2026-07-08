@@ -16,25 +16,29 @@ Founder Mode track
 
 Use this list to close the final submission form.
 
-- [ ] Source code URL: paste the final GitHub repository URL.
-- [ ] Live demo URL: paste the deployed Vercel or Netlify URL.
-- [ ] Demo video URL: paste the final walkthrough video URL.
-- [ ] Screenshots: include Dashboard, Recommendation Result, Task Detail Agent path, Hybrid review gate, and Blocked path.
-- [ ] AI documentation: use the `Models and tools used` section below.
+- [x] Source code URL: [PGMDes/AABW_2026](https://github.com/PGMDes/AABW_2026)
+- [x] Live demo URL: https://aabw-2026.vercel.app/
+- [ ] Demo video URL: TODO, not recorded yet.
+- [ ] Screenshots: TODO, not captured yet. Include Dashboard, Recommendation Result, Task Detail Agent path, Hybrid review gate, and Blocked path.
+- [x] AI documentation: use the `Models and tools used` section below.
 - [x] Selected project target: Founder Mode.
-- [ ] Exact model/tool names: list ChatGPT, Codex in VSCode, and any exact model labels shown in the development tools used for the final submission.
+- [x] Exact model/tool names: ChatGPT, Codex in VSCode, deterministic local JavaScript, and optional live AI draft adapter default model `gpt-4.1`.
 
 ## Source code URL
 
-Final value: paste the GitHub repository URL during submission.
+[PGMDes/AABW_2026](https://github.com/PGMDes/AABW_2026)
 
 ## Live demo URL
 
-Final value: paste the deployed app URL during submission.
+https://aabw-2026.vercel.app/
 
 ## Demo video URL
 
-Final value: paste the recorded demo video URL during submission.
+TODO: not recorded yet.
+
+## Screenshots
+
+TODO: not captured yet.
 
 ## Problem statement
 
@@ -179,7 +183,6 @@ Exact model/tool names to list:
 - Codex in VSCode: coding agent.
 - Runtime default: deterministic local JavaScript.
 - Runtime optional: Agent Runner live AI draft adapter. The current adapter default model is `gpt-4.1` when live mode is used.
-- Add the exact ChatGPT/Codex model labels from the final development session if the submission form asks for model IDs.
 
 ## Technical stack
 
@@ -229,7 +232,7 @@ Result: 11/11 scenarios passed
 - No durable shared storage
 - Custom tasks, Human review decisions, Agent run outputs, and Agent output review decisions persist only in each browser through `localStorage`
 - Built-in demo scenarios are deterministic sample data
-- Source code, live demo, demo video, and screenshot fields need final submission values
+- Demo video and screenshot fields still need final submission values
 
 ## Future roadmap
 
@@ -247,12 +250,12 @@ Possible next steps after the hackathon demo:
 ## Submission checklist
 
 - [x] Confirm track: Founder Mode track
-- [ ] Add source code URL
-- [ ] Add live demo URL
+- [x] Add source code URL
+- [x] Add live demo URL
 - [ ] Add demo video URL
 - [ ] Add screenshots
-- [ ] Add AI documentation summary from this file
-- [ ] Add exact model/tool names from the final development session
+- [x] Add AI documentation summary from this file
+- [x] Add exact model/tool names from the final development session
 - [ ] Run `npm --prefix app run build`
 - [ ] Run `npm --prefix app run validate:scenarios`
 - [ ] Run `npm --prefix app run test:e2e`

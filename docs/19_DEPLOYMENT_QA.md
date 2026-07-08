@@ -12,6 +12,14 @@ authentication, database, serverless functions, or committed secrets.
 
 Use Vercel for the simplest judge-facing static deployment.
 
+Current deployment:
+
+| Field | Value |
+|---|---|
+| Deployment platform | Vercel |
+| Live demo URL | https://aabw-2026.vercel.app/ |
+| Deployment QA date | 2026-07-08 |
+
 Recommended Vercel settings:
 
 | Setting | Value |
@@ -92,6 +100,21 @@ After the live URL is available:
 - [ ] Confirm lifecycle and audit trail show the output review decision.
 - [ ] Run the `Hybrid path` scenario and confirm Agent Runner waits for Human review.
 - [ ] Run the `Blocked` scenario and confirm no Agent run or output review controls appear.
+
+## Recorded deployment smoke summary
+
+Manual smoke notes recorded on 2026-07-08 for
+https://aabw-2026.vercel.app/:
+
+- [x] Fresh load opens Dashboard: passed.
+- [x] New Task -> Analyze Task -> Recommendation: passed.
+- [x] Recommendation -> Continue to Detail: passed.
+- [x] `task_001` Agent path -> Run demo agent -> Accept output: passed.
+- [x] `task_002` Hybrid gate blocks Agent run until Human review approval: passed.
+- [x] `task_003` blocked path exposes no Agent run or output review controls: passed.
+- [x] Reset local demo state clears Agent output and review state: passed.
+- [x] Optional live AI mode does not require a key by default: passed.
+- [x] Incognito fresh load: passed.
 
 ## localStorage reset check
 
