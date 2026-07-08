@@ -149,6 +149,8 @@ function normalizeAgentRunResult(value, fallbackTaskId = "") {
   const output = isObject(value.output) ? value.output : {}
   const taskId = normalizeText(value.taskId, fallbackTaskId)
   const id = normalizeText(value.id)
+  const model = normalizeText(value.model, normalizeText(value.requestedModel))
+  const requestedModel = normalizeText(value.requestedModel, model)
 
   if (!id || !taskId) {
     return null
@@ -163,7 +165,9 @@ function normalizeAgentRunResult(value, fallbackTaskId = "") {
     runMode: normalizeText(value.runMode, "local_deterministic"),
     provider: normalizeText(value.provider),
     providerRunId: normalizeText(value.providerRunId),
-    model: normalizeText(value.model),
+    model,
+    requestedModel,
+    returnedModel: normalizeText(value.returnedModel),
     status: normalizeText(value.status, "completed"),
     generatedAt: normalizeText(value.generatedAt),
     confidence: Number(value.confidence) || 0,

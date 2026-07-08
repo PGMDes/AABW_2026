@@ -14,11 +14,11 @@ function ScoreBar({ label, score }) {
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={score}
-        className="h-2 rounded-full bg-slate-100"
+        className="score-track h-2 rounded-full"
         role="progressbar"
       >
         <div
-          className="h-2 rounded-full bg-cyan-600"
+          className="score-fill h-2 rounded-full"
           style={{ width: `${score}%` }}
         />
       </div>
@@ -30,10 +30,10 @@ export function RecommendationCard({ recommendation, explanation }) {
   return (
     <SectionCard title="Recommendation result">
       <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
-        <div className="rounded-lg bg-slate-950 p-5 text-white">
+        <div className="decision-hero p-5 text-white">
           <p className="text-sm font-medium text-cyan-200">Recommended path</p>
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <p className="text-4xl font-semibold">
+            <p className="decision-path-title">
               {formatLabel(recommendation.recommendedPath)}
             </p>
             <StatusBadge
@@ -41,9 +41,8 @@ export function RecommendationCard({ recommendation, explanation }) {
               label={`${recommendation.confidence}% confidence`}
             />
           </div>
-          <p className="mt-4 text-sm leading-6 text-slate-300">
-            This recommendation is based on task clarity, sensitivity, risk,
-            speed pressure, and capability fit.
+          <p className="mt-4 text-slate-300">
+            Based on clarity, sensitivity, risk, urgency, and capability fit.
           </p>
         </div>
         <div className="space-y-4">
@@ -59,7 +58,7 @@ export function RecommendationCard({ recommendation, explanation }) {
           </h3>
           <ul className="mt-3 space-y-2 text-sm text-slate-700">
             {explanation.topReasons.map((reason) => (
-              <li key={reason} className="rounded-md bg-slate-50 px-3 py-2">
+              <li key={reason} className="info-tile px-3 py-2">
                 {reason}
               </li>
             ))}
@@ -71,10 +70,7 @@ export function RecommendationCard({ recommendation, explanation }) {
           </h3>
           <div className="mt-3 space-y-3">
             {explanation.alternatives.map((alternative) => (
-              <div
-                key={alternative.path}
-                className="rounded-md border border-slate-200 p-3"
-              >
+              <div key={alternative.path} className="info-tile p-3">
                 <p className="font-medium text-slate-900">
                   {formatLabel(alternative.path)}
                 </p>

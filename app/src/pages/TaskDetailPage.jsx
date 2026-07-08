@@ -21,18 +21,18 @@ import {
 function LifecycleStepList({ lifecycle }) {
   return (
     <div className="space-y-4">
-      <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
+      <div className="gate-state p-4">
         <p className="text-sm font-medium text-slate-500">Current stage</p>
         <div className="mt-2">
           <StatusBadge value={lifecycle.currentStage} />
         </div>
       </div>
 
-      <ol className="divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
+      <ol className="timeline-list divide-y divide-slate-200">
         {lifecycle.steps.map((step, index) => (
           <li
             key={step.id}
-            className="grid gap-3 p-4 sm:grid-cols-[5rem_1fr]"
+            className="timeline-item grid gap-3 p-4 pl-9 sm:grid-cols-[5rem_1fr] sm:pl-4"
           >
             <div className="text-sm font-semibold text-slate-400">
               Step {index + 1}
@@ -57,11 +57,11 @@ function LifecycleStepList({ lifecycle }) {
 
 function AuditTrailList({ auditTrail }) {
   return (
-    <ol className="divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
+    <ol className="timeline-list divide-y divide-slate-200">
       {auditTrail.map((event) => (
         <li
           key={event.id}
-          className="grid gap-3 p-4 sm:grid-cols-[5rem_1fr]"
+          className="timeline-item grid gap-3 p-4 pl-9 sm:grid-cols-[5rem_1fr] sm:pl-4"
         >
           <div className="text-sm font-semibold text-slate-500">
             {event.relativeTimestamp}
@@ -103,10 +103,11 @@ function HumanReviewPanel({
   return (
     <SectionCard
       title="Human review"
-      description="Approval checkpoint: a Human reviewer can approve, reroute to a safer Human-led path, or confirm a policy block before launch."
+      description="Human approval gate before launch."
+      className="gate-card"
     >
       <div className="space-y-4">
-        <div className="rounded-md border border-amber-200 bg-amber-50 p-4">
+        <div className="review-panel p-4">
           <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
               <p className="text-sm font-semibold text-amber-950">
@@ -126,7 +127,7 @@ function HumanReviewPanel({
             </div>
             <div>
               <p className="text-sm font-semibold text-amber-950">
-                What happens next
+                Next step
               </p>
               <p className="mt-2 text-sm leading-6 text-amber-950">
                 {humanReview.reason}
@@ -135,7 +136,7 @@ function HumanReviewPanel({
           </div>
 
           {decision ? (
-            <div className="mt-3 rounded-md bg-white px-3 py-2 text-sm text-slate-700">
+            <div className="mt-3 rounded-md bg-white/85 px-3 py-2 text-sm text-slate-700">
               <p className="font-semibold text-slate-950">
                 Decision recorded by {decision.actorName}
               </p>
@@ -160,7 +161,7 @@ function HumanReviewPanel({
           {humanReview.actions.map((action) => (
             <div
               key={action.id}
-              className="flex flex-col justify-between gap-4 rounded-md border border-slate-200 bg-slate-50 p-4"
+              className="review-action-card flex flex-col justify-between gap-4 p-4"
             >
               <div>
                 <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -228,17 +229,17 @@ export function TaskDetailPage({
       <>
         <PageHeader
           title="Task Detail"
-          description="Task details appear after you open a task or analyze a new task."
+          description="Open a task to see its control record."
         />
 
         <SectionCard
           title="No task selected"
-          description="No task selected. Open a task from Dashboard or analyze a new task."
+          description="Open a task from Dashboard or analyze a new task."
+          className="empty-state"
         >
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <p className="text-sm leading-6 text-slate-600">
-              The app is waiting for an explicit task selection before it shows
-              recommendation, governance, lifecycle, and audit evidence.
+            <p className="text-slate-600">
+              No task is selected in this session.
             </p>
             <div className="flex flex-wrap gap-3">
               <PrimaryButton
@@ -300,7 +301,7 @@ export function TaskDetailPage({
     <>
       <PageHeader
         title="Task Detail"
-        description="Full control-plane record: recommendation, governance, Human review, lifecycle, outcome, and audit evidence."
+        description="Recommendation, governance, runner, review, lifecycle, and audit."
         action={
           <PrimaryButton
             variant="secondary"
@@ -317,7 +318,7 @@ export function TaskDetailPage({
         <div className="grid gap-6 lg:grid-cols-2">
           <SectionCard
             title="Recommendation summary"
-            description="This is the routing recommendation. Governance is evaluated separately before launch."
+            description="Routing recommendation before governance."
           >
             {recommendation && explanation ? (
               <div className="space-y-4">
@@ -352,7 +353,7 @@ export function TaskDetailPage({
                   {explanation.topReasons.map((reason) => (
                     <li
                       key={reason}
-                      className="rounded-md bg-slate-50 px-3 py-2"
+                      className="info-tile px-3 py-2"
                     >
                       {reason}
                     </li>
@@ -372,7 +373,7 @@ export function TaskDetailPage({
                 {Object.entries(analysis).map(([key, value]) => {
                   if (key === "taskId") return null
                   return (
-                    <div key={key} className="rounded-md bg-slate-50 p-3">
+                    <div key={key} className="info-tile p-3">
                       <dt className="font-medium text-slate-500">
                         {formatLabel(key)}
                       </dt>
@@ -415,7 +416,7 @@ export function TaskDetailPage({
 
         <SectionCard
           title="Execution lifecycle"
-          description="Step-by-step state showing whether the task launched, paused for review, or stopped by policy."
+          description="Step-by-step control state."
         >
           <LifecycleStepList lifecycle={visibleLifecycle} />
         </SectionCard>
@@ -423,25 +424,25 @@ export function TaskDetailPage({
         <div className="grid gap-6 lg:grid-cols-2">
           <SectionCard
             title="Selected execution option"
-            description="The option selected after recommendation, governance, and any Human review."
+            description="Chosen option after policy checks."
           >
             {selectedOption ? (
               <div className="space-y-4">
                 <div className="mb-3 flex flex-wrap items-center gap-2">
-                  <h3 className="text-xl font-semibold text-slate-950">
+                  <h3 className="font-semibold text-slate-950">
                     {selectedOption.displayName}
                   </h3>
                   <StatusBadge value={selectedOption.pathType} />
                   <StatusBadge value={selectedOption.trustTier} />
                 </div>
                 <dl className="grid gap-3 text-sm sm:grid-cols-2">
-                  <div className="rounded-md bg-slate-50 p-3">
+                  <div className="info-tile p-3">
                     <dt className="font-medium text-slate-500">Fit score</dt>
                     <dd className="mt-1 text-slate-900">
                       {selectedOption.fitScore}
                     </dd>
                   </div>
-                  <div className="rounded-md bg-slate-50 p-3">
+                  <div className="info-tile p-3">
                     <dt className="font-medium text-slate-500">
                       Selected path
                     </dt>
@@ -454,7 +455,7 @@ export function TaskDetailPage({
                   {selectedOption.whyShown.slice(0, 2).map((reason) => (
                     <li
                       key={reason}
-                      className="rounded-md bg-slate-50 px-3 py-2"
+                      className="info-tile px-3 py-2"
                     >
                       {reason}
                     </li>
@@ -462,7 +463,7 @@ export function TaskDetailPage({
                 </ul>
               </div>
             ) : (
-              <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
+              <div className="blocked-state p-4">
                 <div className="mb-2 flex flex-wrap gap-2">
                   <StatusBadge
                     value={
@@ -473,8 +474,8 @@ export function TaskDetailPage({
                 </div>
                 <p className="text-sm leading-6 text-slate-600">
                   {governance.status === "blocked"
-                    ? "No execution option is selected because governance blocked launch for this task."
-                    : "No execution option is selected because the current sample marketplace does not have a direct match for this task yet."}
+                    ? "No execution option is selected because governance blocked launch."
+                    : "No sample option is eligible yet."}
                 </p>
               </div>
             )}
@@ -482,7 +483,7 @@ export function TaskDetailPage({
 
           <SectionCard
             title="Execution status"
-            description="What actually launched, if anything."
+            description="What launched, if anything."
           >
             {execution ? (
               <div className="space-y-3 text-sm">
@@ -498,13 +499,13 @@ export function TaskDetailPage({
                   />
                 </div>
                 <dl className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-md bg-slate-50 p-3">
+                  <div className="info-tile p-3">
                     <dt className="font-medium text-slate-500">Selected path</dt>
                     <dd className="mt-1 text-slate-900">
                       {formatLabel(execution.selectedPath)}
                     </dd>
                   </div>
-                  <div className="rounded-md bg-slate-50 p-3">
+                  <div className="info-tile p-3">
                     <dt className="font-medium text-slate-500">Launched at</dt>
                     <dd className="mt-1 text-slate-900">
                       {execution.launchedAt || "Not launched yet"}
@@ -539,7 +540,7 @@ export function TaskDetailPage({
               </p>
             </div>
           ) : (
-            <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
+            <div className="blocked-state p-4">
               <div className="mb-2 flex flex-wrap gap-2">
                 <StatusBadge
                   value={
@@ -559,7 +560,7 @@ export function TaskDetailPage({
 
         <SectionCard
           title="Audit trail"
-          description="Evidence record showing what the system or Human reviewer did, and why the task is in its current state."
+          description="System and Human decisions in order."
         >
           <AuditTrailList auditTrail={visibleAuditTrail} />
         </SectionCard>

@@ -24,10 +24,11 @@ export function GovernanceStatusCard({ governance }) {
   return (
     <SectionCard
       title="Governance status"
-      description="Policy result for the recommended path before launch."
+      description="Policy result before launch."
+      className={`governance-card governance-card--${governance.status}`}
     >
       <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
+        <div className="governance-decision-panel p-4">
           <p className="text-sm font-semibold text-slate-500">Decision</p>
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <StatusBadge value={governance.status} />
@@ -47,9 +48,9 @@ export function GovernanceStatusCard({ governance }) {
           </p>
         </div>
 
-        <div className="rounded-md border border-slate-200 bg-white p-4">
+        <div className="governance-next-panel p-4">
           <p className="text-sm font-semibold text-slate-500">
-            What happens next
+            Next step
           </p>
           <p className="mt-2 text-sm leading-6 text-slate-700">
             {getGovernanceNextStep(governance)}
@@ -67,7 +68,7 @@ export function GovernanceStatusCard({ governance }) {
       </div>
 
       <div className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
-        <div className="rounded-md border border-slate-200 p-4">
+        <div className="governance-next-panel p-4">
           <p className="mb-2 font-semibold text-slate-900">Allowed paths</p>
           <div className="flex flex-wrap gap-2">
             {governance.allowedPaths.length > 0 ? (
@@ -79,7 +80,7 @@ export function GovernanceStatusCard({ governance }) {
             )}
           </div>
         </div>
-        <div className="rounded-md border border-slate-200 p-4">
+        <div className="governance-next-panel p-4">
           <p className="mb-2 font-semibold text-slate-900">Blocked paths</p>
           <div className="flex flex-wrap gap-2">
             {governance.blockedPaths.length > 0 ? (

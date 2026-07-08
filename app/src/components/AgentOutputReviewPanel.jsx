@@ -11,7 +11,7 @@ function OutputReviewState({ decision }) {
 
   if (!decisionSummary) {
     return (
-      <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
+      <div className="gate-state p-4">
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <StatusBadge value="agent_output_review" label="Awaiting review" />
           <StatusBadge value="human" label="Human decision required" />
@@ -28,7 +28,7 @@ function OutputReviewState({ decision }) {
   }
 
   return (
-    <div className="rounded-md border border-cyan-200 bg-cyan-50 p-4">
+    <div className="agent-output-console p-4">
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <StatusBadge value={decisionSummary.decisionStatus} />
         <StatusBadge value="human" label={`Recorded by ${decisionSummary.actorName}`} />
@@ -39,7 +39,7 @@ function OutputReviewState({ decision }) {
       <p className="mt-2 text-sm leading-6 text-slate-700">
         {decisionSummary.stateDescription}
       </p>
-      <p className="mt-2 text-xs font-medium text-slate-500">
+      <p className="mt-2 text-sm font-medium text-slate-500">
         Decision saved at {decisionSummary.decidedAt}
       </p>
     </div>
@@ -62,7 +62,8 @@ export function AgentOutputReviewPanel({
   return (
     <SectionCard
       title="Agent output review"
-      description="Final Human decision gate after controlled Agent output. This is where the draft is accepted, sent back for revision, or rerouted to Human-led execution."
+      description="Final Human decision gate for Agent output."
+      className="gate-card"
       testId="agent-output-review"
     >
       <div className="space-y-5">
@@ -75,10 +76,10 @@ export function AgentOutputReviewPanel({
             return (
               <div
                 key={action.id}
-                className={`flex flex-col justify-between gap-4 rounded-md border p-4 ${
+                className={`review-action-card flex flex-col justify-between gap-4 p-4 ${
                   isCurrentDecision
                     ? "border-cyan-300 bg-cyan-50"
-                    : "border-slate-200 bg-slate-50"
+                    : ""
                 }`}
               >
                 <div>

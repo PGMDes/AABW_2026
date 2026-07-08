@@ -1,6 +1,3 @@
-import {
-  currentUser,
-} from "../data"
 import { PageHeader } from "../components/PageHeader"
 import { PrimaryButton } from "../components/PrimaryButton"
 import { SectionCard } from "../components/SectionCard"
@@ -10,30 +7,35 @@ import { buildTaskFlow } from "../logic/taskFlowEngine"
 
 const decisionPaths = ["agent", "human", "hybrid"]
 
-const walkthroughSteps = [
-  "Open New Task and show the scenario picker.",
-  "Run task_001 to show the approved Agent path.",
-  "Run task_002 to show Hybrid plus Human review.",
-  "Run task_003 to show the Blocked policy stop.",
-  "Use Task Detail to show lifecycle and audit trail.",
-]
-
-const demoProofPoints = [
-  "Routes work to Human, Agent, or Hybrid execution paths.",
-  "Checks governance before any launch decision.",
-  "Supports Human review to approve, reroute, or block work.",
-  "Records lifecycle and audit trail evidence for every scenario.",
-  "Supports local custom tasks without adding backend infrastructure.",
+const demoPathCards = [
+  {
+    title: "Agent approved",
+    status: "approved_for_launch",
+    route: "agent",
+    description: "Trusted agent can launch.",
+  },
+  {
+    title: "Hybrid gated",
+    status: "needs_human_review",
+    route: "hybrid",
+    description: "Human review unlocks the run.",
+  },
+  {
+    title: "Blocked by policy",
+    status: "blocked",
+    route: "human",
+    description: "No Agent run is exposed.",
+  },
 ]
 
 function SummaryMetric({ label, value, hint, status }) {
   return (
-    <SectionCard>
+    <SectionCard className="metric-card">
       <div className="flex items-start justify-between gap-3">
         <p className="text-sm font-medium text-slate-500">{label}</p>
         {status ? <StatusBadge value={status} /> : null}
       </div>
-      <p className="mt-2 text-3xl font-semibold text-slate-950">{value}</p>
+      <p className="metric-value mt-2">{value}</p>
       {hint ? <p className="mt-1 text-sm text-slate-500">{hint}</p> : null}
     </SectionCard>
   )
@@ -63,11 +65,11 @@ function DecisionMix({ pathCounts, totalTasks }) {
                 aria-valuemax={100}
                 aria-valuemin={0}
                 aria-valuenow={Math.round(percent)}
-                className="h-2 rounded-full bg-slate-100"
+                className="score-track h-2 rounded-full"
                 role="progressbar"
               >
                 <div
-                  className="h-2 rounded-full bg-cyan-600"
+                  className="score-fill h-2 rounded-full"
                   style={{ width: `${percent}%` }}
                 />
               </div>
@@ -79,64 +81,54 @@ function DecisionMix({ pathCounts, totalTasks }) {
   )
 }
 
-function WalkthroughOrder() {
+function DemoPathPanel() {
   return (
     <SectionCard
-      title="Walkthrough order"
-      description="Compact guide for the live demo sequence."
+      title="Demo paths"
+      description="The three outcomes judges should notice first."
     >
-      <ol className="list-decimal space-y-3 pl-5 text-sm leading-6 text-slate-700">
-        {walkthroughSteps.map((step) => (
-          <li key={step}>{step}</li>
+      <div className="grid gap-3">
+        {demoPathCards.map((path) => (
+          <div key={path.title} className="info-tile p-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="font-semibold text-slate-950">{path.title}</p>
+              <StatusBadge value={path.route} />
+              <StatusBadge value={path.status} />
+            </div>
+            <p className="mt-1 text-slate-600">{path.description}</p>
+          </div>
         ))}
-      </ol>
-    </SectionCard>
-  )
-}
-
-function DemoProofPanel() {
-  return (
-    <SectionCard
-      title="What this demo proves"
-      description="The focused control layer before connecting real agent integrations."
-    >
-      <ul className="space-y-2 text-sm leading-6 text-slate-700">
-        {demoProofPoints.map((point) => (
-          <li key={point} className="rounded-md bg-slate-50 px-3 py-2">
-            {point}
-          </li>
-        ))}
-      </ul>
+      </div>
     </SectionCard>
   )
 }
 
 function getNextStepHint(flow) {
   if (flow.governance.status === "blocked") {
-    return "Policy stop - no launch option"
+    return "Blocked by policy"
   }
 
   if (flow.governance.status === "needs_human_review") {
-    return "Review before launch"
+    return "Hybrid gated"
   }
 
   if (flow.execution.launchStatus === "launched") {
-    return "Launched and tracked"
+    return "Agent approved"
   }
 
-  return "Ready for walkthrough"
+  return "Ready"
 }
 
 function getSelectedOptionText(flow) {
   if (flow.selectedOption) {
-    return `Selected option: ${flow.selectedOption.displayName}`
+    return `Option: ${flow.selectedOption.displayName}`
   }
 
   if (flow.governance.status === "blocked") {
-    return "Selected option: none because governance blocks launch"
+    return "No option: governance blocks launch"
   }
 
-  return "Selected option: no eligible sample option yet"
+  return "No eligible sample option"
 }
 
 export function DashboardPage({
@@ -187,7 +179,7 @@ export function DashboardPage({
     <>
       <PageHeader
         title="Human-AgentOS"
-        description="Founder Mode demo: a control plane for agentic work that routes tasks, checks governance, and records audit evidence before teams scale real agent execution."
+        description="Routes knowledge work to Human, Agent, or Hybrid with governance before launch."
         action={
           <PrimaryButton onClick={() => onNavigate("newTask")}>
             New Task
@@ -195,20 +187,16 @@ export function DashboardPage({
         }
       />
 
-      <div className="mb-6 rounded-lg border border-cyan-200 bg-cyan-50 p-4">
+      <div className="control-plane-banner mb-6 p-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-sm font-semibold text-cyan-900">
-              Control plane for agentic work
+              Decision-first workforce control plane
             </p>
-            <p className="mt-1 text-sm text-cyan-800">
-              {currentUser.name} can test the wedge workflow: route work to
-              Human / Agent / Hybrid, apply governance, record Human review,
-              and keep an audit trail. Built-in scenarios stay fixed; local
-              custom tasks, review choices, Agent outputs, and output review
-              decisions are saved only in this browser.
+            <p className="mt-1 text-cyan-800">
+              Analyze the task, enforce policy, then launch only approved work.
             </p>
-            <p className="mt-2 text-xs font-medium text-cyan-900">
+            <p className="mt-2 font-medium text-cyan-900">
               Local session: {customTaskCount} custom tasks,{" "}
               {humanReviewDecisionCount} Human reviews, {agentRunCount} Agent
               outputs, {agentOutputReviewDecisionCount} output reviews.
@@ -249,16 +237,10 @@ export function DashboardPage({
         />
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="space-y-6">
-          <DecisionMix pathCounts={pathCounts} totalTasks={totalTasks} />
-          <DemoProofPanel />
-          <WalkthroughOrder />
-        </div>
-
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <SectionCard
           title="Task queue"
-          description="Demo scenarios are built in. Local tasks are saved in this browser."
+          description="Built-in demo tasks plus any local tasks in this browser."
         >
           <div className="space-y-3">
             {taskFlows.map((taskFlow) => {
@@ -270,22 +252,22 @@ export function DashboardPage({
                   type="button"
                   aria-label={`Open ${task.title} task detail`}
                   onClick={() => onNavigate("detail", task.id)}
-                  className="block w-full rounded-lg border border-slate-200 p-4 text-left transition hover:border-cyan-300 hover:bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2"
+                  className={`task-row task-row--${governance.status}`}
                 >
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-semibold text-slate-950">
+                        <p className="task-row__title">
                           {task.title}
                         </p>
                         <StatusBadge
                           value={task.source === "local" ? "local" : "demo"}
                         />
                       </div>
-                      <p className="mt-1 text-sm text-slate-600">
+                      <p className="mt-1 text-slate-600">
                         {getSelectedOptionText(taskFlow)}
                       </p>
-                      <p className="mt-1 text-xs font-medium text-slate-500">
+                      <p className="mt-1 font-medium text-slate-500">
                         {getNextStepHint(taskFlow)}
                       </p>
                     </div>
@@ -302,6 +284,11 @@ export function DashboardPage({
             })}
           </div>
         </SectionCard>
+
+        <div className="space-y-6">
+          <DemoPathPanel />
+          <DecisionMix pathCounts={pathCounts} totalTasks={totalTasks} />
+        </div>
       </div>
     </>
   )

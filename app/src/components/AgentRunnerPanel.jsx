@@ -18,7 +18,7 @@ function DetailList({ title, items }) {
       <h4 className="text-sm font-semibold text-slate-950">{title}</h4>
       <ul className="mt-2 space-y-2 text-sm leading-6 text-slate-700">
         {items.map((item) => (
-          <li key={item} className="rounded-md bg-slate-50 px-3 py-2">
+          <li key={item} className="info-tile px-3 py-2">
             {item}
           </li>
         ))}
@@ -33,7 +33,7 @@ function AgentRunSteps({ steps }) {
       {steps.map((step) => (
         <li
           key={step.id}
-          className="rounded-md border border-slate-200 bg-white p-4"
+          className="governance-next-panel p-4"
         >
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <h4 className="text-sm font-semibold text-slate-950">
@@ -48,9 +48,35 @@ function AgentRunSteps({ steps }) {
   )
 }
 
+function LiveModelEvidence({ agentRun }) {
+  if (agentRun?.runMode !== "live_ai_draft") {
+    return null
+  }
+
+  const requestedModel = agentRun.requestedModel || agentRun.model || "unavailable"
+  const returnedModel = agentRun.returnedModel || "unavailable"
+
+  return (
+    <div className="governance-next-panel space-y-2 p-3 text-sm leading-6 text-slate-700">
+      <p>
+        <span className="font-semibold text-slate-950">Requested model:</span>{" "}
+        {requestedModel}
+      </p>
+      <p>
+        <span className="font-semibold text-slate-950">Returned model:</span>{" "}
+        {returnedModel}
+      </p>
+      <p>
+        No routing, governance, blocked/unblocked policy, or final approval
+        decision was delegated.
+      </p>
+    </div>
+  )
+}
+
 function AgentOutput({ agentRun }) {
   return (
-    <div className="space-y-5 rounded-md border border-cyan-200 bg-cyan-50 p-4">
+    <div className="agent-output-console space-y-5 p-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <p className="text-sm font-semibold text-cyan-950">Agent output</p>
@@ -74,15 +100,17 @@ function AgentOutput({ agentRun }) {
       </div>
 
       <dl className="grid gap-3 text-sm sm:grid-cols-2">
-        <div className="rounded-md bg-white p-3">
+        <div className="info-tile bg-white p-3">
           <dt className="font-medium text-slate-500">Run ID</dt>
           <dd className="mt-1 break-words text-slate-900">{agentRun.id}</dd>
         </div>
-        <div className="rounded-md bg-white p-3">
+        <div className="info-tile bg-white p-3">
           <dt className="font-medium text-slate-500">Generated at</dt>
           <dd className="mt-1 text-slate-900">{agentRun.generatedAt}</dd>
         </div>
       </dl>
+
+      <LiveModelEvidence agentRun={agentRun} />
 
       <AgentRunSteps steps={agentRun.steps} />
 
@@ -90,7 +118,7 @@ function AgentOutput({ agentRun }) {
         <h4 className="text-sm font-semibold text-slate-950">
           Generated draft
         </h4>
-        <pre className="mt-2 whitespace-pre-wrap rounded-md bg-white p-4 text-sm leading-6 text-slate-700">
+        <pre className="agent-output-draft mt-2 whitespace-pre-wrap rounded-md p-4 text-sm leading-6 text-slate-700">
           {agentRun.output.draft}
         </pre>
       </div>
@@ -114,10 +142,17 @@ function LiveRunStatus({ result }) {
   }
 
   if (result.ok) {
+    const requestedModel = result.requestedModel || "unavailable"
+    const returnedModel = result.returnedModel || "unavailable"
+
     return (
       <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm leading-6 text-emerald-800">
-        Optional live AI draft saved. Human output review is still required
-        before final use.
+        <p>
+          Optional live AI draft saved. Human output review is still required
+          before final use.
+        </p>
+        <p className="mt-1">Requested model: {requestedModel}</p>
+        <p>Returned model: {returnedModel}</p>
       </div>
     )
   }
@@ -151,14 +186,14 @@ function ExecutionModeControl({
   const trimmedLiveApiKey = liveApiKey.trim()
 
   return (
-    <div className="rounded-md border border-slate-200 bg-white p-4">
+    <div className="governance-next-panel p-4">
       <p className="text-sm font-semibold text-slate-950">Execution mode</p>
       <div
         aria-label="Execution mode"
         className="mt-3 grid gap-3 lg:grid-cols-2"
         role="radiogroup"
       >
-        <label className="flex gap-3 rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+        <label className="info-tile flex gap-3 p-3 text-sm text-slate-700">
           <input
             checked={executionMode === "local_deterministic"}
             className="mt-1"
@@ -177,7 +212,7 @@ function ExecutionModeControl({
           </span>
         </label>
 
-        <label className="flex gap-3 rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+        <label className="info-tile flex gap-3 p-3 text-sm text-slate-700">
           <input
             checked={executionMode === "live_ai_draft"}
             className="mt-1"
@@ -216,11 +251,11 @@ function ExecutionModeControl({
               value={liveApiKey}
               onChange={(event) => onLiveApiKeyChange(event.target.value)}
             />
-            <p className="mt-2 text-xs font-medium text-cyan-950">
+            <p className="mt-2 text-sm font-medium text-cyan-950">
               The key stays in this page session and is not saved to
               localStorage.
             </p>
-            <div className="mt-3 space-y-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-950">
+            <div className="mt-3 space-y-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm leading-6 text-amber-950">
               <p>
                 Live mode sends this task context, recommendation, governance
                 result, and selected option to the external provider to draft
@@ -304,11 +339,12 @@ export function AgentRunnerPanel({
   return (
     <SectionCard
       title="Agent Runner"
-      description="Controlled execution surface for safe agentic work. The default run is deterministic local demo output, not a live model API call."
+      description="Controlled run surface for approved work."
+      className="gate-card"
       testId="agent-runner"
     >
       <div className="space-y-5">
-        <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
+        <div className={`gate-state gate-state--${runnerState.status} p-4`}>
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <div className="mb-2 flex flex-wrap items-center gap-2">

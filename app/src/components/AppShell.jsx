@@ -6,11 +6,7 @@ function NavButton({ children, isActive, onClick }) {
       type="button"
       aria-current={isActive ? "page" : undefined}
       onClick={onClick}
-      className={`rounded-md px-3 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:ring-offset-2 ${
-        isActive
-          ? "bg-slate-900 text-white"
-          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-      }`}
+      className={`nav-button ${isActive ? "nav-button--active" : ""}`}
     >
       {children}
     </button>
@@ -19,20 +15,25 @@ function NavButton({ children, isActive, onClick }) {
 
 export function AppShell({ children, currentPage, onNavigate }) {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
+    <div className="app-shell">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-950 focus:ring-2 focus:ring-cyan-600"
       >
         Skip to main content
       </a>
-      <header className="border-b border-slate-200 bg-white">
+      <header className="app-topbar">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold text-cyan-700">Human-AgentOS</p>
-            <p className="text-xs text-slate-500">
-              {currentUser.name} - {currentUser.role}
-            </p>
+          <div className="brand-lockup">
+            <span aria-hidden="true" className="brand-mark" />
+            <div>
+              <p className="text-sm font-semibold text-slate-950">
+                Human-AgentOS
+              </p>
+              <p className="text-sm text-slate-500">
+                {currentUser.name} - {currentUser.role}
+              </p>
+            </div>
           </div>
           <nav aria-label="Primary navigation" className="flex flex-wrap gap-2">
             <NavButton
@@ -62,7 +63,7 @@ export function AppShell({ children, currentPage, onNavigate }) {
           </nav>
         </div>
       </header>
-      <main id="main-content" className="mx-auto max-w-6xl px-4 py-8">
+      <main id="main-content" className="app-content mx-auto max-w-6xl px-4 py-8">
         {children}
       </main>
     </div>

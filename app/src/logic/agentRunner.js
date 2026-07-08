@@ -34,6 +34,27 @@ function getAgentRunDescription(agentRun) {
   return "deterministic local demo run"
 }
 
+function getLiveModelEvidence(agentRun) {
+  if (agentRun?.runMode !== "live_ai_draft") {
+    return null
+  }
+
+  return {
+    requestedModel: agentRun.requestedModel || agentRun.model || "unavailable",
+    returnedModel: agentRun.returnedModel || "unavailable",
+  }
+}
+
+function getLiveModelEvidenceSentence(agentRun) {
+  const evidence = getLiveModelEvidence(agentRun)
+
+  if (!evidence) {
+    return ""
+  }
+
+  return ` Requested model: ${evidence.requestedModel}. Returned model: ${evidence.returnedModel}. No routing, governance, blocked/unblocked policy, or final approval decision was delegated.`
+}
+
 function buildStep(id, label, detail) {
   return {
     id,
@@ -289,6 +310,7 @@ export function buildLifecycleWithAgentRun(lifecycle, agentRun) {
   if (!agentRun) return lifecycle
 
   const runDescription = getAgentRunDescription(agentRun)
+  const modelEvidenceSentence = getLiveModelEvidenceSentence(agentRun)
 
   return {
     ...lifecycle,
@@ -298,7 +320,7 @@ export function buildLifecycleWithAgentRun(lifecycle, agentRun) {
       {
         id: "agent_runner",
         label: "Agent runner",
-        description: `${agentRun.runnerName} generated a controlled ${runDescription} for Human review.`,
+        description: `${agentRun.runnerName} generated a controlled ${runDescription} for Human review.${modelEvidenceSentence}`,
         status: "agent_output_ready",
       },
     ],
@@ -310,13 +332,14 @@ export function buildAuditTrailWithAgentRun(auditTrail, agentRun) {
 
   const isLiveRun = agentRun.runMode === "live_ai_draft"
   const runDescription = getAgentRunDescription(agentRun)
+  const modelEvidenceSentence = getLiveModelEvidenceSentence(agentRun)
 
   return [
     ...auditTrail,
     {
       id: `${agentRun.taskId}_audit_011_agent_runner_completed`,
       label: isLiveRun ? "Live AI draft completed" : "Demo agent run completed",
-      description: `${agentRun.runnerName} generated ${runDescription} ${agentRun.id}.`,
+      description: `${agentRun.runnerName} generated ${runDescription} ${agentRun.id}.${modelEvidenceSentence}`,
       actorType: "agent",
       relativeTimestamp: "T+25m",
       status: "completed",

@@ -13,17 +13,17 @@ export function RecommendationPage({ flowResult, onContinue, onNewTask }) {
       <>
         <PageHeader
           title="Recommendation Result"
-          description="Recommendations appear after a task has been analyzed in this browser session."
+          description="Analyze a task to see its route, policy result, and option."
         />
 
         <SectionCard
           title="No recommendation yet"
-          description="No recommendation yet. Create or select a task, then analyze it."
+          description="Create or select a task, then analyze it."
+          className="empty-state"
         >
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <p className="text-sm leading-6 text-slate-600">
-              The app is waiting for an explicit Analyze Task action before it
-              shows recommendation, governance, and execution-option details.
+            <p className="text-slate-600">
+              No routing decision has been created in this session.
             </p>
             <PrimaryButton onClick={onNewTask}>Go to New Task</PrimaryButton>
           </div>
@@ -45,7 +45,7 @@ export function RecommendationPage({ flowResult, onContinue, onNewTask }) {
     <>
       <PageHeader
         title="Recommendation Result"
-        description="The system scored the task, explains the recommended path, and applies the first governance check."
+        description="Route recommendation, scoring factors, governance, and selected option."
       />
 
       <div className="space-y-6">
@@ -56,7 +56,7 @@ export function RecommendationPage({ flowResult, onContinue, onNewTask }) {
             {Object.entries(analysis).map(([key, value]) => {
               if (key === "taskId") return null
               return (
-                <div key={key} className="rounded-md bg-slate-50 p-3">
+                <div key={key} className="info-tile p-3">
                   <dt className="font-medium text-slate-500">
                     {formatLabel(key)}
                   </dt>
@@ -79,21 +79,21 @@ export function RecommendationPage({ flowResult, onContinue, onNewTask }) {
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div>
                 <div className="mb-2 flex flex-wrap items-center gap-2">
-                  <h3 className="text-xl font-semibold text-slate-950">
+                  <h3 className="font-semibold text-slate-950">
                     {selectedOption.displayName}
                   </h3>
                   <StatusBadge value={selectedOption.pathType} />
                   <StatusBadge value={selectedOption.trustTier} />
                 </div>
                 <p className="text-sm text-slate-600">
-                  Fit score: {selectedOption.fitScore}. Selected as the best
-                  eligible option for this scenario.
+                  Fit score: {selectedOption.fitScore}. Best eligible option
+                  for this scenario.
                 </p>
                 <ul className="mt-3 space-y-2 text-sm text-slate-700">
                   {selectedOption.whyShown.map((reason) => (
                     <li
                       key={reason}
-                      className="rounded-md bg-slate-50 px-3 py-2"
+                      className="info-tile px-3 py-2"
                     >
                       {reason}
                     </li>
@@ -108,14 +108,12 @@ export function RecommendationPage({ flowResult, onContinue, onNewTask }) {
         ) : (
           <SectionCard
             title="Selected execution option"
-            description="No eligible execution option was generated for this task."
+            description="No eligible option is open for this task."
+            className={governance.status === "blocked" ? "empty-state" : ""}
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <p className="text-sm leading-6 text-slate-600">
-                This can happen when governance blocks launch or when the
-                current sample marketplace does not have a direct match.
-                Continue to the detail view to see the lifecycle and audit
-                trail.
+              <p className="text-slate-600">
+                Continue to detail for lifecycle and audit evidence.
               </p>
               <PrimaryButton onClick={onContinue}>Continue to Detail</PrimaryButton>
             </div>

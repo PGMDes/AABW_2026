@@ -114,6 +114,18 @@ function extractOpenAIOutputText(payload) {
     .join("\n\n")
 }
 
+function extractReturnedModel(payload) {
+  const candidates = [payload?.model, payload?.response?.model]
+
+  return (
+    candidates
+      .map((candidate) =>
+        typeof candidate === "string" ? normalizeText(candidate) : "",
+      )
+      .find(Boolean) || ""
+  )
+}
+
 function getPayloadErrorMessage(payload, fallback) {
   return redactSensitiveText(
     normalizeText(payload?.error?.message) ||
@@ -153,11 +165,20 @@ function buildDeterministicFallback(flowResult, message) {
   }
 }
 
-function buildFailureResult({ code, message, flowResult, includeFallback }) {
+function buildFailureResult({
+  code,
+  message,
+  flowResult,
+  includeFallback,
+  requestedModel = DEFAULT_LIVE_MODEL,
+  returnedModel = "unavailable",
+}) {
   return {
     ok: false,
     code,
     message,
+    requestedModel,
+    returnedModel,
     fallback: includeFallback
       ? buildDeterministicFallback(flowResult, message)
       : {
@@ -170,7 +191,13 @@ function buildFailureResult({ code, message, flowResult, includeFallback }) {
   }
 }
 
-function createNormalizedLiveAgentRun({ flowResult, payload, outputText, model }) {
+function createNormalizedLiveAgentRun({
+  flowResult,
+  payload,
+  outputText,
+  requestedModel,
+  returnedModel,
+}) {
   const { task, recommendation, governance, selectedOption, execution } =
     flowResult
   const runnerName = getRunnerAgentName(selectedOption)
@@ -189,7 +216,9 @@ function createNormalizedLiveAgentRun({ flowResult, payload, outputText, model }
     runMode: "live_ai_draft",
     provider: LIVE_PROVIDER_NAME,
     providerRunId: normalizeText(payload.id),
-    model,
+    model: requestedModel,
+    requestedModel,
+    returnedModel,
     status: "completed",
     generatedAt,
     confidence: Math.max(60, Math.min(94, selectedOption.fitScore - 8)),
@@ -202,7 +231,7 @@ function createNormalizedLiveAgentRun({ flowResult, payload, outputText, model }
       buildStep(
         "call_live_model",
         "Called optional live model",
-        `Requested draft text from ${LIVE_PROVIDER_NAME} using ${model}; no policy decision was delegated.`,
+        `Requested model: ${requestedModel}. Returned model: ${returnedModel || "unavailable"}. No routing, governance, blocked/unblocked policy, or final approval decision was delegated.`,
       ),
       buildStep(
         "normalize_output",
@@ -215,7 +244,7 @@ function createNormalizedLiveAgentRun({ flowResult, payload, outputText, model }
       draft: outputText,
       assumptions: [
         `Recommendation stayed ${formatValue(recommendation.recommendedPath)} with ${recommendation.confidence}% confidence before the live draft.`,
-        `Governance stayed ${formatValue(governance.status)}; the model did not choose policy or launch status.`,
+        `Governance stayed ${formatValue(governance.status)}; no routing, governance, blocked/unblocked policy, or final approval decision was delegated.`,
         `Selected option stayed ${selectedOption.displayName}.`,
       ],
       risks: [
@@ -229,6 +258,7 @@ function createNormalizedLiveAgentRun({ flowResult, payload, outputText, model }
       ],
       limitations: [
         "Optional live AI draft mode only writes output; deterministic Human-AgentOS logic still controls routing, governance, blocked status, and audit policy.",
+        "No routing, governance, blocked/unblocked policy, or final approval decision was delegated.",
         "This browser demo uses a session-only user-entered key; it is not a production credential pattern.",
       ],
     },
@@ -241,6 +271,7 @@ export async function createLiveAgentRun({
   fetchImpl = fetch,
   model = DEFAULT_LIVE_MODEL,
 }) {
+  const requestedModel = normalizeText(model, DEFAULT_LIVE_MODEL)
   const runnerState = getAgentRunnerState(flowResult, null)
 
   if (!runnerState.canRun) {
@@ -250,6 +281,7 @@ export async function createLiveAgentRun({
         "Live AI draft mode is unavailable because Agent Runner is not allowed for this task.",
       flowResult,
       includeFallback: false,
+      requestedModel,
     })
   }
 
@@ -261,6 +293,7 @@ export async function createLiveAgentRun({
       message: "Enter a session-only API key before running live AI draft mode.",
       flowResult,
       includeFallback: false,
+      requestedModel,
     })
   }
 
@@ -270,6 +303,7 @@ export async function createLiveAgentRun({
       message: "This browser session cannot start a live AI draft request.",
       flowResult,
       includeFallback: true,
+      requestedModel,
     })
   }
 
@@ -281,13 +315,14 @@ export async function createLiveAgentRun({
         Authorization: `Bearer ${trimmedApiKey}`,
       },
       body: JSON.stringify({
-        model,
+        model: requestedModel,
         input: buildLiveAgentPrompt(flowResult),
         max_output_tokens: 900,
         store: false,
       }),
     })
     const payload = await readResponsePayload(response)
+    const returnedModel = extractReturnedModel(payload) || "unavailable"
 
     if (!response.ok) {
       return buildFailureResult({
@@ -298,6 +333,8 @@ export async function createLiveAgentRun({
         ),
         flowResult,
         includeFallback: true,
+        requestedModel,
+        returnedModel,
       })
     }
 
@@ -309,16 +346,21 @@ export async function createLiveAgentRun({
         message: "Live AI provider returned no draft text.",
         flowResult,
         includeFallback: true,
+        requestedModel,
+        returnedModel,
       })
     }
 
     return {
       ok: true,
+      requestedModel,
+      returnedModel,
       agentRun: createNormalizedLiveAgentRun({
         flowResult,
         payload,
         outputText,
-        model,
+        requestedModel,
+        returnedModel,
       }),
     }
   } catch (error) {
@@ -331,6 +373,7 @@ export async function createLiveAgentRun({
       ),
       flowResult,
       includeFallback: true,
+      requestedModel,
     })
   }
 }

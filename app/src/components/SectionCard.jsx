@@ -8,13 +8,13 @@ export function SectionCard({
   return (
     <section
       data-testid={testId}
-      className={`rounded-lg border border-slate-200 bg-white p-5 shadow-sm ${className}`}
+      className={`surface-card p-5 ${className}`}
     >
       {title ? (
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold text-slate-950">{title}</h2>
+        <div className="surface-card__header mb-4">
+          <h2 className="surface-card__title">{title}</h2>
           {description ? (
-            <p className="mt-1 text-sm leading-6 text-slate-600">
+            <p className="surface-card__description mt-1">
               {description}
             </p>
           ) : null}
