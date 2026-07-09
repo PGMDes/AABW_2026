@@ -7,6 +7,7 @@ import {
   buildAgentWorkSession,
   GOVERNED_AGENT_BOUNDARY_COPY,
 } from "../logic/agentWorkSession"
+import { ROUTER_WORKER_BOUNDARY_COPY } from "../logic/agentWorkflowEngine"
 import { formatLabel } from "./formatLabel"
 import { PrimaryButton } from "./PrimaryButton"
 import { SectionCard } from "./SectionCard"
@@ -49,6 +50,92 @@ function AgentRunSteps({ steps }) {
         </li>
       ))}
     </ol>
+  )
+}
+
+function RouterWorkerWorkflow({ workflow }) {
+  if (!workflow || workflow.terminalState !== "completed") {
+    return null
+  }
+
+  const reviewPacketItems = workflow.humanReviewPacket
+    ? [workflow.humanReviewPacket.summary, ...workflow.humanReviewPacket.items]
+    : []
+
+  return (
+    <div
+      aria-label="Router-Worker workflow"
+      className="space-y-4 rounded-md border border-cyan-200 bg-cyan-50/70 p-4"
+    >
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <p className="text-sm font-semibold text-cyan-950">
+            Router-Worker workflow
+          </p>
+          <p className="mt-1 text-sm leading-6 text-cyan-950">
+            {ROUTER_WORKER_BOUNDARY_COPY}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <StatusBadge value={workflow.terminalState} />
+          <StatusBadge value="agent" label={workflow.selectedWorker} />
+        </div>
+      </div>
+
+      <dl className="grid gap-3 text-sm lg:grid-cols-3">
+        <div className="info-tile bg-white p-3">
+          <dt className="font-medium text-slate-500">Router decision</dt>
+          <dd className="mt-1 text-slate-900">
+            {workflow.routerDecision.result}
+          </dd>
+        </div>
+        <div className="info-tile bg-white p-3">
+          <dt className="font-medium text-slate-500">Selected worker</dt>
+          <dd className="mt-1 font-mono text-slate-900">
+            {workflow.selectedWorker}
+          </dd>
+        </div>
+        <div className="info-tile bg-white p-3">
+          <dt className="font-medium text-slate-500">Worker reason</dt>
+          <dd className="mt-1 text-slate-900">{workflow.workerReason}</dd>
+        </div>
+      </dl>
+
+      <div className="grid gap-3 lg:grid-cols-2">
+        <div className="info-tile bg-white p-3">
+          <h4 className="text-sm font-semibold text-slate-950">
+            Worker output summary
+          </h4>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            {workflow.workerOutput.outputSummary}
+          </p>
+        </div>
+        <div className="info-tile bg-white p-3">
+          <h4 className="text-sm font-semibold text-slate-950">
+            Guardrail/self-check result
+          </h4>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            {workflow.guardrailCheck.result}
+          </p>
+        </div>
+      </div>
+
+      <ol className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
+        {workflow.toolSteps.map((step) => (
+          <li key={step.id} className="info-tile bg-white p-3">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <h4 className="font-mono text-sm font-semibold text-slate-950">
+                {step.toolName}
+              </h4>
+              <StatusBadge value={step.status} />
+            </div>
+            <p className="text-sm leading-6 text-slate-600">{step.result}</p>
+          </li>
+        ))}
+      </ol>
+
+      <DetailList title="Human review packet" items={reviewPacketItems} />
+    </div>
   )
 }
 
@@ -99,19 +186,7 @@ function AgentWorkSession({ session }) {
         </dl>
       ) : null}
 
-      <ol className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
-        {session.toolSteps.map((step) => (
-          <li key={step.id} className="info-tile bg-white p-3">
-            <div className="mb-2 flex flex-wrap items-center gap-2">
-              <h4 className="font-mono text-sm font-semibold text-slate-950">
-                {step.toolName}
-              </h4>
-              <StatusBadge value={step.status} />
-            </div>
-            <p className="text-sm leading-6 text-slate-600">{step.result}</p>
-          </li>
-        ))}
-      </ol>
+      <RouterWorkerWorkflow workflow={session.workflow} />
     </div>
   )
 }
