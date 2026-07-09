@@ -230,9 +230,11 @@ export function DashboardPage({
         />
         <SummaryMetric label="Blocked" value={blockedCount} status="blocked" />
         <SummaryMetric
-          label="Launched"
+          label="Execution records"
           value={launchedCount}
-          hint="Already tracked"
+          hint={`${launchedCount} demo ${
+            launchedCount === 1 ? "record" : "records"
+          } tracked`}
           status="launched"
         />
       </div>
