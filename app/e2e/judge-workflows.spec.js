@@ -65,6 +65,12 @@ test("task_001 runs the approved Agent path through output acceptance", async ({
   await expect(page.getByLabel(/Optional live AI draft/)).toBeVisible()
   await page.getByRole("button", { name: "Run demo agent" }).click()
   await expect(page.getByTestId("agent-runner")).toContainText("Agent output")
+  await expect(page.getByLabel("Router-Worker workflow")).toContainText(
+    "Router decision",
+  )
+  await expect(page.getByLabel("Router-Worker workflow")).toContainText(
+    "analysisWorker",
+  )
   await expect(page.getByTestId("agent-output-review")).toContainText(
     "Human decision pending",
   )
@@ -163,6 +169,7 @@ test("task_003 blocks launch without Agent run or output review controls", async
   await expect(page.getByRole("button", { name: "Request revision" })).toHaveCount(0)
   await expect(page.getByRole("button", { name: "Reroute to Human" })).toHaveCount(0)
   await expect(page.getByTestId("agent-output-review")).toHaveCount(0)
+  await expect(page.getByLabel("Router-Worker workflow")).toHaveCount(0)
 })
 
 test("reset local demo state clears saved Agent output and output review", async ({

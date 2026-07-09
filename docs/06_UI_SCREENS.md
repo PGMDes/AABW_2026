@@ -1084,6 +1084,26 @@ For `task_001`, the session appears after `Run demo agent` creates output. For
 run creates output. For `task_003`, never show completed agent-session evidence,
 run controls, live AI controls, or output review controls.
 
+### Phase 21C deterministic Router-Worker workflow
+
+Human-AgentOS uses a deterministic Router-Worker pattern inside allowed Agent
+Runner sessions. The router reads the task, recommendation, governance result,
+selected execution option, and saved Agent run before selecting one execution
+worker.
+
+The router can select exactly one local worker:
+
+- `analysisWorker`
+- `communicationWorker`
+- `reviewPacketWorker`
+
+This is execution evidence, not governance. The router selects execution workers
+only after deterministic governance allows an Agent run. It must not decide
+Human/Agent/Hybrid routing, blocked status, lifecycle gates, or final approval.
+
+For blocked work such as `task_003`, do not show a completed Router-Worker
+workflow.
+
 ---
 
 ## Phase 16 agent output review
