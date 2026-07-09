@@ -197,6 +197,7 @@ npm --prefix app run build
 npm --prefix app run validate:scenarios
 npm --prefix app run test:e2e
 npm --prefix app run lint
+npm --prefix app run capture:screenshots
 ```
 
 Windows PowerShell equivalent:
@@ -206,6 +207,7 @@ npm.cmd --prefix app run build
 npm.cmd --prefix app run validate:scenarios
 npm.cmd --prefix app run test:e2e
 npm.cmd --prefix app run lint
+npm.cmd --prefix app run capture:screenshots
 ```
 
 The scenario validator should end with:
@@ -219,6 +221,9 @@ empty-state behavior, `task_001` Agent flow, `task_002` Hybrid review gate,
 `task_003` blocked path, the default deterministic Agent Runner mode, live-mode
 visibility guardrails, and local demo state reset. It does not require a real
 API key or network call.
+
+The screenshot command captures the six judge/demo PNGs in
+`docs/assets/screenshots/` using the deterministic local demo runner.
 
 Optional local static preview:
 

@@ -19,7 +19,7 @@ Use this list to close the final submission form.
 - [x] Source code URL: [PGMDes/AABW_2026](https://github.com/PGMDes/AABW_2026)
 - [x] Live demo URL: https://aabw-2026.vercel.app/
 - [ ] Demo video URL: TODO, not recorded yet.
-- [ ] Screenshots: TODO, not captured yet. Include Dashboard, Recommendation Result, Task Detail Agent path, Hybrid review gate, and Blocked path.
+- [x] Screenshots: captured in `docs/assets/screenshots/`.
 - [x] AI documentation: use the `Models and tools used` section below.
 - [x] Selected project target: Founder Mode.
 - [x] Exact model/tool names: ChatGPT, Codex in VSCode, deterministic local JavaScript, and optional live AI draft adapter default model `gpt-4.1`.
@@ -38,7 +38,20 @@ TODO: not recorded yet.
 
 ## Screenshots
 
-TODO: not captured yet.
+Use the repeatable capture command:
+
+```bash
+npm.cmd --prefix app run capture:screenshots
+```
+
+Screenshot package:
+
+- `docs/assets/screenshots/01_dashboard.png` - Fresh Dashboard with task queue, metrics, and decision mix.
+- `docs/assets/screenshots/02_recommendation_agent_path.png` - `task_001` Agent recommendation with governance approval and selected Research Analyst Agent.
+- `docs/assets/screenshots/03_agent_runner_output_review.png` - `task_001` after deterministic Agent run with output-review controls visible.
+- `docs/assets/screenshots/04_hybrid_human_gate.png` - `task_002` Hybrid path showing Agent run gated before Human approval.
+- `docs/assets/screenshots/05_blocked_policy_path.png` - `task_003` blocked policy path with no Agent run or output-review controls.
+- `docs/assets/screenshots/06_audit_lifecycle.png` - Lifecycle and audit evidence after Agent run and Human output review.
 
 ## Problem statement
 
@@ -203,6 +216,7 @@ npm --prefix app run build
 npm --prefix app run validate:scenarios
 npm --prefix app run test:e2e
 npm --prefix app run lint
+npm --prefix app run capture:screenshots
 ```
 
 Windows PowerShell equivalent:
@@ -212,6 +226,7 @@ npm.cmd --prefix app run build
 npm.cmd --prefix app run validate:scenarios
 npm.cmd --prefix app run test:e2e
 npm.cmd --prefix app run lint
+npm.cmd --prefix app run capture:screenshots
 ```
 
 Expected scenario validation result:
@@ -232,7 +247,7 @@ Result: 11/11 scenarios passed
 - No durable shared storage
 - Custom tasks, Human review decisions, Agent run outputs, and Agent output review decisions persist only in each browser through `localStorage`
 - Built-in demo scenarios are deterministic sample data
-- Demo video and screenshot fields still need final submission values
+- Demo video field still needs the final submission value
 
 ## Future roadmap
 
@@ -253,13 +268,14 @@ Possible next steps after the hackathon demo:
 - [x] Add source code URL
 - [x] Add live demo URL
 - [ ] Add demo video URL
-- [ ] Add screenshots
+- [x] Add screenshots
 - [x] Add AI documentation summary from this file
 - [x] Add exact model/tool names from the final development session
 - [ ] Run `npm --prefix app run build`
 - [ ] Run `npm --prefix app run validate:scenarios`
 - [ ] Run `npm --prefix app run test:e2e`
 - [ ] Run `npm --prefix app run lint`
+- [ ] Run `npm --prefix app run capture:screenshots`
 - [ ] Review `docs/08_DEMO_WALKTHROUGH.md`
 - [ ] Review `docs/09_DEPLOYMENT.md`
 - [ ] Review `docs/19_DEPLOYMENT_QA.md`
