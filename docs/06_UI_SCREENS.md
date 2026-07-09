@@ -804,6 +804,22 @@ selected scenario, it shows:
 The picker still only fills the same intake form. It does not create a separate
 workflow.
 
+### New Task enterprise intake assistant
+
+Phase 20E keeps the same New Task -> Analyze Task flow, but makes intake feel
+closer to how enterprise work starts. The New Task screen should show:
+
+- a compact `Start from a demo scenario` area with the five built-in scenario
+  paths
+- a `Paste work brief` area for notes from a document, ticket, thread, or email
+- editable intake signals for `Audience`, `Urgency`, `Sensitivity`, and
+  `Budget range`
+- a deterministic local `Suggest intake fields` action that applies draft
+  signal suggestions the user can review before analysis
+
+This is not document parsing. Do not add Word/PDF upload, backend parsing,
+network calls, required API keys, or live-model inference for this intake step.
+
 ### Task Detail polish
 
 Task Detail now presents the final walkthrough record in clearer sections:

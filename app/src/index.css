@@ -441,6 +441,125 @@ select:focus {
   line-height: 1.3;
 }
 
+.scenario-choice-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+}
+
+.scenario-choice {
+  display: block;
+  width: 100%;
+  min-height: 6.25rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 252, 0.78);
+  padding: 0.85rem;
+  text-align: left;
+  box-shadow: 0 8px 20px rgba(23, 33, 29, 0.04);
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.scenario-choice:hover {
+  border-color: rgba(15, 118, 110, 0.3);
+  background: rgba(255, 255, 252, 0.96);
+  box-shadow: 0 12px 28px rgba(23, 33, 29, 0.08);
+  transform: translateY(-1px);
+}
+
+.scenario-choice:focus-visible,
+.signal-segment:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.scenario-choice--active {
+  border-color: rgba(15, 118, 110, 0.38);
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.12), transparent 64%),
+    rgba(255, 255, 252, 0.96);
+  box-shadow: var(--shadow-inset), 0 12px 30px rgba(15, 118, 110, 0.1);
+}
+
+.scenario-choice__title {
+  color: var(--ink);
+  font-size: 0.98rem;
+  font-weight: 720;
+  line-height: 1.3;
+}
+
+.signal-summary-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+}
+
+.signal-chip,
+.signal-control {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(247, 250, 246, 0.88);
+  box-shadow: var(--shadow-inset);
+}
+
+.signal-chip {
+  min-height: 4.25rem;
+  padding: 0.75rem;
+}
+
+.signal-control {
+  padding: 0.9rem;
+}
+
+.signal-segments {
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+}
+
+.signal-segment {
+  min-height: 2.35rem;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: rgba(255, 255, 252, 0.88);
+  padding: 0.45rem 0.65rem;
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  font-weight: 680;
+  text-align: center;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.signal-segment:hover {
+  border-color: rgba(15, 118, 110, 0.28);
+  color: var(--ink);
+}
+
+.signal-segment--active {
+  border-color: rgba(15, 118, 110, 0.28);
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+  box-shadow: var(--shadow-inset);
+}
+
+.suggestion-status {
+  border: 1px solid rgba(15, 118, 110, 0.22);
+  border-radius: 7px;
+  background: rgba(15, 118, 110, 0.08);
+  padding: 0.65rem 0.75rem;
+  color: var(--accent-strong);
+  font-size: 0.9375rem;
+  font-weight: 620;
+}
+
 .gate-card {
   border-color: rgba(15, 118, 110, 0.22);
 }
