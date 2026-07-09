@@ -63,7 +63,11 @@ export function AppShell({ children, currentPage, onNavigate }) {
           </nav>
         </div>
       </header>
-      <main id="main-content" className="app-content mx-auto max-w-6xl px-4 py-8">
+      <main
+        id="main-content"
+        aria-label="Primary content"
+        className="app-content mx-auto max-w-6xl px-4 py-8"
+      >
         {children}
       </main>
     </div>
