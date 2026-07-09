@@ -1059,6 +1059,31 @@ For blocked work such as `task_003`:
 - do not show `Run live AI draft`
 - do not show Agent output review controls
 
+### Phase 21A governed tool-using agent session
+
+The Agent Runner can present one bounded `Governed Tool-Using Agent` work
+session after a valid Agent run creates output.
+
+The session is evidence of execution only. It must not control recommendation,
+routing, governance, blocked status, lifecycle policy, or final approval.
+
+Show the following deterministic local tool steps after a valid run:
+
+- `readTaskBrief`
+- `inspectGovernance`
+- `createExecutionPlan`
+- `draftOutput`
+- `runPolicySelfCheck`
+- `prepareHumanReviewPacket`
+
+Each step should show the tool name, a short plain-English result, and a status
+such as `completed`, `blocked`, or `waiting`.
+
+For `task_001`, the session appears after `Run demo agent` creates output. For
+`task_002`, it must stay hidden until Human approval is recorded and an Agent
+run creates output. For `task_003`, never show completed agent-session evidence,
+run controls, live AI controls, or output review controls.
+
 ---
 
 ## Phase 16 agent output review
