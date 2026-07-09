@@ -3,6 +3,10 @@ import {
   getAgentRunModeLabel,
   getAgentRunnerState,
 } from "../logic/agentRunner"
+import {
+  buildAgentWorkSession,
+  GOVERNED_AGENT_BOUNDARY_COPY,
+} from "../logic/agentWorkSession"
 import { formatLabel } from "./formatLabel"
 import { PrimaryButton } from "./PrimaryButton"
 import { SectionCard } from "./SectionCard"
@@ -45,6 +49,70 @@ function AgentRunSteps({ steps }) {
         </li>
       ))}
     </ol>
+  )
+}
+
+function AgentWorkSession({ session }) {
+  if (!session) {
+    return null
+  }
+
+  return (
+    <div
+      aria-label="Governed tool-using agent session"
+      className="governance-next-panel space-y-4 p-4"
+    >
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <p className="text-sm font-semibold text-cyan-950">
+            Governed tool-using agent session
+          </p>
+          <p className="mt-1 text-sm leading-6 text-slate-600">
+            {session.summary}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <StatusBadge value={session.status} />
+          <StatusBadge value="agent" label={session.runnerName} />
+          <StatusBadge value={session.runMode} label={session.runModeLabel} />
+        </div>
+      </div>
+
+      <p className="rounded-md border border-cyan-200 bg-cyan-50 px-3 py-2 text-sm leading-6 text-cyan-950">
+        {GOVERNED_AGENT_BOUNDARY_COPY}
+      </p>
+
+      {session.requestedModel || session.returnedModel ? (
+        <dl className="grid gap-3 text-sm sm:grid-cols-2">
+          <div className="info-tile bg-white p-3">
+            <dt className="font-medium text-slate-500">Requested model</dt>
+            <dd className="mt-1 break-words text-slate-900">
+              {session.requestedModel || "unavailable"}
+            </dd>
+          </div>
+          <div className="info-tile bg-white p-3">
+            <dt className="font-medium text-slate-500">Returned model</dt>
+            <dd className="mt-1 break-words text-slate-900">
+              {session.returnedModel || "unavailable"}
+            </dd>
+          </div>
+        </dl>
+      ) : null}
+
+      <ol className="grid gap-3 lg:grid-cols-2 xl:grid-cols-3">
+        {session.toolSteps.map((step) => (
+          <li key={step.id} className="info-tile bg-white p-3">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <h4 className="font-mono text-sm font-semibold text-slate-950">
+                {step.toolName}
+              </h4>
+              <StatusBadge value={step.status} />
+            </div>
+            <p className="text-sm leading-6 text-slate-600">{step.result}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
   )
 }
 
@@ -307,6 +375,7 @@ export function AgentRunnerPanel({
 }) {
   const { selectedOption, execution, governance } = flowResult
   const runnerState = getAgentRunnerState(flowResult, agentRun)
+  const agentWorkSession = buildAgentWorkSession(flowResult, agentRun)
   const [executionMode, setExecutionMode] = useState("local_deterministic")
   const [liveApiKey, setLiveApiKey] = useState("")
   const [liveResult, setLiveResult] = useState(null)
@@ -338,8 +407,8 @@ export function AgentRunnerPanel({
 
   return (
     <SectionCard
-      title="Agent Runner"
-      description="Controlled run surface for approved work."
+      title="Governed Tool-Using Agent"
+      description="Agent Runner session for approved work only."
       className="gate-card"
       testId="agent-runner"
     >
@@ -362,6 +431,9 @@ export function AgentRunnerPanel({
               </h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
                 {runnerState.message}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                {GOVERNED_AGENT_BOUNDARY_COPY}
               </p>
               {runnerState.status === "blocked" ? (
                 <p className="mt-2 text-sm font-medium text-rose-700">
@@ -396,6 +468,8 @@ export function AgentRunnerPanel({
             onRunLocal={handleRunLocal}
           />
         ) : null}
+
+        <AgentWorkSession session={agentWorkSession} />
 
         {agentRun && runnerState.status === "agent_output_ready" ? (
           <AgentOutput agentRun={agentRun} />
