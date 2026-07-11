@@ -1,3 +1,5 @@
+> **Phase 22 status (2026-07-12):** This historical frontend-only document is superseded for `full_stack` mode by `docs/22_PHASE_22_PRODUCTION_PILOT.md`. `local_demo` remains supported for previews and judge-safe demonstrations. Phase 22 is single-Admin; it does not implement workspace membership or multi-user collaboration.
+
 # 19_DEPLOYMENT_QA.md
 
 ## Purpose

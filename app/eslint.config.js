@@ -1,4 +1,4 @@
-import js from '@eslint/js'
+﻿import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
@@ -17,5 +17,20 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+  },
+  {
+    files: ['api/**/*.js', 'server/**/*.js'],
+    languageOptions: { globals: globals.node },
+  },
+  {
+    files: ['src/FullStackApp.jsx'],
+    rules: {
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/exhaustive-deps': 'off',
+    },
+  },
+  {
+    files: ['src/main.jsx'],
+    rules: { 'react-refresh/only-export-components': 'off' },
   },
 ])

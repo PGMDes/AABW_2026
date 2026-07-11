@@ -1,5 +1,7 @@
 # Phase 22A Infrastructure Contracts
 
+> **Status update:** this is the historical Phase 22A infrastructure snapshot. Its single-Admin authorization clauses remain the Phase 22 authorization model. Keep its trust-boundary, secret-handling, RLS, and server-revalidation principles; Phase 23 must introduce an explicit architecture amendment before adding memberships or multi-user collaboration.
+
 ## 1. Status and baseline
 
 | Field | Recorded value |
