@@ -2,7 +2,7 @@
 
 ## Devpost-ready project title
 
-Human-AgentOS
+SymbiontOS
 
 ## Short tagline
 
@@ -69,7 +69,7 @@ That creates risk:
 
 ## Solution summary
 
-Human-AgentOS is a frontend-only MVP demo for a decision-first workforce control plane for agentic work.
+SymbiontOS is a frontend-only MVP demo for a decision-first workforce control plane for agentic work.
 
 It helps an Innovation / AI transformation lead submit a knowledge-work task, see whether the work should go to a Human, an Agent, or a Hybrid team, understand why that route was recommended, apply governance, select a curated execution option, and review the lifecycle and audit trail.
 
@@ -79,7 +79,7 @@ The demo is intentionally narrow. It proves the workflow and control layer befor
 
 This project fits the Founder Mode track because it starts with a real operating pain: teams want to move faster with AI agents, but they need a way to decide where agents are safe, where humans should stay accountable, and where a hybrid team is the right wedge.
 
-Human-AgentOS does not try to become a broad enterprise platform first. It focuses on one sharp workflow:
+SymbiontOS does not try to become a broad enterprise platform first. It focuses on one sharp workflow:
 
 `submit task -> recommend Human / Agent / Hybrid -> apply governance -> review if needed -> run controlled Agent output when allowed -> review output -> accept, revise, or reroute -> record audit trail`
 
@@ -159,7 +159,7 @@ Recommended judge flow:
 
 ## What makes it agentic
 
-Human-AgentOS is not just a static task list. It models the operating layer around agentic work:
+SymbiontOS is not just a static task list. It models the operating layer around agentic work:
 
 - It decides whether a task is appropriate for Human, Agent, or Hybrid execution.
 - It explains the decision in terms a non-technical leader can review.

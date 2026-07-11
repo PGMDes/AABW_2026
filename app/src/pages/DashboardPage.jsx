@@ -178,7 +178,7 @@ export function DashboardPage({
   return (
     <>
       <PageHeader
-        title="Human-AgentOS"
+        title="SymbiontOS"
         description="Routes knowledge work to Human, Agent, or Hybrid with governance before launch."
         action={
           <PrimaryButton onClick={() => onNavigate("newTask")}>

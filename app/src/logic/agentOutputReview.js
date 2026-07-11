@@ -1,5 +1,5 @@
 const OUTPUT_REVIEW_TIMESTAMP = "2026-07-03T11:30:00Z"
-const DEFAULT_REVIEWER = "Jordan Lee"
+const DEFAULT_REVIEWER = "Current workspace administrator"
 
 const agentOutputReviewActionMap = {
   accept_output: {

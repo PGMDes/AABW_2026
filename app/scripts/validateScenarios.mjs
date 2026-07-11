@@ -37,7 +37,7 @@ function printGroup(title, results) {
 
 const summary = validateAllDemoScenarios()
 
-console.log("Human-AgentOS scenario validation")
+console.log("SymbiontOS scenario validation")
 printGroup("Baseline scenarios", summary.baseline)
 printGroup("Human review decision scenarios", summary.humanReview)
 

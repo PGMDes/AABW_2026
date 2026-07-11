@@ -2,7 +2,7 @@
 
 ## Project one-liner
 
-`Human-AgentOS` is a decision-first workforce control plane that helps an AI transformation lead route knowledge work to a Human, an Agent, or a Hybrid team with visible governance and audit evidence.
+`SymbiontOS` is a decision-first workforce control plane that helps an AI transformation lead route knowledge work to a Human, an Agent, or a Hybrid team with visible governance and audit evidence.
 
 ## Market friction
 
@@ -59,7 +59,7 @@ The current repository proves the frontend workflow and control-plane model. It 
 
 ## Business value
 
-Human-AgentOS gives leaders a practical way to introduce agents safely. It helps speed up low-risk work, keeps Humans accountable for judgment-heavy work, and creates a repeatable review path for Hybrid work.
+SymbiontOS gives leaders a practical way to introduce agents safely. It helps speed up low-risk work, keeps Humans accountable for judgment-heavy work, and creates a repeatable review path for Hybrid work.
 
 ## Technical value
 

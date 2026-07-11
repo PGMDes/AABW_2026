@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document explains how to build, preview, validate, and package the current `Human-AgentOS` MVP for static deployment.
+This document explains how to build, preview, validate, and package the current `SymbiontOS` MVP for static deployment.
 
 Phase 10 keeps the app frontend-only. It prepares the existing React/Vite demo for static hosting without adding backend code, authentication, a database, APIs, real agents, or external services.
 

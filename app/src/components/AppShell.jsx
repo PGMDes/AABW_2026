@@ -28,10 +28,10 @@ export function AppShell({ children, currentPage, onNavigate }) {
             <span aria-hidden="true" className="brand-mark" />
             <div>
               <p className="text-sm font-semibold text-slate-950">
-                Human-AgentOS
+                SymbiontOS
               </p>
               <p className="text-sm text-slate-500">
-                {currentUser.name} - {currentUser.role}
+                {currentUser.role} · {currentUser.context}
               </p>
             </div>
           </div>

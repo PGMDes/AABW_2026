@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines the main domain objects used by the current `Human-AgentOS` MVP.
+This document defines the main domain objects used by the current `SymbiontOS` MVP.
 
 It is a tighter reference than `docs/03_DATA_MODEL.md`. The older data-model doc explains the beginner build plan. This file explains the implemented product nouns a reviewer should understand from the repo.
 
@@ -208,7 +208,7 @@ Example:
   "decisionStatus": "approved",
   "selectedPath": "hybrid",
   "selectedOptionName": "Executive Memo Agent + Human Reviewer",
-  "actorName": "Maya Chen",
+  "actorName": "Current workspace administrator",
   "actorRole": "AI Transformation Lead"
 }
 ```
@@ -369,7 +369,7 @@ Example:
   "taskId": "task_001",
   "action": "accept_output",
   "agentRunId": "agent_run_task_001_agent_001_v1",
-  "actorName": "Jordan Lee",
+  "actorName": "Authorized reviewer",
   "decidedAt": "2026-07-03T11:30:00Z"
 }
 ```
@@ -407,7 +407,7 @@ Example:
 {
   "id": "agent_output_review",
   "label": "Agent output review",
-  "description": "Jordan Lee recorded: Human accepted the Agent output for use after review.",
+  "description": "Authorized reviewer recorded: Human accepted the Agent output for use after review.",
   "status": "accepted_for_use"
 }
 ```

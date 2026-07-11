@@ -82,7 +82,7 @@ function buildDraft({ task, analysis, selectedOption }) {
       "- Which competitors are positioned as safe adoption layers instead of isolated agent tools.",
       "",
       "3. Initial recommendation",
-      "Prioritize the competitors that combine useful automation with visible control. The strongest positioning for Human-AgentOS is the governance and routing layer that helps leaders decide when Agent, Human, or Hybrid execution is appropriate.",
+      "Prioritize the competitors that combine useful automation with visible control. The strongest positioning for SymbiontOS is the governance and routing layer that helps leaders decide when Agent, Human, or Hybrid execution is appropriate.",
     ].join("\n")
   }
 

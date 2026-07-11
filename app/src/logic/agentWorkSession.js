@@ -34,7 +34,7 @@ export function buildAgentWorkSession(flowResult, agentRun) {
     runModeLabel: getAgentRunModeLabel(agentRun),
     requestedModel,
     returnedModel,
-    summary: `${agentRun.runnerName} completed a bounded work session after Human-AgentOS launched the ${formatValue(
+    summary: `${agentRun.runnerName} completed a bounded work session after SymbiontOS launched the ${formatValue(
       execution.selectedPath,
     )} path.`,
     workflow,

@@ -2,13 +2,13 @@
 
 ## Purpose
 
-This document explains the current `Human-AgentOS` architecture from a repository and product point of view.
+This document explains the current `SymbiontOS` architecture from a repository and product point of view.
 
 The current app is a frontend-only MVP. It proves the workflow and control-plane idea without adding backend infrastructure, APIs, auth, databases, queues, dependencies, or live model calls.
 
 ## Architecture Summary
 
-Human-AgentOS is a React + Vite single-page app. The important product logic lives in plain JavaScript modules under `app/src/logic`.
+SymbiontOS is a React + Vite single-page app. The important product logic lives in plain JavaScript modules under `app/src/logic`.
 
 The central idea is simple:
 
@@ -303,6 +303,6 @@ The goal is not only uptime. The goal is proving that agentic work is routed, go
 
 Keep the product boundary clear:
 
-`Human-AgentOS` owns decisioning, governance, selection, controlled launch, output review, lifecycle, and audit evidence.
+`SymbiontOS` owns decisioning, governance, selection, controlled launch, output review, lifecycle, and audit evidence.
 
 It should not become a full HR platform, full project management system, open agent marketplace, broad workflow automation suite, or complex enterprise compliance product in V1.

@@ -2,13 +2,13 @@
 
 ## Purpose
 
-This document is the live demo guide for `Human-AgentOS`.
+This document is the live demo guide for `SymbiontOS`.
 
 Use it when presenting the project from GitHub or walking through the app live. It explains what to show, what each scenario proves, and how to describe the product in plain language.
 
-## What Human-AgentOS is
+## What SymbiontOS is
 
-`Human-AgentOS` is a decision-first workforce control plane for knowledge work.
+`SymbiontOS` is a decision-first workforce control plane for knowledge work.
 
 In simple words: it helps a company decide whether a task should be done by a `Human`, an `Agent`, or a `Hybrid` human-agent team. It also explains the decision, checks governance, selects a safe execution option, and tracks what happened.
 
@@ -32,7 +32,7 @@ Companies are adding AI agents faster than their operating systems can manage th
 
 Without a control plane, teams make one-off decisions about agent use, governance, review, and ownership. That makes AI adoption hard to explain, hard to audit, and risky for sensitive work.
 
-`Human-AgentOS` solves the first slice of that problem: routing a knowledge-work task to the right execution path with clear reasoning and governance.
+`SymbiontOS` solves the first slice of that problem: routing a knowledge-work task to the right execution path with clear reasoning and governance.
 
 ## Demo Storyline
 

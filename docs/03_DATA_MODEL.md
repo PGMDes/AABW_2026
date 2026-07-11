@@ -2,7 +2,7 @@
 
 ## Purpose of this file
 
-This file defines the minimum data objects for the first `Human-AgentOS` MVP.
+This file defines the minimum data objects for the first `SymbiontOS` MVP.
 
 It is written for a beginner-friendly build process:
 - use fake/sample data first
@@ -119,7 +119,7 @@ The app cannot analyze or recommend anything until it knows what the user wants 
 
 ### What it means in simple words
 
-`TaskAnalysis` is the system’s structured reading of the task.
+`TaskAnalysis` is the systemâ€™s structured reading of the task.
 
 The user gives raw text. The system converts it into simple attributes that can be scored.
 
@@ -164,7 +164,7 @@ The app needs a consistent way to compare tasks. It is easier to score `taskClar
 
 ### What it means in simple words
 
-`RecommendationRecord` stores the system’s actual recommendation result.
+`RecommendationRecord` stores the systemâ€™s actual recommendation result.
 
 This is the object that answers:
 - should a human do it?
@@ -692,7 +692,7 @@ Blocked tasks can also record that a human confirmed the policy block.
   "selectedPath": "hybrid",
   "selectedOptionId": "task_002_agent_003",
   "selectedOptionName": "Executive Memo Agent + Human Reviewer",
-  "actorName": "Maya Chen",
+  "actorName": "Current workspace administrator",
   "actorRole": "AI Transformation Lead",
   "decidedAt": "2026-07-03T11:05:00Z",
   "reason": "Human reviewer approved the recommended execution option."
@@ -1089,8 +1089,8 @@ That difference is valuable.
 ### Why keeping them separate helps
 
 #### 1. Better UI clarity
-The recommendation screen can show the system’s advice.
-The launch screen can show the user’s actual choice.
+The recommendation screen can show the systemâ€™s advice.
+The launch screen can show the userâ€™s actual choice.
 
 #### 2. Better outcome review
 Later, the app can ask:

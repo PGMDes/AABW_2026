@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This is the judge-facing demo script for `Human-AgentOS`.
+This is the judge-facing demo script for `SymbiontOS`.
 
 Use it when presenting the project live or recording a short walkthrough. It keeps the story focused on the Founder Mode wedge: a serious control plane for agentic work, not a broad enterprise platform.
 
@@ -32,7 +32,7 @@ Result: 11/11 scenarios passed
 
 ### Goal
 
-Show the core value quickly: Human-AgentOS routes work, applies governance, and records evidence before agentic work scales.
+Show the core value quickly: SymbiontOS routes work, applies governance, and records evidence before agentic work scales.
 
 ### Script
 
@@ -40,7 +40,7 @@ Show the core value quickly: Human-AgentOS routes work, applies governance, and 
 
 Say:
 
-`Human-AgentOS is a decision-first workforce control plane. It helps an AI transformation lead decide whether knowledge work should go to a Human, an Agent, or a Hybrid team, then records the governance and audit trail.`
+`SymbiontOS is a decision-first workforce control plane. It helps an AI transformation lead decide whether knowledge work should go to a Human, an Agent, or a Hybrid team, then records the governance and audit trail.`
 
 Point to:
 
@@ -255,4 +255,4 @@ It proves the deterministic demo behavior still works. It checks the five baseli
 
 ### How do you avoid scope creep?
 
-Keep the V1 boundary clear. Human-AgentOS owns task routing, explainability, governance, controlled launch, output review, lifecycle, and audit trail. It does not become a full HR system, project management suite, open marketplace, or general workflow automation platform in the current MVP.
+Keep the V1 boundary clear. SymbiontOS owns task routing, explainability, governance, controlled launch, output review, lifecycle, and audit trail. It does not become a full HR system, project management suite, open marketplace, or general workflow automation platform in the current MVP.

@@ -1,13 +1,15 @@
-# Human-AgentOS Task Routing Design
+# SymbiontOS Task Routing Design
 
 Date: 2026-07-03
 Status: Approved for planning
 Product slice: Decision-first workforce control plane for knowledge work
 Primary user: Innovation / AI transformation lead
 
+Near-term deployment target: a real hosted product for an initial group of roughly 100 users. Production user and reviewer identities must come from authentication rather than hardcoded sample people. Local demo mode may use neutral role labels where identity is not available yet.
+
 ## Purpose
 
-This document defines the first product slice for Human-AgentOS: a system that helps an organization decide whether a knowledge-work task should be performed by a human, an AI agent, or a human-agent team, then route that work through minimal governance and launch it through a curated agent marketplace.
+This document defines the first product slice for SymbiontOS: a system that helps an organization decide whether a knowledge-work task should be performed by a human, an AI agent, or a human-agent team, then route that work through minimal governance and launch it through a curated agent marketplace.
 
 The goal of this slice is to help organizations access the right capability in minutes instead of weeks while maintaining trust, governance, and clear reasoning behind every decision.
 

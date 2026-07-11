@@ -2,7 +2,7 @@
 
 ## Purpose of this file
 
-This file defines the MVP recommendation logic for `Human-AgentOS`.
+This file defines the MVP recommendation logic for `SymbiontOS`.
 
 It explains, in beginner-friendly terms, how the app should decide whether a task should be handled by:
 - a `human`
@@ -1088,7 +1088,7 @@ Do not use vague names like:
 ---
 
 ## 7. Making confidence feel fake
-Confidence does not need to be “scientifically true” in V1.
+Confidence does not need to be â€œscientifically trueâ€ in V1.
 
 It just needs to be:
 - consistent
@@ -1118,7 +1118,7 @@ That keeps the product consistent.
 
 Bad example:
 - score says `agent`
-- explanation says “this needs heavy human judgment”
+- explanation says â€œthis needs heavy human judgmentâ€
 
 Good example:
 - explanation matches the factors that raised the winning score
@@ -1164,4 +1164,4 @@ The MVP recommendation engine should be:
 - easy to change
 - clearly separate from governance
 
-That is enough to power the first believable `Human-AgentOS` demo.
+That is enough to power the first believable `SymbiontOS` demo.

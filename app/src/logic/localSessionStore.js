@@ -215,7 +215,7 @@ function normalizeAgentOutputReviewDecisions(value) {
             taskId: normalizeText(decision.taskId, taskId),
             action,
             agentRunId: normalizeText(decision.agentRunId),
-            actorName: normalizeText(decision.actorName, "Jordan Lee"),
+            actorName: "Current workspace administrator",
             decidedAt: normalizeText(decision.decidedAt),
           },
         ]

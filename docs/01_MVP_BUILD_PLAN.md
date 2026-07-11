@@ -2,7 +2,7 @@
 
 ## What we are building in simple words
 
-We are building the first demo of `Human-AgentOS`.
+We are building the first demo of `SymbiontOS`.
 
 This first version is a small working product that helps an `Innovation / AI transformation lead` answer one question:
 
@@ -117,8 +117,8 @@ Use hardcoded sample data first.
 - `Review policy document for gaps`
 
 #### Sample users
-- `Maya Chen` - AI Transformation Lead
-- `Jordan Lee` - Human Reviewer
+- `Current workspace administrator` - AI Transformation Lead
+- `Authorized reviewer` - Human Reviewer
 - `Priya Raman` - Department Manager
 
 #### Sample task fields
@@ -286,8 +286,8 @@ Examples:
 - if `external audience = true` -> require human approval before release
 
 #### Sample reviewers
-- `Jordan Lee` - Policy Reviewer
-- `Maya Chen` - AI Transformation Lead
+- `Authorized reviewer` - Policy Reviewer
+- `Current workspace administrator` - AI Transformation Lead
 
 ### Simple functions needed
 
@@ -296,7 +296,7 @@ Examples:
 - `getApprovalReason(governanceResult)`
 - `getAllowedExecutionModes(governanceResult, recommendation)`
 
-Keep governance logic explicit and readable. Avoid anything “smart” here.
+Keep governance logic explicit and readable. Avoid anything â€œsmartâ€ here.
 
 ### Expected output
 
@@ -735,7 +735,7 @@ behavior.
 By the end of this phase, the repo should provide:
 
 - stronger Dashboard positioning for the Founder Mode track
-- clearer explanation that Human-AgentOS is a control plane for agentic work
+- clearer explanation that SymbiontOS is a control plane for agentic work
 - sharper scenario proof text for the five deterministic demo scenarios
 - Task Detail copy that explains recommendation, governance, Human review,
   lifecycle, and audit trail as separate control-plane concepts
@@ -787,7 +787,7 @@ npm.cmd --prefix app run validate:scenarios
 
 ### Goal
 
-Show that Human-AgentOS is not only a routing and governance demo. It also has
+Show that SymbiontOS is not only a routing and governance demo. It also has
 a controlled execution surface where approved Agent or Hybrid work can produce
 a draft output safely.
 
@@ -1159,7 +1159,7 @@ Recommended stack:
 
 Reason:
 
-This lets the builder focus on the product flow first. The first goal is not to build infrastructure. The first goal is to make the Human-AgentOS demo understandable and clickable.
+This lets the builder focus on the product flow first. The first goal is not to build infrastructure. The first goal is to make the SymbiontOS demo understandable and clickable.
 
 Backend, database, authentication, and real agent execution can be added later after the flow works.
 

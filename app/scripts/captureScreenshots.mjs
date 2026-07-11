@@ -38,7 +38,7 @@ async function canReuseAppServer(baseURL) {
 
     const html = await response.text()
 
-    return html.includes("<title>Human-AgentOS</title>")
+    return html.includes("<title>SymbiontOS</title>")
   } catch {
     return false
   }
@@ -56,7 +56,7 @@ async function getServerTarget() {
     }
 
     throw new Error(
-      `SCREENSHOT_BASE_URL/PLAYWRIGHT_BASE_URL did not serve Human-AgentOS: ${baseURL}`,
+      `SCREENSHOT_BASE_URL/PLAYWRIGHT_BASE_URL did not serve SymbiontOS: ${baseURL}`,
     )
   }
 
@@ -110,7 +110,7 @@ async function resetLocalDemoState(page, baseURL) {
     }
   }, storagePrefix)
   await page.goto(baseURL, { waitUntil: "networkidle" })
-  await expect(page.getByRole("heading", { name: "Human-AgentOS" })).toBeVisible()
+  await expect(page.getByRole("heading", { name: "SymbiontOS" })).toBeVisible()
 }
 
 async function openNewTask(page) {
@@ -220,8 +220,8 @@ try {
 
   console.log(
     target.reused
-      ? `Reusing Human-AgentOS server at ${target.baseURL}`
-      : `Started Human-AgentOS screenshot server at ${target.baseURL}`,
+      ? `Reusing SymbiontOS server at ${target.baseURL}`
+      : `Started SymbiontOS screenshot server at ${target.baseURL}`,
   )
 
   await mkdir(screenshotsDir, { recursive: true })

@@ -32,7 +32,7 @@ test.beforeEach(async ({ page }) => {
 test("fresh load opens Dashboard and keeps Recommendation and Task Detail empty", async ({
   page,
 }) => {
-  await expect(page.getByRole("heading", { name: "Human-AgentOS" })).toBeVisible()
+  await expect(page.getByRole("heading", { name: "SymbiontOS" })).toBeVisible()
   await expect(page.getByRole("heading", { name: "Task queue" })).toBeVisible()
 
   await primaryNav(page).getByRole("button", { name: "Recommendation" }).click()

@@ -1,6 +1,6 @@
-# Human-AgentOS Frontend App
+# SymbiontOS Frontend App
 
-This folder contains the React + Vite frontend demo for `Human-AgentOS`.
+This folder contains the React + Vite frontend demo for `SymbiontOS`.
 
 The app is frontend-only. It uses sample data and local React state to show the MVP flow:
 

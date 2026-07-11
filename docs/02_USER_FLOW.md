@@ -2,7 +2,7 @@
 
 ## Purpose of this file
 
-This file explains the main user journey for the first demo of `Human-AgentOS` in simple words.
+This file explains the main user journey for the first demo of `SymbiontOS` in simple words.
 
 It is written so a beginner developer or future coding agent can build the screens and the flow without restarting product strategy.
 
@@ -106,7 +106,7 @@ Do not wait for a backend before building the flow.
 The user lands on a simple dashboard.
 
 It should show:
-- page title: `Human-AgentOS`
+- page title: `SymbiontOS`
 - short description of what the product does
 - button: `New Task`
 - list of recent sample tasks
@@ -125,7 +125,7 @@ Example current user:
 ```json
 {
   "id": "user_001",
-  "name": "Maya Chen",
+  "name": "Current workspace administrator",
   "role": "AI Transformation Lead"
 }
 ```
@@ -933,12 +933,12 @@ Build sample versions of these states:
 
 Here is the simplest way to explain the demo:
 
-A company’s AI Transformation Lead wants help deciding how a task should be done.
+A companyâ€™s AI Transformation Lead wants help deciding how a task should be done.
 
 They enter a task:
 `Create internal market research brief about AI competitors`
 
-Human-AgentOS reads the task, breaks it into simple factors like clarity, sensitivity, and judgment, and recommends the best route.
+SymbiontOS reads the task, breaks it into simple factors like clarity, sensitivity, and judgment, and recommends the best route.
 
 In this case, it recommends an `Agent` because the task is clear, repeatable, and low sensitivity.
 

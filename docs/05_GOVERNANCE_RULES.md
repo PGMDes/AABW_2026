@@ -2,7 +2,7 @@
 
 ## Purpose of this file
 
-This file defines the MVP governance logic for `Human-AgentOS`.
+This file defines the MVP governance logic for `SymbiontOS`.
 
 It explains how the app decides:
 - what is allowed
@@ -103,7 +103,7 @@ Why governance needs it:
 
 ## 3. `RecommendationRecord`
 
-This gives the recommendation engine’s result.
+This gives the recommendation engineâ€™s result.
 
 Important fields:
 - `recommendedPath`

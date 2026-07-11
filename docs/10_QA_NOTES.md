@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document records the Phase 11 frontend QA and submission-readiness pass for `Human-AgentOS`.
+This document records the Phase 11 frontend QA and submission-readiness pass for `SymbiontOS`.
 
 The pass stayed inside the current frontend-only MVP. It did not add backend code, authentication, a database, APIs, external services, dependencies, or a new test framework.
 

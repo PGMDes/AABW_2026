@@ -53,7 +53,7 @@ function buildLiveAgentPrompt(flowResult) {
   } = flowResult
 
   return [
-    "You are writing an optional draft for Human-AgentOS, a workforce control-plane demo.",
+    "You are writing an optional draft for SymbiontOS, a workforce control-plane demo.",
     "",
     "Important boundaries:",
     "- Do not decide routing, governance, policy, launch status, blocked status, or audit status.",
@@ -68,7 +68,7 @@ function buildLiveAgentPrompt(flowResult) {
     `Audience: ${formatValue(task.audience)}`,
     `Sensitivity: ${formatValue(task.sensitivity)}`,
     "",
-    "Decision context already produced by deterministic Human-AgentOS logic:",
+    "Decision context already produced by deterministic SymbiontOS logic:",
     `Task type: ${formatValue(analysis.taskType)}`,
     `Recommended path: ${formatValue(recommendation.recommendedPath)}`,
     `Recommendation confidence: ${recommendation.confidence}%`,
@@ -257,7 +257,7 @@ function createNormalizedLiveAgentRun({
         "Record Accept output, Request revision, or Reroute to Human before final use.",
       ],
       limitations: [
-        "Optional live AI draft mode only writes output; deterministic Human-AgentOS logic still controls routing, governance, blocked status, and audit policy.",
+        "Optional live AI draft mode only writes output; deterministic SymbiontOS logic still controls routing, governance, blocked status, and audit policy.",
         "No routing, governance, blocked/unblocked policy, or final approval decision was delegated.",
         "This browser demo uses a session-only user-entered key; it is not a production credential pattern.",
       ],

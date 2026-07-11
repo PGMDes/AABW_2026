@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document maps common hackathon-style judging criteria to evidence already present in the `Human-AgentOS` repository.
+This document maps common hackathon-style judging criteria to evidence already present in the `SymbiontOS` repository.
 
 The current MVP is frontend-only. It proves a working workflow and repository evidence, not production backend infrastructure.
 

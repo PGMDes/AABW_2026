@@ -55,4 +55,4 @@ On `Task Detail`:
 
 ## Why This Matters
 
-A serious control plane must be able to say no. The blocked scenario shows that Human-AgentOS values safe routing and governance evidence over maximizing Agent usage.
+A serious control plane must be able to say no. The blocked scenario shows that SymbiontOS values safe routing and governance evidence over maximizing Agent usage.

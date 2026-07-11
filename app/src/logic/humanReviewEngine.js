@@ -211,8 +211,8 @@ export function buildHumanReviewState({
         selectedPath: selectedOption?.pathType || null,
         selectedOptionId: selectedOption?.id || null,
         selectedOptionName: selectedOption?.displayName || null,
-        actorName: "Maya Chen",
-        actorRole: "AI Transformation Lead",
+        actorName: "Current workspace administrator",
+        actorRole: "Workspace administrator",
         decidedAt: REVIEW_TIMESTAMP,
         reason: decisionAction.resultReason,
       }

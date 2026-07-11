@@ -1,6 +1,6 @@
-# Human-AgentOS
+# SymbiontOS
 
-`Human-AgentOS` is a decision-first workforce control plane that routes knowledge work to a Human, an Agent, or a Hybrid team with visible governance and audit evidence.
+`SymbiontOS` is a decision-first workforce control plane that routes knowledge work to a Human, an Agent, or a Hybrid team with visible governance and audit evidence.
 
 ## Founder Mode Framing
 
@@ -12,6 +12,8 @@ This MVP focuses on one sharp Founder Mode wedge:
 
 The current product is intentionally narrow. It proves the decision and control layer before adding production infrastructure.
 
+The near-term target is a real hosted product for an initial group of roughly 100 users. The current local demo uses neutral role labels; real names and reviewer identities will come from authentication when the full-stack identity flow is implemented.
+
 ## Problem
 
 AI adoption is creating a new management problem:
@@ -22,7 +24,7 @@ AI adoption is creating a new management problem:
 - agent selection is often disconnected from policy
 - output review and audit evidence are usually scattered or missing
 
-Human-AgentOS treats this as an operating-system problem, not just a chat or task-list problem.
+SymbiontOS treats this as an operating-system problem, not just a chat or task-list problem.
 
 ## Solution
 

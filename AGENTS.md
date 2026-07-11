@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This repository is for building `Human-AgentOS` inside the `AABW_2026` project folder.
+This repository is for building `SymbiontOS` inside the `AABW_2026` project folder.
 
 This file tells future AI coding agents how to work in this repo without re-opening core product strategy decisions that are already locked.
 
@@ -26,13 +26,18 @@ If a later file conflicts with `AGENTS.md`, follow `AGENTS.md` unless the user e
 These decisions are already made. Do not restart product strategy, reframe the MVP, or replace the product thesis unless the user explicitly asks to change it.
 
 ### Product
-- `Human-AgentOS`
+- `SymbiontOS`
 
 ### V1 approach
 - `Decision-first workforce control plane`
 
 ### Primary user
 - `Innovation / AI transformation lead`
+
+### Near-term deployment target
+- A real hosted product for an initial group of roughly `100 users`
+- Real user identities must come from authentication, never hardcoded sample names
+- Until authentication is implemented, local demo surfaces should use neutral role labels such as `Workspace administrator`
 
 ### First task category
 - `Knowledge work`

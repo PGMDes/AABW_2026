@@ -2,7 +2,7 @@
 
 ## Purpose of this file
 
-This file defines the exact MVP screens for `Human-AgentOS`.
+This file defines the exact MVP screens for `SymbiontOS`.
 
 It is written so a coding agent can build a first frontend in:
 - `React`
@@ -90,7 +90,7 @@ It should answer:
 
 ### What the user sees
 
-- product title: `Human-AgentOS`
+- product title: `SymbiontOS`
 - short one-line description
 - button: `New Task`
 - small summary cards
@@ -1086,7 +1086,7 @@ run controls, live AI controls, or output review controls.
 
 ### Phase 21C deterministic Router-Worker workflow
 
-Human-AgentOS uses a deterministic Router-Worker pattern inside allowed Agent
+SymbiontOS uses a deterministic Router-Worker pattern inside allowed Agent
 Runner sessions. The router reads the task, recommendation, governance result,
 selected execution option, and saved Agent run before selecting one execution
 worker.

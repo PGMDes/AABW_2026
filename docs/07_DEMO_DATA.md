@@ -2,7 +2,7 @@
 
 ## Purpose of this file
 
-This file defines the fake/sample data for the first `Human-AgentOS` frontend demo.
+This file defines the fake/sample data for the first `SymbiontOS` frontend demo.
 
 The goal is to let a beginner build a believable React + Vite + Tailwind app before adding any backend or database.
 
@@ -37,10 +37,10 @@ The first frontend demo only needs enough data to prove:
 ```js
 export const currentUser = {
   id: "user_001",
-  name: "Maya Chen",
+  name: "Current workspace administrator",
   role: "Innovation / AI Transformation Lead",
   team: "Strategy and Transformation",
-  organization: "Human-AgentOS Demo Org"
+  organization: "Local demo workspace"
 }
 ```
 
