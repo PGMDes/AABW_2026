@@ -6,7 +6,12 @@ test("uses the approved sidebar and neutral demo identity", async ({ page }) => 
   await expect(page.getByRole("banner").getByText("SymbiontOS")).toBeVisible()
   await expect(
     page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button"),
-  ).toHaveText(["Dashboard", "Tasks", "Governance", "Marketplace", "Activity"])
+  ).toHaveText(["Action Queue", "Cases", "Governance", "Catalog", "Activity"])
+  await expect(
+    page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", {
+      name: "New case",
+    }),
+  ).toHaveCount(0)
   await expect(page.getByText("Workspace administrator")).toBeVisible()
   await expect(page.getByText("All systems operational")).toBeVisible()
 })
@@ -43,9 +48,9 @@ test("supports keyboard navigation and a skip link", async ({ page }) => {
   await page.keyboard.press("Enter")
   await expect(page.locator("#main-content")).toBeFocused()
 
-  await page.getByRole("button", { name: "Dashboard" }).focus()
+  await page.getByRole("button", { name: "Action Queue" }).focus()
   await page.keyboard.press("Tab")
-  await expect(page.getByRole("button", { name: "Tasks" })).toBeFocused()
+  await expect(page.getByRole("button", { name: "Cases" })).toBeFocused()
 })
 
 test("persists dark mode locally", async ({ page }) => {
@@ -67,7 +72,7 @@ test("collapses navigation on a mobile viewport", async ({ page }) => {
     page.getByRole("navigation", { name: "Primary navigation" }),
   ).toBeVisible()
 
-  await page.getByRole("button", { name: "Tasks" }).click()
+  await page.getByRole("button", { name: "Cases" }).click()
   await expect(page.getByRole("button", { name: "Open navigation" })).toBeVisible()
   await expect(
     page.getByRole("navigation", { name: "Primary navigation" }),

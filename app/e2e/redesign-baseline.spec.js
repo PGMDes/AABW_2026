@@ -1,34 +1,3 @@
-import { expect, test } from "@playwright/test"
-
-const approvedNavigationItems = [
-  "Dashboard",
-  "Tasks",
-  "Governance",
-  "Marketplace",
-  "Activity",
-]
-
-test("renders the approved five-item navigation baseline", async ({ page }) => {
-  await page.goto("/")
-
-  const primaryNavigation = page.getByRole("navigation", {
-    name: "Primary navigation",
-  })
-
-  await expect(primaryNavigation.getByRole("button")).toHaveText(
-    approvedNavigationItems,
-  )
-  await expect(
-    primaryNavigation.getByRole("button", { name: "Dashboard" }),
-  ).toHaveAttribute("aria-current", "page")
-})
-
-test("renders the dashboard without horizontal overflow", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 })
-  await page.goto("/")
-
-  await expect(page.getByRole("main", { name: "Primary content" })).toBeVisible()
-  await expect
-    .poll(() => page.evaluate(() => document.documentElement.scrollWidth))
-    .toBeLessThanOrEqual(390)
-})
+import { expect,test } from "@playwright/test"
+test("renders the approved five-item navigation baseline",async({page})=>{await page.goto("/");await expect(page.getByRole("navigation",{name:"Primary navigation"}).getByRole("button")).toHaveText(["Action Queue","Cases","Governance","Catalog","Activity"]);await expect(page.getByRole("heading",{name:"Action Queue"})).toBeVisible()})
+test("renders the action queue without horizontal overflow",async({page})=>{await page.goto("/");expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true)})

@@ -1,0 +1,6 @@
+import { PageHeader } from "../components/PageHeader"
+import { PrimaryButton } from "../components/PrimaryButton"
+import { SectionCard } from "../components/SectionCard"
+import { StatusBadge } from "../components/StatusBadge"
+import { buildCaseRows, sortCaseRows } from "../logic/caseLibrary"
+export function ActionQueuePage({flows,selections,agentRuns,outputReviews,onNavigate,onResetLocalState}){const rows=sortCaseRows(buildCaseRows(flows,selections,agentRuns,outputReviews));return <><PageHeader title="Action Queue" description="The next governed action for every open decision case." action={<PrimaryButton onClick={()=>onNavigate("newTask")}>New Task</PrimaryButton>}/><SectionCard title="Work requiring attention" description="One direct action per case, ordered by governance state."><div className="case-table">{rows.map((row)=><button key={row.id} type="button" className="case-table__row" onClick={()=>onNavigate("case",row.id,row.nextAction?.stageId)}><span><strong>{row.title}</strong><small>{row.source}</small></span><StatusBadge value={row.route}/><StatusBadge value={row.governance}/><span className="case-table__action">{row.nextAction?.label||"Review case"}</span></button>)}</div></SectionCard><div className="mt-6"><PrimaryButton variant="secondary" onClick={onResetLocalState}>Reset local demo state</PrimaryButton></div></>}

@@ -3,10 +3,10 @@ import { currentUser } from "../data"
 import { ThemeToggle } from "./ThemeToggle"
 
 const navigationItems = [
-  { id: "dashboard", label: "Dashboard" },
-  { id: "tasks", label: "Tasks" },
+  { id: "dashboard", label: "Action Queue" },
+  { id: "cases", label: "Cases" },
   { id: "governance", label: "Governance" },
-  { id: "marketplace", label: "Marketplace" },
+  { id: "marketplace", label: "Catalog" },
   { id: "activity", label: "Activity" },
 ]
 

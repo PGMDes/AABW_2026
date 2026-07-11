@@ -1,0 +1,5 @@
+import { PageHeader } from "../components/PageHeader"
+import { SectionCard } from "../components/SectionCard"
+import { StatusBadge } from "../components/StatusBadge"
+import { buildActivityFeed } from "../logic/activityFeed"
+export function ActivityPage({flows,onOpenCase}){const feed=buildActivityFeed(flows);return <><PageHeader title="Activity" description="A factual timeline built from the existing decision audit trails."/><SectionCard title="Decision activity"><ol className="timeline-list divide-y divide-slate-200">{feed.map((event,index)=><li className="timeline-item grid gap-2 p-4 sm:grid-cols-[7rem_1fr]" key={event.id||index}><span className="text-sm text-slate-500">{event.relativeTimestamp}</span><button type="button" className="text-left" onClick={()=>onOpenCase(event.taskId)}><div className="flex flex-wrap gap-2"><strong>{event.taskTitle}</strong><StatusBadge value={event.status}/></div><p className="mt-1 text-sm text-slate-600">{event.description||event.label}</p></button></li>)}</ol></SectionCard></>}

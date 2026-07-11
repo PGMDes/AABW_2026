@@ -1,0 +1,1 @@
+export function buildActivityFeed(flows){return flows.flatMap((flow)=> (flow.auditTrail||[]).map((event)=>({...event,taskId:flow.task.id,taskTitle:flow.task.title}))).sort((a,b)=>String(a.relativeTimestamp).localeCompare(String(b.relativeTimestamp)))}

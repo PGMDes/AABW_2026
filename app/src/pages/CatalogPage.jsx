@@ -1,0 +1,4 @@
+import { PageHeader } from "../components/PageHeader"
+import { SectionCard } from "../components/SectionCard"
+import { StatusBadge } from "../components/StatusBadge"
+export function CatalogPage({options=[]}){return <><PageHeader title="Catalog" description="Curated execution options available to the current decision model."/><SectionCard title="Approved option metadata" description="No publishing, ratings, or marketplace transactions are included in V1."><div className="case-card-grid">{options.map((option)=><article className="case-card" key={option.id}><div><small>{option.id}</small><h2>{option.displayName||option.name}</h2><p>{option.description||option.summary||"Curated execution option"}</p></div><div className="flex flex-wrap gap-2"><StatusBadge value={option.pathType}/>{option.eligible?<StatusBadge value="approved_for_launch" label="Eligible in matching cases"/>:null}</div></article>)}</div></SectionCard></>}

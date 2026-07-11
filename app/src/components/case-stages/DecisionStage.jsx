@@ -1,0 +1,5 @@
+import { RecommendationCard } from "../RecommendationCard"
+import { SectionCard } from "../SectionCard"
+import { StatusBadge } from "../StatusBadge"
+import { formatLabel } from "../formatLabel"
+export function DecisionStage({ flowResult }) { const { recommendation, explanation, selectedOption }=flowResult; return <div className="space-y-6"><RecommendationCard recommendation={recommendation} explanation={explanation} selectedOption={selectedOption}/><SectionCard title="Decision evidence" description="All route scores and conditions remain visible for review."><div className="flex flex-wrap gap-2">{Object.entries(recommendation?.scores || recommendation?.fitScores || {}).map(([path,score])=><StatusBadge key={path} value={path} label={`${formatLabel(path)}: ${score}`}/>)}</div>{explanation?.alternatives?.length?<ul className="case-bullet-list">{explanation.alternatives.map((item,index)=><li key={`${index}-${typeof item === "string" ? item : item?.pathType || "alternative"}`}>{typeof item==="string"?item:JSON.stringify(item)}</li>)}</ul>:null}</SectionCard></div> }

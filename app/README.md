@@ -60,3 +60,10 @@ npm.cmd run preview -- --host 127.0.0.1
 ```
 
 For the full GitHub entry point, live demo script, deployment guide, and QA notes, see the root `README.md`, `docs/08_DEMO_WALKTHROUGH.md`, `docs/09_DEPLOYMENT.md`, and `docs/10_QA_NOTES.md`.
+
+
+## Decision Case Files experience
+
+The frontend is organized around five product areas: **Action Queue**, **Cases**, **Governance**, **Catalog**, and **Activity**. Each task opens as one Decision Case File with seven governed stages: **Intake**, **Analysis**, **Decision**, **Governance**, **Selection**, **Execution**, and **Outcome**.
+
+The recommendation is guidance rather than an automatic launch. A user must select an eligible option, governance must permit execution, and launch remains an explicit action. Local demo selections are stored in the browser; full-stack mode continues to use the existing authenticated API actions.
