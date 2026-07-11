@@ -1,0 +1,8 @@
+import { PrimaryButton } from "./PrimaryButton"
+import { SectionCard } from "./SectionCard"
+import { StatusBadge } from "./StatusBadge"
+
+export function ExecutionShortlist({ options = [], selectedOption, governance, onContinue }) {
+  const eligibleOptions = options.filter((option) => option.eligible)
+  return <SectionCard title="Eligible execution options" description="Only options currently allowed by the decision engine are shown. Nothing launches automatically.">{eligibleOptions.length ? <div className="grid gap-4 lg:grid-cols-2">{eligibleOptions.map((option) => <article key={option.id} className="info-tile p-4"><div className="flex flex-wrap items-center gap-2"><h3 className="font-semibold text-slate-950">{option.displayName}</h3><StatusBadge value={option.pathType} /><StatusBadge value={option.trustTier} /></div><p className="mt-2 text-sm text-slate-600">Fit score: {option.fitScore}</p><ul className="mt-3 space-y-2 text-sm text-slate-700">{option.whyShown.map((reason) => <li key={reason}>{reason}</li>)}</ul></article>)}</div> : <p className="text-sm text-slate-600">No execution option is eligible under the current policy.</p>}<div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between"><p className="text-sm text-slate-600">{governance.status === "blocked" ? "Review the blocked decision manually. Launch remains unavailable." : selectedOption ? "Next: review the selected option before any launch action." : "Review the decision before choosing a next step."}</p><PrimaryButton onClick={onContinue}>Continue to Detail</PrimaryButton></div></SectionCard>
+}

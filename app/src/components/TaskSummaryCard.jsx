@@ -2,15 +2,15 @@ import { SectionCard } from "./SectionCard"
 import { formatLabel } from "./formatLabel"
 import { StatusBadge } from "./StatusBadge"
 
-export function TaskSummaryCard({ task }) {
+export function TaskSummaryCard({ task, compact = false }) {
   return (
-    <SectionCard title="Task summary">
+    <SectionCard title={compact ? undefined : "Task summary"}>
       <div className="space-y-4">
         <div>
           <div className="mb-2 flex flex-wrap items-center gap-2">
-            <h3 className="font-semibold text-slate-950">
+            <h1 className="text-xl font-semibold text-slate-950">
               {task.title}
-            </h3>
+            </h1>
             <StatusBadge value={task.source === "local" ? "local" : "demo"} />
             <StatusBadge value={task.status} />
           </div>

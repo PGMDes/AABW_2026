@@ -1,73 +1,92 @@
+import { useEffect, useState } from "react"
 import { currentUser } from "../data"
+import { ThemeToggle } from "./ThemeToggle"
 
-function NavButton({ children, isActive, onClick }) {
+const navigationItems = [
+  { id: "dashboard", label: "Dashboard" },
+  { id: "tasks", label: "Tasks" },
+  { id: "governance", label: "Governance" },
+  { id: "marketplace", label: "Marketplace" },
+  { id: "activity", label: "Activity" },
+]
+
+function NavButton({ item, currentPage, onNavigate }) {
   return (
     <button
       type="button"
-      aria-current={isActive ? "page" : undefined}
-      onClick={onClick}
-      className={`nav-button ${isActive ? "nav-button--active" : ""}`}
+      aria-current={currentPage === item.id ? "page" : undefined}
+      className={`sidebar-nav__item ${currentPage === item.id ? "sidebar-nav__item--active" : ""}`}
+      onClick={() => onNavigate(item.id)}
     >
-      {children}
+      <span aria-hidden="true" className="sidebar-nav__dot" />
+      {item.label}
     </button>
   )
 }
 
 export function AppShell({ children, currentPage, onNavigate }) {
+  const [navigationOpen, setNavigationOpen] = useState(false)
+
+  useEffect(() => {
+    function closeNavigation(event) {
+      if (event.key === "Escape") {
+        setNavigationOpen(false)
+      }
+    }
+
+    window.addEventListener("keydown", closeNavigation)
+    return () => window.removeEventListener("keydown", closeNavigation)
+  }, [])
+
+  function navigate(page) {
+    onNavigate(page)
+    setNavigationOpen(false)
+  }
+
   return (
     <div className="app-shell">
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-950 focus:ring-2 focus:ring-cyan-600"
+      <a href="#main-content" className="skip-link">Skip to main content</a>
+      <button
+        type="button"
+        aria-expanded={navigationOpen}
+        aria-label={navigationOpen ? "Close navigation" : "Open navigation"}
+        className="mobile-nav-toggle"
+        onClick={() => setNavigationOpen((value) => !value)}
       >
-        Skip to main content
-      </a>
-      <header className="app-topbar">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="brand-lockup">
-            <span aria-hidden="true" className="brand-mark" />
+        Menu
+      </button>
+      <button
+        type="button"
+        aria-label="Close navigation"
+        className={`mobile-nav-backdrop ${navigationOpen ? "mobile-nav-backdrop--visible" : ""}`}
+        onClick={() => setNavigationOpen(false)}
+      />
+      <header className={`app-sidebar ${navigationOpen ? "app-sidebar--open" : ""}`}>
+        <div className="sidebar-brand">
+          <span aria-hidden="true" className="sidebar-brand__mark">S</span>
+          <div>
+            <p>SymbiontOS</p>
+            <span>Workforce control plane</span>
+          </div>
+        </div>
+        <nav aria-label="Primary navigation" className="sidebar-nav">
+          {navigationItems.map((item) => (
+            <NavButton key={item.id} item={item} currentPage={currentPage} onNavigate={navigate} />
+          ))}
+        </nav>
+        <div className="sidebar-footer">
+          <p className="system-status"><span aria-hidden="true" />All systems operational</p>
+          <ThemeToggle />
+          <div className="sidebar-account">
+            <span aria-hidden="true" className="sidebar-account__avatar">WA</span>
             <div>
-              <p className="text-sm font-semibold text-slate-950">
-                SymbiontOS
-              </p>
-              <p className="text-sm text-slate-500">
-                {currentUser.role} · {currentUser.context}
-              </p>
+              <strong>{currentUser.role || "Workspace administrator"}</strong>
+              <span>{currentUser.context}</span>
             </div>
           </div>
-          <nav aria-label="Primary navigation" className="flex flex-wrap gap-2">
-            <NavButton
-              isActive={currentPage === "dashboard"}
-              onClick={() => onNavigate("dashboard")}
-            >
-              Dashboard
-            </NavButton>
-            <NavButton
-              isActive={currentPage === "newTask"}
-              onClick={() => onNavigate("newTask")}
-            >
-              New Task
-            </NavButton>
-            <NavButton
-              isActive={currentPage === "recommendation"}
-              onClick={() => onNavigate("recommendation")}
-            >
-              Recommendation
-            </NavButton>
-            <NavButton
-              isActive={currentPage === "detail"}
-              onClick={() => onNavigate("detail")}
-            >
-              Task Detail
-            </NavButton>
-          </nav>
         </div>
       </header>
-      <main
-        id="main-content"
-        aria-label="Primary content"
-        className="app-content mx-auto max-w-6xl px-4 py-8"
-      >
+      <main id="main-content" tabIndex="-1" aria-label="Primary content" className="app-content">
         {children}
       </main>
     </div>

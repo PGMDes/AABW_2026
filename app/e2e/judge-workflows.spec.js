@@ -1,11 +1,7 @@
 import { expect, test } from "@playwright/test"
 
-function primaryNav(page) {
-  return page.getByRole("navigation", { name: "Primary navigation" })
-}
-
 async function openNewTask(page) {
-  await primaryNav(page).getByRole("button", { name: "New Task" }).click()
+  await page.getByRole("button", { name: "New Task" }).click()
   await expect(page.getByRole("heading", { name: "New Task" })).toBeVisible()
 }
 
@@ -29,19 +25,16 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/")
 })
 
-test("fresh load opens Dashboard and keeps Recommendation and Task Detail empty", async ({
+test("fresh load opens Dashboard without recommendation or task detail content", async ({
   page,
 }) => {
   await expect(page.getByRole("heading", { name: "SymbiontOS" })).toBeVisible()
   await expect(page.getByRole("heading", { name: "Task queue" })).toBeVisible()
 
-  await primaryNav(page).getByRole("button", { name: "Recommendation" }).click()
   await expect(
     page.getByRole("heading", { name: "No recommendation yet" }),
-  ).toBeVisible()
-
-  await primaryNav(page).getByRole("button", { name: "Task Detail" }).click()
-  await expect(page.getByRole("heading", { name: "No task selected" })).toBeVisible()
+  ).toHaveCount(0)
+  await expect(page.getByRole("heading", { name: "No task selected" })).toHaveCount(0)
 })
 
 test("task_001 runs the approved Agent path through output acceptance", async ({

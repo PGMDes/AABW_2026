@@ -23,8 +23,8 @@ function getGovernanceNextStep(governance) {
 export function GovernanceStatusCard({ governance }) {
   return (
     <SectionCard
-      title="Governance status"
-      description="Policy result before launch."
+      title="Governance snapshot"
+      description="Current policy result before selection or launch."
       className={`governance-card governance-card--${governance.status}`}
     >
       <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
